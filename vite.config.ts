@@ -8,6 +8,7 @@ export default defineConfig({
   plugins: [vue()],
   assetsInclude: ['**/*.gltf'],
   build:{
+    outDir:'docs',
     chunkSizeWarningLimit:1024,
     rollupOptions : {
       output : {
@@ -19,7 +20,7 @@ export default defineConfig({
       }
     }
   },
-  base:'./',
+  base:'/ScholarGateFront',
   resolve : {
     alias : {
       '@' : resolve(__dirname,"./src"),
