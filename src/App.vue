@@ -22,10 +22,10 @@ import Header from "@/components/Header.vue"
   will-change: filter;
   transition: filter 300ms;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.el-header {
+  padding: 0;
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.el-main {
+  padding: 10px 0 0 0;
 }
 </style>

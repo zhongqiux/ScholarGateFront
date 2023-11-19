@@ -1,6 +1,6 @@
 import { routes } from "./routes";
 import { createRouter, createWebHistory } from 'vue-router'
-import { useCounterStore } from '@/store'
+import { useCounterStore,useHeaderStore } from '@/store'
 
 // 路由参数配置
 export const router = createRouter({
@@ -13,6 +13,11 @@ export const router = createRouter({
 router.beforeEach((to, from, next) => {
     // 继续前进 next()
     // 返回 false 以取消导
+    if(to.path == "/main"){
+        useHeaderStore().search = false;
+    }else {
+        useHeaderStore().search = true;
+    }
 	const store = useCounterStore()
     console.log(from)
     console.log(to)
