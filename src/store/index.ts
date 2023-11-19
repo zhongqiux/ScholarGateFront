@@ -19,7 +19,8 @@ export const useCounterStore = defineStore('counter'/*store的唯一标识*/, {
 
 export const useHeaderStore = defineStore('header'/*store的唯一标识*/, {
 	state: () => ({
-		search:true
+		search:true,
+		search_active:false,
 	}),
 	getters: {
 	  // @ts-ignore
