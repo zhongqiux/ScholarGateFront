@@ -7,4 +7,5 @@ export const routes = [
 	{ path: '/main', name: '', title: 'main', component: ()=>import('@/components/HelloWorld.vue') },
 	{ path: '/person', name: '', title: 'person', component: ()=>import('@/pages/PersonPage.vue') },
 	{ path: '/editinfo', name: '', title: 'editinfo', component: ()=>import('@/pages/EditInfoPage.vue') },
+	{ path: '/result', name: '', title: 'result', component: ()=>import('@/pages/ResultPage.vue') },
 ]
