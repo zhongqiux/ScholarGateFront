@@ -7,7 +7,7 @@
 		<input type="text" readonly autocomplete="off" placeholder="请选择" class="base-input_inner">
 		<input type="text" autocomplete="off" placeholder="搜索你感兴趣的内容..." class="top_input" @focus="store.search_active = true">
 	</div>
-	<div class="ava">
+	<div class="ava" @click="go('/person')">
 		<el-tooltip effect="dark" content="消息" placement="bottom">
 			<el-badge :value="1" :max="99" class="item">
 				<el-icon color="#777575" class="no-inherit" :size="20" style="vertical-align: middle">
@@ -20,9 +20,10 @@
 		<el-avatar :icon="UserFilled" />
 		<template #dropdown>
 			<el-dropdown-menu>
-			<el-dropdown-item @click="go('/path')">主页</el-dropdown-item>
-			<el-dropdown-item @click="go('/path')">消息</el-dropdown-item>
-			<el-dropdown-item @click="go('/path')">收藏</el-dropdown-item>
+			<el-dropdown-item @click="go('/admin')">管理员</el-dropdown-item>
+			<el-dropdown-item @click="go('/person')">主页</el-dropdown-item>
+			<el-dropdown-item @click="go('/result')">学术成果展示</el-dropdown-item>
+			<el-dropdown-item @click="go('/login')">登录</el-dropdown-item>
 			</el-dropdown-menu>
 		</template>
 		</el-dropdown>
@@ -124,7 +125,6 @@ export default defineComponent({
 	display: flex;
 	align-items: center;
 	margin-left: 50px;
-	
 }
 .search .el-select {
 	width: 150px;
