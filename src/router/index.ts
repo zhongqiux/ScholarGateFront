@@ -13,7 +13,7 @@ export const router = createRouter({
 router.beforeEach((to, from, next) => {
     // 继续前进 next()
     // 返回 false 以取消导
-    if(to.path == "/main"){
+    if(to.path == "/" || to.path === "/index"){
         useHeaderStore().search = false;
     }else {
         useHeaderStore().search = true;

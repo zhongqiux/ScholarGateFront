@@ -4,15 +4,8 @@
 		<div v-for="item,index in itemList" :class='(active-1 == index)?"active header-item":"header-item"' @click="[go(item.path),active = index+1]" >{{ item.value }}</div>
 	</div>
 	<div class="search" v-show="store.search">
-		<el-select v-model="value" placeholder="Select">
-			<el-option
-			v-for="item in options"
-			:key="item.value"
-			:label="item.label"
-			:value="item.value"
-			/>
-		</el-select>
-		<el-input v-model="input" placeholder="Please input" />
+		<input type="text" readonly autocomplete="off" placeholder="请选择" class="base-input_inner">
+		<input type="text" autocomplete="off" placeholder="搜索你感兴趣的内容..." class="top_input" @focus="store.search_active = true">
 	</div>
 	<div class="ava">
 		<el-tooltip effect="dark" content="消息" placement="bottom">
@@ -86,6 +79,36 @@ export default defineComponent({
 .header-item:hover {
 	cursor: pointer;
 }
+.base-input_inner {
+	border: 1px solid transparent;
+    border-right-color: hsla(0,0%,100%,.2);
+    height: 36px;
+    line-height: 36px;
+    border-radius: 999px 0 0 999px;
+    background-color: hsla(0,0%,100%,.2);
+    padding: 0 10px 0 0;
+    
+    text-align: center;
+	outline: none;
+	cursor: pointer;
+	width: 70px;
+}
+.top_input::-webkit-input-placeholder,
+.base-input_inner::-webkit-input-placeholder {
+	color: white;
+}
+.top_input {
+	height: 36px;
+    line-height: 36px;
+    border-radius: 0 999px 999px 0;
+    border: 1px solid transparent;
+    caret-color: #fff;
+    color: #fff;
+    background-color: hsla(0,0%,100%,.2);
+    padding: 0 16px 0 10px;
+	outline: none;
+	width: 250px;
+}
 .active {
 	background-color: rgb(78, 87, 161);
 	border-bottom: 5px solid rgb(221, 187, 52);
@@ -95,11 +118,17 @@ export default defineComponent({
 .search {
 	display: flex;
 	flex-direction: row;
-	height: 40px;
+	
 	float: left;
+	height: 70px;
+	display: flex;
+	align-items: center;
+	margin-left: 50px;
+	
 }
 .search .el-select {
 	width: 150px;
+	
 }
 .routes {
 	display: flex;
