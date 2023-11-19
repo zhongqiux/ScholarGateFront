@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="content-main">
     <div class="toptitle">
       <svg style="margin: 0; padding: 0; width: 15; height: 15">
         <rect width="10" height="14" stroke="black" fill="black" />
@@ -22,7 +22,7 @@
         >
           <el-card
             :body-style="{ padding: '0px' }"
-            shadow="always"
+            shadow="hover"
             style="margin: 2.5vh 0; height: 34vh; min-width: 180px"
             class="card"
           >
@@ -255,6 +255,11 @@ function totalCount() {
 </script>
 
 <style scoped>
+.content-main {
+  padding: 4vh 5vw;
+  padding-top: 1vh;
+}
+
 .bottom {
   margin-top: 13px;
   line-height: 12px;
@@ -269,7 +274,8 @@ function totalCount() {
 }
 
 .background {
-  background-color: aqua;
+  background-image: url(../assets/card-bg.jpg);
+  background-size: contain;
   padding: 15px;
 }
 
@@ -338,8 +344,7 @@ function totalCount() {
 }
 
 .card {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(252,252,252,0.6);
   border-color: white;
-  box-shadow: rgb(199, 199, 199);
 }
 </style>

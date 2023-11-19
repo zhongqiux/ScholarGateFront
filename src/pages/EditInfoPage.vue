@@ -30,7 +30,7 @@ const onSubmit = () => {
 }
 </script>
 
-<style>
+<style scoped>
 
 .container {
     width: 100%;
