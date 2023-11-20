@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
+  <div class="container" :class="{'container2':isPatent}">
     <!-- 下载 -->
-    <div class="item" style="margin-top: 13px">
+    <div v-if="isPatent == false" class="item" style="margin-top: 13px">
       <div class="title">
         <Link class="icon"/>
         <span>合作资源方下载</span>
@@ -13,7 +13,7 @@
     </div>
 
     <!-- 操作 -->
-    <div class="item">
+    <div class="item" :style="patentStyle">
       <div class="title">
         <Operation class="icon"/>
         <span>常用操作</span>
@@ -88,11 +88,22 @@ import "@/assets/ResultPageIconfont/iconfont.css"
 export default defineComponent({
   name: "RightTab",
   components: {Edit, Histogram, Operation, Link},
+  props: ['isPatent'],
 
   data() {
     return {
       viewNum: 0,
       recommendNum: 0,
+    }
+  },
+
+  computed:{
+    patentStyle(){
+      if(this.isPatent){
+        return ({
+          marginTop: '13px',
+        })
+      }
     }
   }
 })
@@ -103,6 +114,14 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   height: 500px;
+  background-color: #f3f5f8;
+  margin-top: 30px;
+}
+
+.container2 {
+  display: flex;
+  flex-direction: column;
+  height: 400px;
   background-color: #f3f5f8;
   margin-top: 30px;
 }

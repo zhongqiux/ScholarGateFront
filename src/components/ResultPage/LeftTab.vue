@@ -28,6 +28,7 @@ import {ArrowDown, ArrowUp, Avatar, Promotion} from '@element-plus/icons-vue';
 export default defineComponent({
   name: "LeftTab",
   components: {Promotion, ArrowDown, ArrowUp, Avatar},
+  props: ['isPatent'],
   data() {
     return {
       activities: [
@@ -92,14 +93,31 @@ export default defineComponent({
         if (entry.isIntersecting) {
           // 执行滚动到目标元素时的逻辑
           let targetId = entry.target.id
-          console.log(targetId);
-          if (targetId == "tag1") {
-            this.handleClick(0, null);
-          } else if (targetId == "tag2") {
-            this.handleClick(1, null);
-          } else if (targetId == "tag3") {
-            this.handleClick(2, null);
+
+          if (!this.isPatent) {
+            if (targetId == "tag1") {
+              this.handleClick(0, null);
+            } else if (targetId == "tag6") {
+              this.handleClick(0, null);
+            } else if (targetId == "tag2") {
+              this.handleClick(1, null);
+            } else if (targetId == "tag3") {
+              this.handleClick(2, null);
+            }
+          } else {
+            if (targetId == "tag1") {
+              this.handleClick(0, null);
+            } else if (targetId == "tag6") {
+              this.handleClick(0, null);
+            } else if (targetId == "tag2") {
+              this.handleClick(2, null);
+            } else if (targetId == "tag3") {
+              this.handleClick(3, null);
+            } else if (targetId == "tag4") {
+              this.handleClick(1, null);
+            }
           }
+
 
         }
       });
@@ -110,11 +128,13 @@ export default defineComponent({
       let targetElement1 = document.getElementById("tag1")
       let targetElement2 = document.getElementById("tag2")
       let targetElement3 = document.getElementById("tag3")
+      let targetElement4 = document.getElementById("tag4")
+      let targetElement6 = document.getElementById("tag6")
 
       const observer = new IntersectionObserver(this.handleIntersection, {
-        root: null, // 默认为视口
+        root: null,
         rootMargin: '0px',
-        threshold: 0.9, // 当目标元素50%进入视口时触发回调
+        threshold: 0.9,
       });
 
       // 将目标元素传递给观察者
@@ -122,12 +142,39 @@ export default defineComponent({
         observer.observe(targetElement1);
         observer.observe(targetElement2);
         observer.observe(targetElement3);
+        observer.observe(targetElement4);
+        observer.observe(targetElement6);
       }
     }
   },
 
   mounted() {
     window.addEventListener("scroll", this.handleScroll);
+
+    if (this.isPatent) {
+      this.activities = [
+        {
+          content: "基本信息",
+          color: "#2f3a91",
+          hrefId: "#info"
+        },
+        {
+          content: "权利要求",
+          color: "#8590a6",
+          hrefId: "#power"
+        },
+        {
+          content: "相关推荐",
+          color: "#8590a6",
+          hrefId: "#recommend"
+        },
+        {
+          content: "交流评论",
+          color: "#8590a6",
+          hrefId: "#comment"
+        }
+      ]
+    }
   }
 })
 </script>
