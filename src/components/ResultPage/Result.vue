@@ -103,7 +103,7 @@
     </div>
 
     <!-- 导航栏监听用 -->
-    <div id="tag2"></div>
+    <div id="tag2" v-if="isPatent"></div>
 
     <div v-for="(recommends, index) in recommendation" key="index" class="recommend_container">
       <div class="recommend_list">
@@ -116,6 +116,8 @@
     </div>
   </div>
 
+  <!-- 导航栏监听用 -->
+  <div id="tag2" v-if="!isPatent"></div>
 
   <!--  交流评论    -->
   <div id="comment" class="page_divider">
