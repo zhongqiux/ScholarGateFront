@@ -4,7 +4,7 @@
         <div style="opacity: 0.85; color: black;">
             <!-- 登陆页 -->
             <div :class="{ 'flip-front': playFlip }" class="flip-item flip-item-front">
-                <div class="register-form" style="margin-top: 200px;">
+                <div class="register-form" style="margin-top: 20vh;">
                     <h2 class="tit" style="font-weight: bold; color: black; font-size: 26px;">登录</h2>
                     <form @submit.prevent="login">
                         <div class="form-group">
@@ -18,7 +18,7 @@
                         <div class="tit">
                             <button type="submit">登录</button>
                         </div>
-                        <div class="tit" style="margin-top: 20px;">
+                        <div class="tit" style="margin-top: 3vh;">
                             <el-button @click="handleForgotPassword">忘记密码？</el-button>
                             <el-button @click="play">没有账号？立即注册</el-button>
                         </div>
@@ -59,7 +59,7 @@
             </div>
             <!-- 忘记密码页 -->
             <div :class="{ 'flip-back': playForget }" class="flip-item flip-item-back">
-                <div class="register-form" style="margin-top: 110px;">
+                <div class="register-form" style="margin-top: 15vh;">
                     <h2 class="tit" style="font-weight: bold; color: black; font-size: 26px;">忘记密码</h2>
                     <form @submit.prevent="resetPassword">
                         <div class="form-group">
@@ -72,9 +72,9 @@
                         </div>
                         <div class="form-group">
                             <label for="verificationCode">验证码</label>
-                            <input v-model="verificationCode" type="text" id="verificationCode" style="width: 275px;" required />
+                            <input v-model="verificationCode" type="text" id="verificationCode" style="width: 18.2vw;" required />
                             <button type="button" @click="sendVerificationCode"
-                                :disabled="verificationCodeSent" style="font-size: 16px; width: 100px;">发送</button>
+                                :disabled="verificationCodeSent" style="font-size: 16px; width: 6vw;">发送</button>
                         </div>
                         <div class="form-group">
                             <label for="newPassword">新密码</label>
@@ -203,6 +203,7 @@ export default {
                     'password': this.pwd
                 }
                 console.log(data)
+                this.$router.push('/')
                 // routes.push({ path: '/teams' })
                 // const response = await fetch('http://8.130.113.86:8000/auth/login', {
                 //     method: 'POST',
@@ -287,14 +288,14 @@ export default {
 }
 
 .tit {
-    margin-bottom: 24px;
+    margin-bottom: 3vh;
     display: flex;
     justify-content: center;
 }
 
 .register-form {
-    margin: 100px 500px;
-    padding: 20px 50px;
+    margin: 14vh 30vw;
+    padding: 3vh 3vw;
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: white;
@@ -304,19 +305,19 @@ export default {
 .form-group {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
-    height: 40px;
+    margin-bottom: 3vh;
+    height: 5vh;
 }
 
 label {
-    width: 100px;
+    width: 7vw;
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 1vh;
     font-weight: bold;
 }
 
 input {
-    width: 380px;
+    width: 25vw;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
