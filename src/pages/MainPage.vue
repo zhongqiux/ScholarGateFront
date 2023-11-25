@@ -2,14 +2,20 @@
 	<div class="center-back">
 		<div class="search center">
 			<div class="sort-default" @click="selecting = true">
-				<span>{{ option.label+" " }}</span>
-				<i class="sort-icon">▼</i>
-				<ul class="pop-options" v-show="selecting" @mouseleave="selecting = false">
-					<li v-for="item in options" @click="option = item">{{ item.label }}</li>
-				</ul>
+				<el-dropdown>
+					<div class="op outline-none">
+						<span>{{ option.label+" " }}</span>
+						<i class="sort-icon">▼</i>
+					</div>
+					<template #dropdown>
+					<el-dropdown-menu>
+						<el-dropdown-item v-for="item in options" @click="option = item">{{ item.label }}</el-dropdown-item>
+					</el-dropdown-menu>
+					</template>
+				</el-dropdown>
 			</div>
 			
-			<input class="search-input" id="txt_SearchText" name="txt_SearchText" type="text" autocomplete="off" placeholder="中文文献、外文文献" value="" maxlength="100" style="color: rgb(125, 125, 125);">
+			<input class="search-input" id="txt_SearchText" name="txt_SearchText" type="text" autocomplete="off" placeholder="中文文献、外文文献" value="" maxlength="100" style="color: rgb(125, 125, 125);" @keyup.enter.native="go('/explore')">
 			<input class="search-btn" type="button" value="">
 			<div class="exten">
 				<div class="advanced">高级检索<span class="w-2 inline-block"></span><svg t="1700095260301" class="icon w-2 h-2" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3992" width="200" height="200"><path d="M312.888889 995.555556c-17.066667 0-28.444444-5.688889-39.822222-17.066667-22.755556-22.755556-17.066667-56.888889 5.688889-79.644445l364.088888-329.955555c11.377778-11.377778 17.066667-22.755556 17.066667-34.133333 0-11.377778-5.688889-22.755556-17.066667-34.133334L273.066667 187.733333c-22.755556-22.755556-28.444444-56.888889-5.688889-79.644444 22.755556-22.755556 56.888889-28.444444 79.644444-5.688889l364.088889 312.888889c34.133333 28.444444 56.888889 73.955556 56.888889 119.466667s-17.066667 85.333333-51.2 119.466666l-364.088889 329.955556c-11.377778 5.688889-28.444444 11.377778-39.822222 11.377778z" fill="#999999" p-id="3993"></path></svg></div>
@@ -70,6 +76,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+
 export default defineComponent({
 	name:"MainPages",
 	data(){
@@ -94,6 +101,12 @@ export default defineComponent({
 				tem = tem+element
 			});
 			return tem;
+		},
+		print(message:string):void{
+			console.log(message);
+		},
+		go(path:string){
+			this.$router.push(path)
 		}
 	}
 })
@@ -147,23 +160,6 @@ h3,p {
 	padding-top: 5%;
 	/* height: 50px; */
 }
-.pop-options{
-	list-style: none;
-	position: absolute;
-	margin: 0;
-	padding: 5px 0;
-	background-color: white;
-	margin-top: 5px;
-}
-.pop-options li {
-	cursor: pointer;
-	height: 25px;
-	line-height: 25px;
-	padding: 0 10px;
-}
-.pop-options li:hover {
-	background-color: #c4c4c4;
-}
 
 .sort-default {
 	height: 50px;
@@ -183,6 +179,10 @@ h3,p {
     text-indent: -9999em;
     background: url(https://piccache.cnki.net/kdn/index/kns8/nimages/icon-sort.png) no-repeat 0 -50px
 }
+.sort-default .el-dropdown {
+	vertical-align: middle;
+}
+
 .search-input {
 	float: left;
     width: 475px;

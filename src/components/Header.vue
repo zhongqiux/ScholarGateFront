@@ -1,9 +1,12 @@
 <template>
-<div class="header">
-	<div class="routes">
+<div class="header" >
+	<div class="icon float-left hover:cursor-pointer" @click="go('/index')">
+		<img src="@/assets/icon.png" class="w-60 h-17">
+	</div>
+	<div class="routes" v-show="store.display">
 		<div v-for="item,index in itemList" :class='(active-1 == index)?"active header-item":"header-item"' @click="[go(item.path),active = index+1]" >{{ item.value }}</div>
 	</div>
-	<div class="search" v-show="store.search">
+	<div class="search" v-show="store.search && store.display">
 		<input type="text" readonly autocomplete="off" placeholder="请选择" class="base-input_inner">
 		<input type="text" autocomplete="off" placeholder="搜索你感兴趣的内容..." class="top_input" @focus="store.search_active = true">
 	</div>
@@ -17,7 +20,8 @@
 		</el-tooltip>
 		<span class="w-5"></span>
 		<el-dropdown>
-		<el-avatar :icon="UserFilled" />
+		<!-- <el-avatar :icon="UserFilled" /> -->
+		<GitAvatar :num="6" class="outline-none"></GitAvatar>
 		<template #dropdown>
 			<el-dropdown-menu>
 			<el-dropdown-item @click="go('/admin')">管理员</el-dropdown-item>
@@ -36,13 +40,17 @@
 import { defineComponent } from 'vue'
 import { UserFilled } from '@element-plus/icons-vue'
 import { useHeaderStore } from "@/store"
+import GitAvatar from "@/components/small/GitAvatar.vue"
 // let store = useHeaderStore()
 
 export default defineComponent({
 	name:"Header",
+	components:{
+		GitAvatar,
+	},
 	data(){
 		return {
-			itemList:[{value:' 首页 ',path:'/'},{value:'网站介绍',path:'/main'},{value:'关于我们',path:'/'}],
+			itemList:[{value:' 首页 ',path:'/'},{value:'网站介绍',path:'/main'},{value:'工作台',path:'/admin'}],
 			input:'',
 			active:1,
 			options: [
@@ -134,7 +142,14 @@ export default defineComponent({
 	display: flex;
 	flex-direction: row;
 	float: left;
-	margin-left: 150px;
+}
+.icon {
+	float: left;
+	/* width: 150px; */
+	height: 70px;
+}
+.icon img {
+	height: 100%;
 }
 .ava {
 	float: right;
