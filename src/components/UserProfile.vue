@@ -26,57 +26,16 @@ export default {
     <div class="wrapper">
         <div role="tablist" class="tabs tabs-lifted">
             <el-tabs type="border-card" style="width: calc(60vw - 41px); height: 60vh;">
-                <el-tab-pane label="我的成果"> <el-tabs style="width: 100%; height: 100%;">
-                        <el-tab-pane label="论文">
-                            <div class="paper-top">
-                                <KeywordSearch @search="handleSearch"></KeywordSearch>
-                                <div class="button-top"><el-button type="success">添加成果</el-button>
-                                    <el-button type="warning">认领成果</el-button>
-                                </div>
-                            </div>
-                        </el-tab-pane>
-                        <el-tab-pane label="专利">
-                            <div class="paper-top">
-                                <KeywordSearch @search="handleSearch"></KeywordSearch>
-                                <div class="button-top"><el-button type="success">添加成果</el-button>
-                                    <el-button type="warning">认领成果</el-button>
-                                </div>
-                            </div>
-                        </el-tab-pane>
-                        <el-tab-pane label="专著">
-                            <div class="paper-top">
-                                <KeywordSearch @search="handleSearch"></KeywordSearch>
-                                <div class="button-top"><el-button type="success">添加成果</el-button>
-                                </div>
-                            </div>
-                        </el-tab-pane>
-                        <el-tab-pane label="软著权">
-                            <div class="paper-top">
-                                <KeywordSearch @search="handleSearch"></KeywordSearch>
-                                <div class="button-top"><el-button type="success">添加成果</el-button>
-                                </div>
-                            </div>
-                        </el-tab-pane>
-                        <el-tab-pane label="项目">
-                            <div class="paper-top">
-                                <KeywordSearch @search="handleSearch"></KeywordSearch>
-                                <div class="button-top"><el-button type="success">添加成果</el-button>
-                                </div>
-                            </div>
-                        </el-tab-pane>
-                        <el-tab-pane label="奖项">
-                            <div class="paper-top">
-                                <KeywordSearch @search="handleSearch"></KeywordSearch>
-                                <div class="button-top"><el-button type="success">添加成果</el-button>
-                                </div>
-                            </div>
-                        </el-tab-pane>
-                        <!-- 在这里可以继续添加其他子选项卡 -->
-                    </el-tabs></el-tab-pane>
-                <el-tab-pane label="我的文库">我的文库</el-tab-pane>
-                <el-tab-pane label="我的收藏">我的收藏</el-tab-pane>
-                <el-tab-pane label="我的评论">我的评论</el-tab-pane>
-                <el-tab-pane label="我的推荐">我的推荐</el-tab-pane>
+                <el-tab-pane label="论文">
+                    <div class="paper-top">
+                        <KeywordSearch @search="handleSearch"></KeywordSearch>
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane label="专利">
+                    <div class="paper-top">
+                        <KeywordSearch @search="handleSearch"></KeywordSearch>
+                    </div>
+                </el-tab-pane>
             </el-tabs>
         </div>
     </div>
