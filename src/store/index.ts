@@ -21,10 +21,9 @@ export const useHeaderStore = defineStore('header'/*store的唯一标识*/, {
 	state: () => ({
 		search:true,
 		search_active:false,
+		display:true,
 	}),
 	getters: {
-	  // @ts-ignore
-	  display:(search)=>{return search}
 	},
 	actions: {
 	  change() {

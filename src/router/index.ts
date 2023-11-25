@@ -18,9 +18,13 @@ router.beforeEach((to, from, next) => {
     }else {
         useHeaderStore().search = true;
     }
-	const store = useCounterStore()
+    if(to.path == "/admin" ){
+        useHeaderStore().display = false;
+    }else {
+        useHeaderStore().display = true;
+    }
     console.log(from)
     console.log(to)
-	console.log(store.count)
+	console.log(useHeaderStore().display)
     next()
 })
