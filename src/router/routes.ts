@@ -9,5 +9,6 @@ export const routes = [
     {path: '/person', name: '', title: 'person', component: () => import('@/pages/PersonPage.vue')},
     {path: '/editinfo', name: '', title: 'editinfo', component: () => import('@/pages/EditInfoPage.vue')},
     {path: '/result', name: '', title: 'result', component: () => import('@/pages/ResultPage.vue')},
-    {path: '/patent', name: '', title: 'patent', component: () => import('@/pages/PatentPage.vue')}
+    {path: '/patent', name: '', title: 'patent', component: () => import('@/pages/PatentPage.vue')},
+    {path: '/explore', name: '', title: 'explore', component: () => import('@/pages/SearchDetail.vue')}
 ]
