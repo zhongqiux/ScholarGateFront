@@ -2,7 +2,7 @@
   @author Cloud-Iris
   搜索框的骨架，可以根据插槽完成自定义搜索框
  -->
- <template>
+<template>
   <div 
     ref="searchContainerTarget"
     class="group search-container"
