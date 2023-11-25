@@ -57,7 +57,11 @@
                     />
                   </el-select>
                 </div>
-              <el-divider/>                
+                <el-divider/>  
+
+                <!-- 卡片内容 -->
+                <SearchCard/>
+
               </el-tab-pane>
               <el-tab-pane label="专利" name="second">
                 Config
@@ -87,6 +91,7 @@ import AuthorsResCard from '../components/Search/SearchCard/AuthorsResCard.vue';
 import VenuesResCard from '../components/Search/SearchCard/VenuesResCard.vue';
 import InstitutionsResCard from '../components/Search/SearchCard/InstitutionsResCard.vue';
 import ConceptsResCard from '../components/Search/SearchCard/ConceptsResCard.vue';
+import SearchCard from '@/components/Search/SearchCard/SearchCard.vue'
 
 const searchStore = useSearchStore()
 const value = ref('')
@@ -113,7 +118,6 @@ const options2 = [
   border-radius: 4px;
   
 }
-
 
 .AppSearchAggregation__label {
   text-align: center;
@@ -153,6 +157,7 @@ const options2 = [
 }
 
 .card {
+  text-align: left;
   height: 500px;
   margin-bottom: 10px;
   background: #fff;
