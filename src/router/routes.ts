@@ -7,5 +7,6 @@ export const routes = [
     {path: '/editinfo', name: '', title: 'editinfo', component: () => import('@/pages/EditInfoPage.vue')},
     {path: '/result', name: '', title: 'result', component: () => import('@/pages/ResultPage.vue')},
     {path: '/patent', name: '', title: 'patent', component: () => import('@/pages/PatentPage.vue')},
-    {path: '/explore', name: '', title: 'explore', component: () => import('@/pages/SearchDetail.vue')}
+    {path: '/explore', name: '', title: 'explore', component: () => import('@/pages/SearchDetail.vue')},
+    {path: '/login', name: '', title: '登录', component: () => import('@/pages/NewLogin.vue')}
 ]
