@@ -1,4 +1,11 @@
 export interface CommonReturnType {
-	message:String
-	data:Object
+	msg:String
+	flag:number
+	data:any
+}
+
+export interface LoginReturn extends CommonReturnType {
+	data: {
+		id:number
+	}
 }

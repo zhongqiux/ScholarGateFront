@@ -38,14 +38,15 @@
 			<div class="title">热门文章<span class="w-10 inline-block"></span><span class="text-sm hover:text-blue-500 hover:cursor-pointer">查看更多</span></div>
 			<div class="layout">
 				<div class="paper" v-for="item in rpapers">
-					<!-- <img src="@/assets/paper.svg" class="w-20"> -->
 					<h3 class="article-title">{{ item.title }}</h3>
-					<p class="desc">{{ item.title }}</p>
-					<div class="keys flex">
-						<div class="key" v-for="key in item.keys">{{ key }}</div>
-					</div>
-					<div class="authos flex">
-						<span class="author">{{ join(item.authors) }}</span>
+					<p class="desc">{{ item.abstract }}</p>
+					<div class="flex flex-row">
+						<div class="keys flex items-center">
+							<span class="key-label">关键词</span><div class="key" v-for="key in item.keywords">{{ key }}</div>
+						</div>
+						<div class="authos flex items-center">
+							<span class="key-label">作者</span><span class="author">{{ join(item.authorNames) }}</span>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -90,7 +91,7 @@ export default defineComponent({
 			value:'123',
 			selecting:false,
 			option:{ value: '123',label: '主题',},
-			rpapers:[{title:"Human-like systematic generalization through a meta-learning neural network",desc:"The power of human language and thought arises from systematic compositionality—the algebraic ability to understand and produce novel combinations from known components. ",keys:["AI","算法"],authors:["张三"]},
+			rpapers:[{title:"机器学习模型辅助抗菌肽设计",abstract:"抗菌肽是一类具有抗菌活性的小分子多肽，其研究开发具有重要的学术意义和产业前景。与传统从自然界中发现和分离抗菌肽等实验手段相比，基于模型预测和设计的方法具有高效快捷、成本低廉等特点，是今后抗菌肽研发的趋势。但由于抗菌肽序列及其活性之间存在着异常复杂的非线性映射关系，由序列准确预测其活性仍然十分困难。抗菌肽序列是如何决定其抑菌活性的？高活性序列存在哪些关键特征？这是高活性抗菌肽设计需要解决的关键科学问题。为回答这些问题，本项目拟采用BP神经网络、支持向量机、深度学习等非线性映射能力很强的机器学习算法来构建高效的抗菌肽序列-活性定量预测模型，并基于模型的精准预测，实现高效低毒的新抗菌肽设计。本研究建立的模型、方法和工具有望为一类共性科学问题（即序列-活性之间的函数关联）提供新的解决方案，亦能为抗菌肽产品的研发提供理论依据和平台支持。",keywords:["AI","算法"],authorNames:["张三"],publishDate:''},
 			],
 		}
 	},
@@ -150,7 +151,7 @@ h3,p {
 	justify-content: space-between;
 }
 .index {
-	width: 40%;
+	width: 30%;
 }
 .search {
 	display: flex;
@@ -231,7 +232,8 @@ h3,p {
 .papers {
 	/* background-color: rgb(235, 244, 255); */
 	/* height: 250px; */
-	padding-right: 20px;
+	/* padding-right: 20px; */
+	width: 65%;
 }
 .title {
 	height: 80px;
@@ -264,20 +266,33 @@ h3,p {
 	margin-left: 5px;
 	color: #5f7292;
 }
+.key-label {
+	font-size: 14px;
+	color:#8590a6;
+	margin-right: 5px;
+}
 .article-title {
     cursor: pointer;
     -webkit-transition: color .3s;
     transition: color .3s;
-    max-height: 54px;
-    min-height: 54px;
 	text-align: left;
+	font-weight: 400;
+    color: #002076;
+    letter-spacing: 1px;
+    font-size: 18px;
 }
 .desc {
 	color: #4b5b76;
     margin-bottom: 10px;
+	font-size: 14px;
     /* max-height: 25px; */
     min-height: 25px;
 	text-align: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
 }
 .author {
     font-size: 13px;
@@ -286,5 +301,10 @@ h3,p {
 .paper {
 	width: 100%;
 	align-items: center;
+	padding: 5px;
+}
+.keys,
+.authors {
+	width: 50%;
 }
 </style>

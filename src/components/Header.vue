@@ -21,7 +21,7 @@
 		<span class="w-5"></span>
 		<el-dropdown>
 		<!-- <el-avatar :icon="UserFilled" /> -->
-		<GitAvatar :num="6" class="outline-none"></GitAvatar>
+		<GitAvatar :num="213123183" class="outline-none"></GitAvatar>
 		<template #dropdown>
 			<el-dropdown-menu>
 			<el-dropdown-item @click="go('/admin')">管理员</el-dropdown-item>

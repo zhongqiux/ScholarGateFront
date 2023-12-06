@@ -8,4 +8,5 @@ export const routes = [
 	{ path: '/person', name: '', title: 'person', component: ()=>import('@/pages/PersonPage.vue') },
 	{ path: '/editinfo', name: '', title: 'editinfo', component: ()=>import('@/pages/EditInfoPage.vue') },
 	{ path: '/result', name: '', title: 'result', component: ()=>import('@/pages/ResultPage.vue') },
+	{ path: '/field', name: '', title: '领域', component: ()=>import('@/pages/FieldPage.vue') },
 ]

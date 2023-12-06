@@ -4,10 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --mode development",
     "build": "vue-tsc && vite build --mode production",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "debug": "vite --debug"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
