@@ -19,7 +19,7 @@
                             <button type="submit">登录</button>
                         </div>
                         <div class="tit" style="margin-top: 3vh;">
-                            <el-button @click="handleForgotPassword">忘记密码？</el-button>
+                            <!-- <el-button @click="handleForgotPassword">忘记密码？</el-button> -->
                             <el-button @click="play">没有账号？立即注册</el-button>
                         </div>
                     </form>
@@ -35,12 +35,14 @@
                             <input v-model="nickname" type="text" id="nickname" required />
                         </div>
                         <div class="form-group">
-                            <label for="fullname">真实姓名</label>
-                            <input v-model="fullname" type="text" id="fullname" required />
-                        </div>
-                        <div class="form-group">
                             <label for="email">邮箱</label>
                             <input v-model="email" type="email" id="email" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="verificationCode">验证码</label>
+                            <input v-model="verificationCode" type="text" id="verificationCode" style="width: 18.2vw;" required />
+                            <button type="button" @click="sendVerificationCode"
+                                :disabled="verificationCodeSent" style="font-size: 16px; width: 6vw;">发送</button>
                         </div>
                         <div class="form-group">
                             <label for="password">密码</label>
@@ -58,7 +60,7 @@
                 </div>
             </div>
             <!-- 忘记密码页 -->
-            <div :class="{ 'flip-back': playForget }" class="flip-item flip-item-back">
+            <!-- <div :class="{ 'flip-back': playForget }" class="flip-item flip-item-back">
                 <div class="register-form" style="margin-top: 15vh;">
                     <h2 class="tit" style="font-weight: bold; color: black; font-size: 26px;">忘记密码</h2>
                     <form @submit.prevent="resetPassword">
@@ -90,7 +92,7 @@
                         <el-button @click="handleForgotPassword">返回登录</el-button>
                     </form>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
@@ -107,11 +109,10 @@ export default {
         return {
             playFlip: false,
             playFlip1: false,
-            playForget: false,
+            // playForget: false,
             username: '',
             pwd: '',
             nickname: '',
-            fullname: '',
             email: '',
             password: '',
             confirmPassword: '',
@@ -139,12 +140,12 @@ export default {
             const data = {
                 'username': this.nickname,
                 'password': this.password,
-                'realName': this.fullname,
                 'email': this.email,
+                'code': this.verificationCode,
             }
             console.log(data)
             // try {
-            //     const response = await fetch('http://8.130.113.86:8000/auth/register', {
+            //     const response = await fetch('http://dev-cn.your-api-server.com/register', {
             //         method: 'POST',
             //         headers: {
             //             'Content-Type': 'application/json',
@@ -161,7 +162,6 @@ export default {
             //                     offset: 100,
             //                 })
             //                 this.nickname = ''
-            //                 this.fullname = ''
             //                 this.email = ''
             //                 this.password = ''
             //                 this.confirmPassword = ''
@@ -205,8 +205,8 @@ export default {
                 console.log(data)
                 this.$router.push('/')
                 // routes.push({ path: '/teams' })
-                // const response = await fetch('http://8.130.113.86:8000/auth/login', {
-                //     method: 'POST',
+                // const response = await fetch('http://dev-cn.your-api-server.com/user/login', {
+                //     method: 'GET',
                 //     headers: {
                 //         'Content-Type': 'application/json',
                 //     },
@@ -230,12 +230,12 @@ export default {
             }
         },
         // 登录/忘记密码页面翻转
-        handleForgotPassword() {
-            //跳转到忘记密码页面
-            // router.replace('/forgetpassword')
-            this.playFlip = !this.playFlip
-            this.playForget = !this.playForget
-        },
+        // handleForgotPassword() {
+        //     //跳转到忘记密码页面
+        //     // router.replace('/forgetpassword')
+        //     this.playFlip = !this.playFlip
+        //     this.playForget = !this.playForget
+        // },
         // 邮箱验证码
         sendVerificationCode() {
             // 在这里执行发送邮箱验证码的逻辑
@@ -269,7 +269,7 @@ export default {
             this.newPassword = ''
             this.confirmNewPassword = ''
 
-            this.handleForgotPassword()
+            // this.handleForgotPassword()
         },
     }
 }
