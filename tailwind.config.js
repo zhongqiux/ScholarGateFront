@@ -18,6 +18,9 @@ export default {
         text_color_regular: "var(--el-text-color-regular)",
         text_color_disabled: "var(--el-text-color-disabled)"
       }
+    },
+    colors:{
+      'nav-blue': '#8590a6',
     }
   },
   plugins: [require("daisyui")],
