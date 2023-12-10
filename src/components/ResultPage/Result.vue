@@ -7,19 +7,57 @@
     </div>
     <el-divider style="border-color: #d5d8e9; border-width: 2px"></el-divider>
 
-    <!-- 作者信息 -->
-    <div class="author_row">
+    <div id="tag6"></div>
+
+    <!-- 作者信息: 学术成果状态下-->
+    <div class="author_row" v-if="!isPatent">
       <Avatar class="icon"/>
-      <span class="author_name" @click="toAuthor()"> 作者姓名</span>  <!-- 跳转科研人员页面 -->
+      <span class="author_name" @click="toAuthor(authors)" v-for="(authors, index) in authorNames">
+        {{ authors }}
+        <span v-if="index != authorNames.length - 1" style="color: #8590a6; font-weight: normal" @click.stop="">,</span>
+      </span><!-- 跳转科研人员页面 -->
       <p class="text"> 作者其他信息</p>
     </div>
 
-    <!-- 其他信息 -->
-    <div class="row">
+    <!-- 作者信息: 专利状态下-->
+    <div class="author_row" v-if="isPatent">
+      <span class="text" style="font-weight: bold; color: #8590a6">发明人:</span>  <!-- 跳转科研人员页面 -->
+      <span class="author_name" @click="toAuthor(authors)" v-for="(authors, index) in authorNames">
+        {{ authors }}
+        <span v-if="index != authorNames.length - 1" style="color: #8590a6; font-weight: normal" @click.stop="">,</span>
+      </span> <!-- 跳转科研人员页面 -->
+    </div>
+
+    <!-- 专利申请人：专利状态下 -->
+    <div class="row" v-if="isPatent">
+      <span class="text" style="font-weight: bold; color: #8590a6">申请人:</span>  <!-- 跳转科研人员页面 -->
+      <span class="author_name" @click="toAuthor('申请人姓名/单位')">申请人姓名/单位</span>  <!-- 跳转科研人员页面 -->
+    </div>
+
+    <!-- 其他信息：学术成果状态下 -->
+    <div class="row" v-if="!isPatent">
       <p class="text">其他信息（若有）</p>
     </div>
 
-    <!--  简介内容    -->
+    <!-- 其他信息：专利状态下 -->
+    <div class="row" v-if="isPatent">
+      <span class="text" style="color: #8590a6">申请日:</span>
+      <span class="text">{{ registerDate }}</span>
+      <span class="text" style="color: #8590a6">申请号:</span>
+      <span class="text">{{ registerNo }}</span>
+      <span class="text" style="color: #8590a6">公开日:</span>
+      <span class="text">{{ openDate }}</span>
+      <span class="text" style="color: #8590a6">公开号:</span>
+      <span class="text">{{ openNo }}</span>
+      <span class="text" style="color: #8590a6">IPC分类号:</span>
+      <span class="ipc_ext" v-for="(IPC, index) in IPCNo" key="index" @click="toIPC(index, IPC)">
+        {{ IPC }}
+      <span v-if="index != IPCNo.length - 1" style="color: #8590a6; font-weight: normal" @click.stop="">,</span>
+      </span>
+
+    </div>
+
+    <!--  简介内容  -->
     <div class="context">
       <div class="context_text">
         <span @click="expandContent(0)">{{ isExpand ? message : filter(message) }}</span>
@@ -31,24 +69,42 @@
       </div>
     </div>
 
-    <!--  关键词    -->
-    <div class="tag_row">
+    <!--  关键词: 学术成果状态下   -->
+    <div class="tag_row" v-if="!isPatent">
       <span class="text">关键词：</span>
       <el-tag class="tags" v-for="(keyword) in keyWords" effect="plain" @click="toKeyWord(keyword)">
         {{ keyword }}
       </el-tag>
     </div>
   </div>
-
   <!-- 导航栏监听用 -->
   <div id="tag1"></div>
 
+
+  <!--  权利要求：专利状态下    -->
+  <div id="power" v-if="isPatent">
+    <div class="page_divider">
+      <p class="divider_title">权利要求</p>
+      <p class="line"></p>
+    </div>
+    <!-- 导航栏监听用 -->
+    <div id="tag4" v-if="isPatent"></div>
+    <div class="text" style="white-space: pre-wrap">
+      {{ powerRequest }}
+    </div>
+  </div>
+
+
   <!--  相关推荐    -->
-  <div>
-    <div id="recommend" class="page_divider">
+  <div id="recommend">
+    <div class="page_divider">
       <p class="divider_title">相关推荐</p>
       <p class="line"></p>
     </div>
+
+    <!-- 导航栏监听用 -->
+    <div id="tag2" v-if="isPatent"></div>
+
     <div v-for="(recommends, index) in recommendation" key="index" class="recommend_container">
       <div class="recommend_list">
         <span style="color: #2f3a91; font-size: 16px; height: 51px; width: 32px">{{ index + 1 }}.</span>
@@ -61,7 +117,7 @@
   </div>
 
   <!-- 导航栏监听用 -->
-  <div id="tag2"></div>
+  <div id="tag2" v-if="!isPatent"></div>
 
   <!--  交流评论    -->
   <div id="comment" class="page_divider">
@@ -82,6 +138,7 @@ import {Avatar, ArrowDown, ArrowUp,} from '@element-plus/icons-vue'
 export default defineComponent({
   name: "Result",
   components: {ArrowDown, ArrowUp, Avatar},
+  props: ['isPatent'],
   data() {
     return {
       isExpand: false,
@@ -99,7 +156,68 @@ export default defineComponent({
         {title: "推荐8", info: "其他信息"},
         {title: "推荐9", info: "其他信息"},
         {title: "推荐10", info: "其他信息"},
-      ]
+      ],
+      authorNames: ["作者1", "作者2"],
+      registerDate: "2023-08-14",
+      registerNo: " CN202310829800.3",
+      openDate: "2023-09-08",
+      openNo: "CN116718812A",
+      IPCNo: ["G01R1/04", "G01R31/26"],
+      powerRequest: "1.一种用于半导体器件的测试装置的电接触端子，其特征在于，所述电接触端子包括：\n" +
+          "\n" +
+          "对称并排布置的一对接触引脚，连接到所述测试装置；\n" +
+          "\n" +
+          "可拆卸地安装在每个所述接触引脚上的接触端，所述接触端由高硬度且可承受高电流的材料制成，\n" +
+          "\n" +
+          "其中，当利用所述测试装置测试所述半导体器件时，所述半导体器件的器件引脚与每个所述接触引脚上的所述接触端电接触。\n" +
+          "\n" +
+          "2.根据权利要求1所述的电接触端子，其特征在于，所述接触端由合金制成。\n" +
+          "\n" +
+          "3.根据权利要求1所述的电接触端子，其特征在于，每个所述接触引脚具有沿着纵向延伸的颈部、以及与所述颈部连接并沿着与所述纵向垂直的横向延伸的悬臂部，所述颈部包括上端部，所述接触端可拆卸地安装在所述上端部上。\n" +
+          "\n" +
+          "4.根据权利要求3所述的电接触端子，其特征在于，所述上端部上设置有至少一个第一导向孔，所述接触端上设置有至少一个第二导向孔，所述至少一个第一导向孔和所述至少一个第二导向孔分别一一对应，\n" +
+          "\n" +
+          "其中，借助于所述至少一个第一导向孔和所述至少一个第二导向孔，通过附接部件或焊接工艺将所述接触端可拆卸地安装在所述上端部上。\n" +
+          "\n" +
+          "5.根据权利要求3所述的电接触端子，其特征在于，所述颈部还包括柔性部，所述柔性部包括与所述上端部的下方连接的延伸部、以及与所述悬臂部的一端连接的弯曲部，\n" +
+          "\n" +
+          "其中，借助于所述柔性部，所述接触引脚能够在所述纵向或所述横向上移动。\n" +
+          "\n" +
+          "6.根据权利要求3所述的电接触端子，其特征在于，所述上端部与所述接触端由不同的材料制成。\n" +
+          "\n" +
+          "7.根据权利要求1所述的电接触端子，其特征在于，所述悬臂部的下方设置有导向钩部，借助于所述导向钩部，将所述接触引脚连接到所述测试装置。\n" +
+          "\n" +
+          "8.根据权利要求5所述的电接触端子，其特征在于，所述悬臂部的另一端设置有连接部，用于使所述接触引脚与所述测试装置的负载板建立电连接。\n" +
+          "\n" +
+          "9.一种用于半导体器件的测试装置，其特征在于，所述测试装置包括：\n" +
+          "\n" +
+          "底座；\n" +
+          "\n" +
+          "根据权利要求1-8中任一项所述的电接触端子，所述电接触端子中的一对接触引脚连接到所述底座；\n" +
+          "\n" +
+          "夹紧部，所述夹紧部在第一位置和第二位置之间切换，\n" +
+          "\n" +
+          "其中，当所述夹紧部位于所述第二位置时，将所述半导体器件的器件引脚放入所述测试装置或从所述测试装置移除，当所述夹紧部位于所述第一位置时，使放入所述测试装置的所述半导体器件的所述器件引脚同时电接触每个所述接触引脚上的接触端。\n" +
+          "\n" +
+          "10.根据权利要求9所述的测试装置，其特征在于，所述夹紧部与弹性装置连接，当所述弹性装置处于压缩状态时，所述夹紧部位于所述第二位置，当所述弹性装置处于伸长状态时，所述夹紧部位于所述第一位置。\n" +
+          "\n" +
+          "11.根据权利要求10所述的测试装置，其特征在于，当所述夹紧部位于所述第二位置时，带有所述器件引脚的所述半导体器件在竖直方向上放入所述测试装置，使得所述器件引脚被插入一对接触引脚的一对上端部之间，\n" +
+          "\n" +
+          "当所述夹紧部位于所述第一位置时，使所述半导体器件的器件引脚被一对上端部上的一对接触端夹紧，并同时电接触所述一对接触端。\n" +
+          "\n" +
+          "12.根据权利要求11所述的测试装置，其特征在于，所述测试装置包含第一器件保持器，用于固定插入的半导体器件，并容纳每个接触引脚的所述上端部。\n" +
+          "\n" +
+          "13.根据权利要求12所述的电接触端子，其特征在于，所述第一器件保持器中设置有切口，所述半导体器件通过所述切口插入所述第一器件保持器，并且当所述夹紧部位于所述第一位置时，所述夹紧部通过所述切口与所述一对上端部之一接触，以使所述器件引脚被所述一对接触端夹紧。\n" +
+          "\n" +
+          "14.根据权利要求10所述的测试装置，其特征在于，当所述夹紧部位于所述第二位置时，带有所述器件引脚的所述半导体器件在横向方向上放入所述测试装置，使得所述器件引脚被放置在一对接触引脚的一对上端部上方，\n" +
+          "\n" +
+          "当所述夹紧部位于所述第一位置时，从所述器件引脚上方施加压力，使所述器件引脚在所述夹紧部和一对上端部上的一对接触端之间被夹紧，并同时电接触所述一对接触端。\n" +
+          "\n" +
+          "15.根据权利要求14所述的测试装置，其特征在于，所述测试装置包含第二器件保持器，用于支撑在横向方向上放入所述测试装置的所述半导体器件。\n" +
+          "\n" +
+          "16.根据权利要求9所述的测试装置，其特征在于，所述底座上设置有导向槽，其中，通过将设置在每个所述接触引脚上的导向钩部置于所述导向槽中，使每个所述接触引脚连接到所述底座。\n" +
+          "\n" +
+          "17.根据权利要求9所述的测试装置，其特征在于，其特征在于，还包括下盖板，所述下盖板安装在所述底座上，用于将所述接触引脚与所述底座固定在一起。"
     }
   },
 
@@ -133,8 +251,12 @@ export default defineComponent({
       alert("跳转到: " + keyword);
     },
 
-    toAuthor() {
-      alert("跳转到作者个人门户")
+    toAuthor(authors: String) {
+      alert("跳转到" + authors + "个人门户");
+    },
+
+    toIPC(index: number, IPC: String) {
+      alert("跳转到" + IPC);
     }
   },
 })
@@ -215,7 +337,8 @@ export default defineComponent({
 .row {
   display: flex;
   align-items: center;
-  height: 35px;
+  height: auto;
+  flex-wrap: wrap;
 }
 
 .context {
@@ -271,7 +394,7 @@ export default defineComponent({
 .page_divider {
   display: flex;
   flex-direction: row;
-  margin-top: 40px;
+  margin-top: 20px;
   align-items: center;
 }
 
@@ -323,4 +446,19 @@ export default defineComponent({
   margin-top: 6px;
   text-align: left;
 }
+
+.ipc_ext {
+  font-size: 15px;
+  padding: 5px;
+  text-align: start;
+  color: #121212;
+}
+
+.ipc_ext:hover {
+  cursor: pointer;
+  color: #2f3a91;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+}
+
 </style>

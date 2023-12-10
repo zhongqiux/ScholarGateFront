@@ -1,15 +1,15 @@
 <template>
   <el-container @scroll="handleScroll">
     <el-aside width="150px" style="margin-left: 50px">
-      <LeftTab class="sticky_element" :class="{is_sticky : isSticky}" :isPatent="false"/>
+      <LeftTab class="sticky_element" :class="{is_sticky : isSticky}" :isPatent="true"/>
     </el-aside>
 
     <el-main>
-      <Result :isPatent="false"/>
+      <Result :isPatent="true"/>
     </el-main>
 
     <el-aside width="240px" style="margin-left: 10px; margin-right: 50px">
-      <RightTab :isPatent="false"/>
+      <RightTab :isPatent="true"/>
     </el-aside>
   </el-container>
 </template>
@@ -39,6 +39,8 @@ export default defineComponent({
 
   mounted() {
     window.addEventListener('scroll', this.handleScroll);
+
+
   },
 
 })

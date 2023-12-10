@@ -1,50 +1,60 @@
 <template>
-    <div class="container"><el-form :model="form" label-width="120px">
-            <el-form-item label="您的姓名">
-                <el-input v-model="form.name" />
+    <el-button text @click="dialogFormVisible = true">
+        open a Form nested Dialog
+    </el-button>
+
+    <el-dialog v-model="dialogFormVisible" title="Shipping address">
+        <el-form :model="form">
+            <el-form-item label="Promotion name" :label-width="formLabelWidth">
+                <el-input v-model="form.name" autocomplete="off" />
             </el-form-item>
-            <el-form-item label="您的机构">
-                <el-input v-model="form.org" />
+            <el-form-item label="Zones" :label-width="formLabelWidth">
+                <el-select v-model="form.region" placeholder="Please select a zone">
+                    <el-option label="Zone No.1" value="shanghai" />
+                    <el-option label="Zone No.2" value="beijing" />
+                </el-select>
             </el-form-item>
-            <el-form-item label="您的邮箱">
-                <el-input v-model="form.email" />
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="onSubmit">保存</el-button>
-            </el-form-item>
-        </el-form></div>
+        </el-form>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="dialogFormVisible = false">
+                    Confirm
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
   
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 
-// do not use same name with ref
+const dialogFormVisible = ref(false)
+const formLabelWidth = '140px'
+
 const form = reactive({
-    name: '',
-    org: '',
-    email: '',
+  name: '',
+  region: '',
+  date1: '',
+  date2: '',
+  delivery: false,
+  type: [],
+  resource: '',
+  desc: '',
 })
 
-const onSubmit = () => {
-    console.log('submit!')
-}
 </script>
-
 <style scoped>
-
-.container {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    /* 使用 space-between 将元素推到两端 */
+.el-button--text {
+  margin-right: 15px;
 }
-
-el-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.el-select {
+  width: 300px;
 }
-
+.el-input {
+  width: 300px;
+}
+.dialog-footer button:first-child {
+  margin-right: 10px;
+}
 </style>
