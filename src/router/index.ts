@@ -1,11 +1,11 @@
 import { routes } from "./routes";
 import { createRouter, createWebHistory } from 'vue-router'
-import { useCounterStore,useHeaderStore } from '@/store'
+import { useHeaderStore } from '@/store'
 
 // 路由参数配置
 export const router = createRouter({
     // 使用hash(createWebHashHistory)模式，(createWebHistory是HTML5历史模式，支持SEO)
-    history: createWebHistory('/ScholarGateFront'),
+    history: createWebHistory('ScholarGateFront'),
     routes: routes,
 })
 
@@ -22,6 +22,11 @@ router.beforeEach((to, from, next) => {
         useHeaderStore().display = false;
     }else {
         useHeaderStore().display = true;
+    }
+    if(to.path == "/login"){
+        useHeaderStore().login = false;
+    }else {
+        useHeaderStore().login = true;
     }
     console.log(from)
     console.log(to)

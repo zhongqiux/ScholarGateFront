@@ -1,6 +1,6 @@
 <script lang="ts">
-import UserInfo from "@/components/UserInfo.vue"
-import UserProfile from "@/components/UserProfile.vue"
+import UserInfo from "@/components/User/UserInfo.vue"
+import UserProfile from "@/components/User/UserProfile.vue"
 
 export default {
     components: {
