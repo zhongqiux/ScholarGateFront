@@ -259,6 +259,34 @@ export default defineComponent({
       alert("跳转到" + IPC);
     }
   },
+
+
+  // 调用API方法
+  // async 方法名() {
+  //
+  //   let data = {
+  //     //传输的数据
+  //   }
+  //
+  //   let result = await 调用的api名字(data)
+  //   console.log(result)
+  //
+  //   this.ret = result.flag //返回值
+  //
+  //   if (result.flag === 1) { //提示信息
+  //     this.$message({
+  //       type: 'success',
+  //       message: '保存成功'
+  //     })
+  //   } else {
+  //     this.$message({
+  //       type: 'error',
+  //       message: '保存失败'
+  //     })
+  //   }
+  // },
+
+
 })
 </script>
 

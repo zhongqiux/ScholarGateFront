@@ -20,17 +20,28 @@
       </div>
 
       <div class="actions">
-        <div class="action_item">
-          <i class="iconfont icon-quote-left"></i>
-          <span class="action_text">引用</span>
+        <el-popover placement="left-start"
+                    :width="200"
+                    show-after="100"
+                    hide-after="100"
+                    trigger="click">
+          <div>引用格式1</div>
+          <div>引用格式2</div>
+          <template #reference>
+            <div class="action_item" @click="clickAction(0)">
+              <i class="iconfont icon-quote-left" :class="{clickedStyle : isCitation}"></i>
+              <span class="action_text" :class="{clickedStyle : isCitation}">引用</span>
+            </div>
+          </template>
+        </el-popover>
+
+        <div class="action_item" @click="clickAction(1)">
+          <i class="iconfont icon-star" :class="{clickedStyle : isFavourite}"></i>
+          <span class="action_text" :class="{clickedStyle : isFavourite}">收藏</span>
         </div>
-        <div class="action_item">
-          <i class="iconfont icon-star"></i>
-          <span class="action_text">收藏</span>
-        </div>
-        <div class="action_item">
-          <i class="iconfont icon-heart"> </i>
-          <span class="action_text">推荐</span>
+        <div class="action_item" @click="clickAction(2)">
+          <i class="iconfont icon-heart" :class="{clickedStyle : isRecommend}"> </i>
+          <span class="action_text" :class="{clickedStyle : isRecommend}">推荐</span>
         </div>
       </div>
     </div>
@@ -84,6 +95,7 @@
 import {defineComponent} from "vue";
 import {Edit, Histogram, Link, Operation} from "@element-plus/icons-vue";
 import "@/assets/ResultPageIconfont/iconfont.css"
+import {ElMessage} from "element-plus";
 
 export default defineComponent({
   name: "RightTab",
@@ -94,15 +106,63 @@ export default defineComponent({
     return {
       viewNum: 0,
       recommendNum: 0,
+      isCitation: false,
+      isFavourite: false,
+      isRecommend: false,
     }
   },
 
-  computed:{
-    patentStyle(){
-      if(this.isPatent){
+  computed: {
+    patentStyle() {
+      if (this.isPatent) {
         return ({
           marginTop: '13px',
         })
+      }
+    }
+  },
+
+  methods: {
+    clickAction(type: number) {
+      if (type == 0) {
+        // if (this.isCitation) {
+        //   this.isCitation = false;
+        //   alert("取消引用成功！");
+        // } else {
+        //   this.isCitation = true;
+        //   alert("引用成功！");
+        // }
+      } else if (type == 1) {
+        if (this.isFavourite) {
+          this.isFavourite = false;
+          ElMessage({
+            message: '取消收藏',
+            duration: 1500,
+          })
+        } else {
+          this.isFavourite = true;
+          ElMessage({
+            message: '收藏成功',
+            type: 'success',
+            duration: 1500,
+          })
+        }
+      } else if (type == 2) {
+        if (this.isRecommend) {
+          this.isRecommend = false;
+          ElMessage({
+            message: '取消推荐',
+            duration: 1500,
+          })
+        } else {
+          this.isRecommend = true;
+          ElMessage({
+            message: '推荐成功',
+            type: 'success',
+            duration: 1500,
+          })
+        }
+
       }
     }
   }
@@ -185,6 +245,7 @@ export default defineComponent({
   flex-wrap: wrap;
 }
 
+
 .action_item:hover {
   cursor: pointer;
   color: #75540d;
@@ -197,6 +258,10 @@ export default defineComponent({
 
 .action_item:hover > .action_text {
   cursor: pointer;
+  color: #75540d;
+}
+
+.clickedStyle {
   color: #75540d;
 }
 
