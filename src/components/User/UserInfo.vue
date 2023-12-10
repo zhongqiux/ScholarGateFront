@@ -7,6 +7,10 @@
                 <div class="info-container">
                     <div class="name">{{ form.name }}</div>
                     <div class="organization">{{ form.organization }}</div>
+                    <div class="background"><el-text class="background-text">
+                            {{ form.background }}
+                        </el-text>
+                    </div>
                     <div class="edit"><el-link type="success" :underline="false"
                             @click="dialogFormVisible = true">编辑个人信息</el-link></div>
                 </div>
@@ -20,14 +24,18 @@
 
     <el-dialog v-model="dialogFormVisible" title="编辑个人信息">
         <el-form :model="form" class="form">
-            <el-form-item label="昵称" :label-width="formLabelWidth">
-                <el-input v-model="form.name" autocomplete="off" />
+            <el-form-item label="昵称" :label-width="formLabelWidth" class="input">
+                <el-input v-model="form.name" autocomplete="off" disabled />
             </el-form-item>
-            <el-form-item label="真实姓名" :label-width="formLabelWidth">
-                <el-input v-model="form.realname" autocomplete="off" />
+            <el-form-item label="真实姓名" :label-width="formLabelWidth" class="input">
+                <el-input v-model="form.realname" autocomplete="off" disabled />
             </el-form-item>
-            <el-form-item label="机构" :label-width="formLabelWidth">
-                <el-input v-model="form.organization" autocomplete="off" />
+            <el-form-item label="机构" :label-width="formLabelWidth" class="input">
+                <el-input v-model="form.organization" autocomplete="off" disabled />
+            </el-form-item>
+            <el-form-item label="个人简介" :label-width="formLabelWidth" class="input bgc-input">
+                <el-input v-model="form.background" autocomplete="off" :rows="5" type="textarea" maxlength="100"
+                    show-word-limit resize="none" />
             </el-form-item>
         </el-form>
         <template #footer>
@@ -42,7 +50,7 @@
 </template>
   
 <script lang="ts">
-import Avatar from "@/components/Avatar.vue";
+import Avatar from "@/components/User/Avatar.vue";
 import { ref, reactive } from 'vue';
 
 export default {
@@ -57,13 +65,14 @@ export default {
             name: '我是原神高手',
             realname: '',
             organization: '提瓦特大学',
+            background: '原神,启动！',
         });
 
         return {
             dialogFormVisible,
             formLabelWidth,
             form,
-            backgroundImagePath: 'public/assets/Personbgc.jpg',
+            backgroundImagePath: 'assets/Personbgc.jpg',
         };
     },
 };
@@ -101,17 +110,28 @@ export default {
     font-weight: bold;
     font-size: large;
     margin-left: 2vw;
-    margin-top: 30px;
+    margin-top: 1.5vh;
 }
 
 .organization {
     /* margin-left: 2vw; */
-    margin-top: 10px;
+    margin-top: 1vh;
     font-size: small;
 }
 
+.background {
+    margin-top: 1vh;
+    font-size: x-small;
+    margin-left: 2vw;
+    color: rgb(71, 71, 205);
+    display: flex;
+    justify-content: left;
+    max-width: 5vw;
+}
+
 .edit {
-    margin-top: 10px;
+    margin-top: 1vh;
+    /* margin-top: 1px; */
     margin-left: 0.88vw;
 }
 
@@ -146,5 +166,23 @@ export default {
     /* 适当的宽度，可以根据需要调整 */
     margin: 0 auto;
     /* 水平居中 */
-}</style>
+}
+
+.input {
+    width: 18.5vw;
+}
+
+.background-text {
+    display: block;
+    white-space: nowrap;
+    /* 防止换行 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* 使用省略号表示被省略的文本 */
+}
+
+.bgc-input {
+    height: 20%;
+}
+</style>
   
