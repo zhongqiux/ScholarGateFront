@@ -3,30 +3,26 @@
     <el-container class="List__item">
       <el-aside width="60px" class="List__itemActions">
         <div class="List__itemAction">
-          <div class="List__itemIndex">{{ item.id }}.</div>
-        </div>
-        <div class="List__itemAction">
-          <div class="iconfont icon-quote-left QuoteButton"></div>
-          <div class="CircleQuoteButton__label">引用</div>
+          
+          <div class="List__itemIndex">
+            {{ item.id }}.</div>
         </div>
         
       </el-aside>
   
       <div class="list-item">
-        <!-- 标题 -->
-        <h2 class="ContentItem__titleText" @click="handleTitleClick">{{ item.title }}</h2>
-        <!-- 作者 -->
-        <div>
+        <!-- 名字 -->
+        <h2 class="ContentItem__titleText" @click="handleTitleClick">
           <el-icon class="author-icon"><UserFilled /></el-icon>
+          {{ item.name }}</h2>
+        <!-- 领域 -->
+        <div>
           <span  @click="handleAuthorClick">
-            <span v-for="(a, index) in item.author" class="Author-info__content">
+            <span v-for="(a, index) in item.fields" class="Author-info__content">
               {{ a }} &nbsp;
             </span>
           </span>
         </div>
-
-        <!-- 来源 -->
-        <div class="article-source__content">{{ item.source }}</div>
 
         <!-- 简介 -->
         <div class="article-brief__content" v-if="item.showFlag">
@@ -47,19 +43,6 @@
             <el-icon><ArrowUp /></el-icon>
           </span>
         </div>
-        
-        <!-- 关键词 -->
-        <div class="keywords" >
-          <span class="keywords__label">关键词: </span>
-          <span 
-            v-for="(keyword, index) in item.keywords" 
-            class="keywords__content"
-            @click="handleKeywordClick"
-          >
-            {{ keyword }} &nbsp;
-          </span>
-          
-        </div>
       </div>
     </el-container>
     <el-divider class="item-divider"/>
@@ -78,47 +61,37 @@ import "@/assets/ResultPageIconfont/iconfont.css"
 const searchData = reactive(
   [{
     id:1,
-    title: '我是标题我是标题我是标题我是标题我是',
-    author: ['作者1', '作者2'],
-    source: '《招生考试通讯:高考版》 2023 年第 3 期 16 - 18 , 共 3 页',
-    abstract: '攻略一回归教材，查缺补漏一、厘清知识脉络，完善知识体系回归教材不是从头到尾读教材，也不是把书后习题个再做一遍。考生需要根据自己的学习情况，精读自己掌握得最薄弱的章节，准备一张白纸，先凭印象画出这部分内容的简略图，再结合教材和课堂笔记，增减内容。结合笔记能更好地抓住重点，在之前学习、复习过程中老师给出的小结和重点知识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
-    keywords: ['知识脉络', '回归教材', '抓住重点'],
+    name: '王老吉',
+    fields: ['化学', '数学'],
+    abstract: '我是一个粉刷匠粉刷本领强我是一个粉刷匠粉刷本领强我是一个粉刷匠粉刷本领强我是一个粉刷匠粉刷本领强我是一个粉刷匠粉刷本领强我是一个粉刷匠粉刷本领强我是一个粉刷匠粉刷本领强我是一个粉刷匠粉刷本领强',
     showFlag: true
   },
   {
     id:2,
-    title: '文章22222',
-    author: ['作者1', '作者2'],
-    source: '《招生考试通讯:高考版》 2023 年第 3 期 16 - 18 , 共 3 页',
+    name: '李老二',
+    fields: ['生物', '物理', '地理', '安全健康'],
     abstract: '攻略一回归教材，查缺补漏一、厘清知识脉络，完善知识体系回归教材不是从头到尾读教材，也不是把书后习题个再做一遍。考生需要根据自己的学习情况，精读自己掌握得最薄弱的章节，准备一张白纸，先凭印象画出这部分内容的简略图，再结合教材和课堂笔记，增减内容。结合笔记能更好地抓住重点，在之前学习、复习过程中老师给出的小结和重点知识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
-    keywords: ['知识脉络'],
     showFlag: true
   },
   {
     id:3,
-    title: '文章22222',
-    author: ['作者1', '作者2'],
-    source: '《招生考试通讯:高考版》 2023 年第 3 期 16 - 18 , 共 3 页',
+    name: '李老二',
+    fields: ['生物', '物理', '地理', '安全健康'],
     abstract: '攻略一回归教材，查缺补漏一、厘清知识脉络，完善知识体系回归教材不是从头到尾读教材，也不是把书后习题个再做一遍。考生需要根据自己的学习情况，精读自己掌握得最薄弱的章节，准备一张白纸，先凭印象画出这部分内容的简略图，再结合教材和课堂笔记，增减内容。结合笔记能更好地抓住重点，在之前学习、复习过程中老师给出的小结和重点知识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
-    keywords: ['知识脉络'],
     showFlag: true
   },
   {
     id:4,
-    title: '文章22222',
-    author: ['作者1', '作者2'],
-    source: '《招生考试通讯:高考版》 2023 年第 3 期 16 - 18 , 共 3 页',
+    name: '李老二',
+    fields: ['生物', '物理', '地理', '安全健康'],
     abstract: '攻略一回归教材，查缺补漏一、厘清知识脉络，完善知识体系回归教材不是从头到尾读教材，也不是把书后习题个再做一遍。考生需要根据自己的学习情况，精读自己掌握得最薄弱的章节，准备一张白纸，先凭印象画出这部分内容的简略图，再结合教材和课堂笔记，增减内容。结合笔记能更好地抓住重点，在之前学习、复习过程中老师给出的小结和重点知识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
-    keywords: ['知识脉络'],
     showFlag: true
   },
   {
     id:5,
-    title: '文章22222',
-    author: ['作者1', '作者2'],
-    source: '《招生考试通讯:高考版》 2023 年第 3 期 16 - 18 , 共 3 页',
-    abstract: '识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
-    keywords: ['知识脉络'],
+    name: '李老二',
+    fields: ['生物', '物理', '地理', '安全健康'],
+    abstract: '攻略一回归教材，查缺补漏一、厘清知识脉络，完善知识体系回归教材不是从头到尾读教材，也不是把书后习题个再做一遍。考生需要根据自己的学习情况，精读自己掌握得最薄弱的章节，准备一张白纸，先凭印象画出这部分内容的简略图，再结合教材和课堂笔记，增减内容。结合笔记能更好地抓住重点，在之前学习、复习过程中老师给出的小结和重点知识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
     showFlag: true
   },
 ]) 
