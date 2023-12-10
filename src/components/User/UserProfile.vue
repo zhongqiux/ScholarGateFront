@@ -1,5 +1,5 @@
 <script lang="ts">
-import KeywordSearch from "@/components/KeywordSearch.vue"
+import KeywordSearch from "@/components/User/KeywordSearch.vue"
 
 export default {
     components: {
@@ -36,6 +36,7 @@ export default {
                         <KeywordSearch @search="handleSearch"></KeywordSearch>
                     </div>
                 </el-tab-pane>
+                <el-empty description="空" class="empty"/>
             </el-tabs>
         </div>
     </div>
@@ -58,5 +59,9 @@ export default {
     justify-content: space-between;
     /* 使用 space-between 将元素推到两端 */
     align-items: center;
+}
+
+.empty {
+    margin-top: 10vh;
 }
 </style>
