@@ -19,7 +19,8 @@ export const routes = [
     {path: '/researcher', name: '', title: 'researcher', component: () => import('@/pages/ResearcherPage.vue')},
     {path: '/result', name: '', title: 'result', component: () => import('@/pages/ResultPage.vue')},
     {path: '/patent', name: '', title: 'patent', component: () => import('@/pages/PatentPage.vue')},
-    {path: '/explore', name: '', title: 'explore', component: () => import('@/pages/SearchDetail.vue')},
+    {path: '/explorePaper', name: '', title: 'explorePaper', component: () => import('@/pages/SearchDetail.vue')},
+    {path: '/exploreAuthor', name: '', title: 'exploreAuthor', component: () => import('@/pages/SearchAuthor.vue')},
     {path: '/login', name: '', title: '登录', component: () => import('@/pages/NewLogin.vue')},
 
 	{ path: '/login', name: 'Login', title: '登录', component: ()=>import('@/pages/NewLogin.vue') },
