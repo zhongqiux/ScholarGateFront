@@ -1,5 +1,17 @@
 export const routes = [
-    {path: '/admin', name: 'admin', title: '管理审核', component: () => import('@/pages/AdminPage.vue')},
+    {path: '/admin', name: 'admin', title: '管理审核', component: () => import('@/pages/AdminPage.vue'),
+        children:[{
+          path: 'issue',
+          name: 'issue',
+          component: ()=>import('../components/Admin/Issue.vue'),
+        }, 
+        {
+          path: 'board',
+          name: 'board',
+          component: ()=>import('../components/Admin/DashBoard.vue')
+        }
+      ]
+    },
     {path: '/', name: '', title: '首页', component: () => import('@/pages/MainPage.vue')},
     {path: '/index', name: 'index', title: '首页', component: () => import('@/pages/MainPage.vue')},
     {path: '/main', name: '', title: 'main', component: () => import('@/components/HelloWorld.vue')},
