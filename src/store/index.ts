@@ -1,5 +1,6 @@
 // @ts-ignore
 import { defineStore } from 'pinia'
+export * from "./headerStore"
 
 export const useCounterStore = defineStore('counter'/*store的唯一标识*/, {
 	state: () => ({ count: 0 }),
@@ -17,26 +18,22 @@ export const useCounterStore = defineStore('counter'/*store的唯一标识*/, {
 	persist: true,
 })
 
-export const useHeaderStore = defineStore('header'/*store的唯一标识*/, {
+export const useUserStore = defineStore('user'/*store的唯一标识*/, {
 	state: () => ({
-		search:true,
-		search_active:false,
-		display:true,
+		userId:-1,
+		doi:'',
+		name:'',
+		email:'',
+		token:''
 	}),
 	getters: {
+		isLogin:()=>{
+			// @ts-ignore
+			return (this.userId != -1);
+		}
 	},
 	actions: {
-	  change() {
-		// @ts-ignore
-		if(this.research === true){
-			// @ts-ignore
-			this.research = false;
-		}
-		else{
-			// @ts-ignore
-			this.research = true;
-		}
-	  },
+	  
 	},
 	//数据持久化
 	persist: true,
