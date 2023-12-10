@@ -1,53 +1,13 @@
 <template>
   <div class="body">
     <el-container class="ContentLayout">
-      <el-aside width="150px" class="AppSearchAggregation ContentLayout__sideColumn">
-        <div class="AppSearchAggregation__label">分类浏览</div>
-        <div class="demo-collapse">
-          <el-collapse v-model="activeNames">
-            <el-collapse-item title="论文类型" name="1">
-              <div>
-                <div v-for="(item, index) in tab_contents.item1" class="AggregationListItem">
-                  <span class="AggregationListItemKey">{{ item.label }}</span>
-                  <span class="AggregationListItemNumber">{{ item.num }}</span>
-                </div>
-              </div>
-            </el-collapse-item>
-            <el-collapse-item title="学科分类" name="2">
-              <div>
-                <div v-for="(item, index) in tab_contents.item2" class="AggregationListItem">
-                  <span class="AggregationListItemKey">{{ item.label }}</span>
-                  <span class="AggregationListItemNumber">{{ item.num }}</span>
-                </div>
-              </div>
-            </el-collapse-item>
-            <el-collapse-item title="出版年" name="3">
-              <div>
-                <div v-for="(item, index) in tab_contents.item2" class="AggregationListItem">
-                  <span class="AggregationListItemKey">{{ item.label }}</span>
-                  <span class="AggregationListItemNumber">{{ item.num }}</span>
-                </div>
-              </div>
-            </el-collapse-item>
-            <el-collapse-item title="出版物" name="4">
-              <div>
-                <div v-for="(item, index) in tab_contents.item2" class="AggregationListItem">
-                  <span class="AggregationListItemKey">{{ item.label }}</span>
-                  <span class="AggregationListItemNumber">{{ item.num }}</span>
-                </div>
-              </div>
-            </el-collapse-item>
-          </el-collapse>
-        </div>
-      </el-aside>
-    
   
       <el-main>
         <div class="card">
           <!-- 搜索标签 -->
           <div class="AppSearchTabs">
-            <div class="AppSearchTab" :class="{'is-active': active_tab === 1}" @click="changeActiveTab(1)">论文</div>
-            <div class="AppSearchTab" :class="{'is-active': active_tab === 2}" @click="changeActiveTab(2)">专利</div>
+            <div class="AppSearchTab" :class="{'is-active': active_tab === 1}" @click="changeActiveTab(1)">作者</div>
+            <div class="AppSearchTab" :class="{'is-active': active_tab === 2}" @click="changeActiveTab(2)">待定</div>
           </div>
           <!-- 搜索筛选项 -->
           <div class="AppSearchTabContent">
@@ -101,7 +61,7 @@
           </div>
           <!-- 搜索详情 -->
           <div class="List"></div>
-          <SearchCard/>
+          <SearchAuthorCard/>
         </div>
         
       </el-main>
@@ -119,13 +79,7 @@ import { ElCheckbox, ElCheckboxGroup, ElEmpty, ElNotification, ElPagination } fr
 import { useSearchStore } from '../store/search.ts';
 import { Calendar, Search } from '@element-plus/icons-vue'
 
-import SearchInput from '../components/Search/SearchInput/Search.vue';
-import WorksResCard from '../components/Search/SearchCard/WorksResCard.vue';
-import AuthorsResCard from '../components/Search/SearchCard/AuthorsResCard.vue';
-import VenuesResCard from '../components/Search/SearchCard/VenuesResCard.vue';
-import InstitutionsResCard from '../components/Search/SearchCard/InstitutionsResCard.vue';
-import ConceptsResCard from '../components/Search/SearchCard/ConceptsResCard.vue';
-import SearchCard from '@/components/Search/SearchCard/SearchCard.vue'
+import SearchAuthorCard from '@/components/Search/SearchCard/SearchAuthorCard.vue'
 import Avatar from '@/components/Avatar.vue'
 
 
