@@ -20,5 +20,8 @@ export const routes = [
     {path: '/result', name: '', title: 'result', component: () => import('@/pages/ResultPage.vue')},
     {path: '/patent', name: '', title: 'patent', component: () => import('@/pages/PatentPage.vue')},
     {path: '/explore', name: '', title: 'explore', component: () => import('@/pages/SearchDetail.vue')},
-    {path: '/login', name: '', title: '登录', component: () => import('@/pages/NewLogin.vue')}
+    {path: '/login', name: '', title: '登录', component: () => import('@/pages/NewLogin.vue')},
+
+	{ path: '/login', name: 'Login', title: '登录', component: ()=>import('@/pages/NewLogin.vue') },
+	{ path: '/field', name: '', title: '领域', component: ()=>import('@/pages/FieldPage.vue') },
 ]

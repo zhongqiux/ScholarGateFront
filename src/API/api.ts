@@ -11,6 +11,9 @@ export function test(msg:String):Promise< Type.CommonReturnType > {
             params:{
                 message:msg
             },
+            headers:{
+                Authorization:useUserStore().token,
+            }
         }).then(res=>{
             console.log(res);
 			resolve(res.data);

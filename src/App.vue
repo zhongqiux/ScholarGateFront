@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 import Header from "@/components/Header.vue"
+import { useHeaderStore } from './store';
+const store  = useHeaderStore();
 </script>
 
 <template>
   <div class="common-layout">
     <el-container>
-      <el-header><Header></Header></el-header>
+      <el-header v-show="store.login"><Header></Header></el-header>
       <el-main>
         <router-view></router-view>
       </el-main>
