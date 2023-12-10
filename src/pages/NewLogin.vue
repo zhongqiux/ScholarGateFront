@@ -6,14 +6,14 @@
             <div :class="{ 'flip-front': playFlip }" class="flip-item flip-item-front">
                 <div class="register-form" style="margin-top: 20vh;">
                     <h2 class="tit" style="font-weight: bold; color: black; font-size: 26px;">登录</h2>
-                    <form @submit.prevent="login">
+                    <form @submit.prevent="APIlogin">
                         <div class="form-group">
                             <label for="username">账号</label>
-                            <input v-model="username" type="text" id="username" placeholder="请输入账号" required />
+                            <input v-model="username" type="text" id="username" placeholder="请输入账号" />
                         </div>
                         <div class="form-group">
                             <label for="pwd">密码</label>
-                            <input v-model="pwd" type="pwd" id="pwd" placeholder="请输入密码" required />
+                            <input v-model="pwd" type="pwd" id="pwd" placeholder="请输入密码" />
                         </div>
                         <div class="tit">
                             <button type="submit">登录</button>
@@ -29,7 +29,7 @@
             <div :class="{ 'flip-back': playFlip1 }" class="flip-item flip-item-back">
                 <div class="register-form">
                     <h2 class="tit" style="font-weight: bold; color: black; font-size: 26px;">注册</h2>
-                    <form @submit.prevent="register">
+                    <form @submit.prevent="APIregister">
                         <div class="form-group">
                             <label for="nickname">昵称</label>
                             <input v-model="nickname" type="text" id="nickname" required />
@@ -40,9 +40,10 @@
                         </div>
                         <div class="form-group">
                             <label for="verificationCode">验证码</label>
-                            <input v-model="verificationCode" type="text" id="verificationCode" style="width: 18.2vw;" required />
-                            <button type="button" @click="sendVerificationCode"
-                                :disabled="verificationCodeSent" style="font-size: 16px; width: 6vw;">发送</button>
+                            <input v-model="verificationCode" type="text" id="verificationCode" style="width: 18.2vw;"
+                                required />
+                            <button type="button" @click="sendVerificationCode" :disabled="verificationCodeSent"
+                                style="font-size: 16px; width: 6vw;">发送</button>
                         </div>
                         <div class="form-group">
                             <label for="password">密码</label>
@@ -102,6 +103,10 @@
 // import useUserStore from '../store/modules/user'
 // import Cookies from 'js-cookie'
 import { ElMessage } from 'element-plus'
+import { login, register } from '@/API'
+import * as Type from "@/API/type"
+
+
 
 // const userStore = useUserStore()
 export default {
@@ -130,6 +135,45 @@ export default {
             this.playFlip = !this.playFlip
             this.playFlip1 = !this.playFlip1
         },
+
+        APIlogin(): void {
+            if (this.username === '' || this.pwd === '') {
+                ElMessage({
+                    message: `账号和密码不能为空！`,
+                    type: 'error',
+                })
+            } else {
+                this.$router.push('/')
+                login(this.username, this.pwd).then((res: Type.LoginReturn) => {
+                    console.log(res)
+                }).catch(err => {
+                    console.log(err)
+                })
+            }
+        },
+
+        APIregister(): void {
+            if (this.password !== this.confirmPassword) {
+                ElMessage({
+                    message: `两次密码不一致！`,
+                    type: 'error',
+                })
+                return;
+            } else if (this.verificationCode != '1') {
+                ElMessage({
+                    message: `验证码不正确！`,
+                    type: 'error',
+                })
+                return;
+            } else {
+                register(this.nickname, this.password, this.email).then((res: Type.RegisterReturn) => {
+                    console.log(res)
+                }).catch(err => {
+                    console.log(err)
+                })
+            }
+        },
+
         // 注册
         async register() {
             if (this.password !== this.confirmPassword) {
@@ -190,6 +234,7 @@ export default {
             //     console.log(error)
             // }
         },
+
         // 登录
         async login(e: { preventDefault: () => void; }) {
             e.preventDefault();
@@ -229,6 +274,7 @@ export default {
                 // }
             }
         },
+
         // 登录/忘记密码页面翻转
         // handleForgotPassword() {
         //     //跳转到忘记密码页面
@@ -236,6 +282,7 @@ export default {
         //     this.playFlip = !this.playFlip
         //     this.playForget = !this.playForget
         // },
+
         // 邮箱验证码
         sendVerificationCode() {
             // 在这里执行发送邮箱验证码的逻辑
@@ -243,34 +290,35 @@ export default {
             console.log('发送邮箱验证码', this.f_email);
             this.verificationCodeSent = true;
         },
+        
         // 重置密码
-        resetPassword() {
-            if (this.newPassword !== this.confirmNewPassword) {
-                alert('密码和确认密码不匹配');
-                return;
-            }
-            // 在这里执行重置密码逻辑，可以发送请求给服务器或者执行其他操作
-            console.log('重置密码信息：', {
-                username: this.f_username,
-                email: this.f_email,
-                verificationCode: this.verificationCode,
-                newPassword: this.newPassword,
-            });
-            ElMessage({
-                message: `重置成功！`,
-                type: 'success',
-                offset: 100,
-            })
+        // resetPassword() {
+        //     if (this.newPassword !== this.confirmNewPassword) {
+        //         alert('密码和确认密码不匹配');
+        //         return;
+        //     }
+        //     // 在这里执行重置密码逻辑，可以发送请求给服务器或者执行其他操作
+        //     console.log('重置密码信息：', {
+        //         username: this.f_username,
+        //         email: this.f_email,
+        //         verificationCode: this.verificationCode,
+        //         newPassword: this.newPassword,
+        //     });
+        //     ElMessage({
+        //         message: `重置成功！`,
+        //         type: 'success',
+        //         offset: 100,
+        //     })
 
-            this.f_username = ''
-            this.f_email = ''
-            this.verificationCode = ''
-            this.verificationCodeSent = false
-            this.newPassword = ''
-            this.confirmNewPassword = ''
+        //     this.f_username = ''
+        //     this.f_email = ''
+        //     this.verificationCode = ''
+        //     this.verificationCodeSent = false
+        //     this.newPassword = ''
+        //     this.confirmNewPassword = ''
 
-            // this.handleForgotPassword()
-        },
+        //     // this.handleForgotPassword()
+        // },
     }
 }
 </script>
