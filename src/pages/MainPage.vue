@@ -15,8 +15,15 @@
 				</el-dropdown>
 			</div>
 			
-			<input class="search-input" id="txt_SearchText" name="txt_SearchText" type="text" placeholder="中文文献、外文文献" maxlength="100" style="color: rgb(125, 125, 125);" v-model="serInput" @keyup.enter.native="go('/explore',{key:option.value,value:serInput})">
-			<input class="search-btn" type="button" value="">
+			<el-dropdown ref="dropdown1" trigger="contextmenu" placement="bottom-start">
+				<input class="search-input"  @input="getSuggestion()" autocomplete="off" id="txt_SearchText" name="txt_SearchText" type="text" placeholder="中文文献、外文文献" maxlength="100" style="color: rgb(125, 125, 125);" v-model="serInput" @keyup.enter.native="go('/explorePaper',{key:option.value,value:serInput})">
+				<template #dropdown>
+					<el-dropdown-menu>
+						<el-dropdown-item v-for="item in suggestions" @click="serInput = item">{{ item }}</el-dropdown-item>
+					</el-dropdown-menu>
+				</template>
+			</el-dropdown>
+			<input class="search-btn" type="button" value="" @click="go('/explorePaper',{key:option.value,value:serInput})">
 			<div class="exten">
 				<div class="advanced">高级检索<span class="w-2 inline-block"></span><svg t="1700095260301" class="icon w-2 h-2" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3992" width="200" height="200"><path d="M312.888889 995.555556c-17.066667 0-28.444444-5.688889-39.822222-17.066667-22.755556-22.755556-17.066667-56.888889 5.688889-79.644445l364.088888-329.955555c11.377778-11.377778 17.066667-22.755556 17.066667-34.133333 0-11.377778-5.688889-22.755556-17.066667-34.133334L273.066667 187.733333c-22.755556-22.755556-28.444444-56.888889-5.688889-79.644444 22.755556-22.755556 56.888889-28.444444 79.644444-5.688889l364.088889 312.888889c34.133333 28.444444 56.888889 73.955556 56.888889 119.466667s-17.066667 85.333333-51.2 119.466666l-364.088889 329.955556c-11.377778 5.688889-28.444444 11.377778-39.822222 11.377778z" fill="#999999" p-id="3993"></path></svg></div>
 				<div class="scholar">检索学者<span class="w-2 inline-block"></span><svg t="1700095260301" class="icon w-2 h-2" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3992" width="200" height="200"><path d="M312.888889 995.555556c-17.066667 0-28.444444-5.688889-39.822222-17.066667-22.755556-22.755556-17.066667-56.888889 5.688889-79.644445l364.088888-329.955555c11.377778-11.377778 17.066667-22.755556 17.066667-34.133333 0-11.377778-5.688889-22.755556-17.066667-34.133334L273.066667 187.733333c-22.755556-22.755556-28.444444-56.888889-5.688889-79.644444 22.755556-22.755556 56.888889-28.444444 79.644444-5.688889l364.088889 312.888889c34.133333 28.444444 56.888889 73.955556 56.888889 119.466667s-17.066667 85.333333-51.2 119.466666l-364.088889 329.955556c-11.377778 5.688889-28.444444 11.377778-39.822222 11.377778z" fill="#999999" p-id="3993"></path></svg></div>
@@ -75,9 +82,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { getFields } from '@/API'
 
 export default defineComponent({
 	name:"MainPages",
+	mounted:function(){
+		this.getHotFields();
+	},
 	data(){
 		return {
 			input:'',
@@ -87,6 +98,7 @@ export default defineComponent({
 				{ value: 'key',label: '关键词',},
 				{ value: 'title',label: '篇名',}
 			],
+			suggestions:['1','2'],
 			value:'123',
 			selecting:false,
 			option:{ value: '123',label: '主题',},
@@ -122,6 +134,16 @@ export default defineComponent({
 		},
 		go(path:string,query:any){
 			this.$router.push({path:path,query:query})
+		},
+		getSuggestion(){
+			// @ts-ignore
+			this.$refs.dropdown1.handleOpen();
+			
+		},
+		getHotFields(){
+			getFields(1).then(res=>{
+				console.log(res)
+			})
 		}
 	}
 })

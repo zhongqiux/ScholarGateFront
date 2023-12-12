@@ -36,11 +36,11 @@
 			<el-divider content-position="right">论文总数</el-divider>
 			<div class="layout">
 				<div class="paper flex flex-row align-top" v-for="item,index in works">
-					<div class="rank mr-3">
+					<!-- <div class="rank mr-3">
 						{{ index+1 }}
-					</div>
+					</div> -->
 					<div class="content">
-						<div class="article-title">{{ item.display_name }}</div>
+						<div class="article-title">{{ (currentPage * 10 + index -9)+" 、"+item.display_name }}</div>
 						<div class="keys flex start-1 items-center">
 							<span class="key-label">关键词：</span><span class="key mr-2" v-for="key in item.keywords">{{ key.keyword }}</span>
 						</div>
@@ -58,7 +58,7 @@
 			:total="metadata.works_count"
 			:page-size="10"
 			v-model:current-page="currentPage"
-			@current-page="updateWork(currentPage)"
+			@current-change="updateWork(currentPage)"
 			layout="prev, pager, next"
 			class="pagina"
 			/>
@@ -69,15 +69,23 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { Picture as IconPicture } from '@element-plus/icons-vue'
+import { getFieldData,getFieldWorks } from '@/API'
 
 export default defineComponent({
 	name:"FieldPage",
+	mounted:function(){
+		// @ts-ignore
+		getFieldData(this.$route.query.field).then(res=>{
+			this.metadata = res.data;
+			this.works = res.data.works.results;
+		})
+	},
 	components:{
 		IconPicture,
 	},
 	data(){
 		return {
-			works:[
+			works: [
 			{
 				"id": "https://openalex.org/W4293247451",
 				"doi": "https://doi.org/10.1016/0003-2697(76)90527-3",
@@ -103,10 +111,6 @@ export default defineComponent({
 						"keyword": "microgram quantities",
 						"score": 0.4242
 					},
-					{
-						"keyword": "protein-dye",
-						"score": 0.25
-					}
 				],
 			},
 			],
@@ -125,6 +129,7 @@ export default defineComponent({
 					"i10_index": 11276630
 				},
 				"image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Asklepios.3.jpg",
+				"works_api_url": "https://api.openalex.org/works?filter=concepts.id:C71924100",
 			}
 		}
 	},
@@ -137,7 +142,10 @@ export default defineComponent({
 			return tem;
 		},
 		updateWork(currentPage:number){
-			console.log(currentPage)
+			// console.log("sbdsfhf")
+			getFieldWorks(this.metadata.works_api_url,currentPage).then(res=>{
+				this.works = res.data.results;
+			})
 		}
 	}
 })
@@ -262,7 +270,7 @@ export default defineComponent({
 	flex-direction: column;
 	justify-content: space-around;
 	align-items: flex-start;
-	width: 80%;
+	width: 100%;
 }
 .article-title {
     cursor: pointer;
