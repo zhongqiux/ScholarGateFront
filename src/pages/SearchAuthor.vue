@@ -80,7 +80,7 @@ import { useSearchStore } from '../store/search.ts';
 import { Calendar, Search } from '@element-plus/icons-vue'
 
 import SearchAuthorCard from '@/components/Search/SearchCard/SearchAuthorCard.vue'
-import Avatar from '@/components/Avatar.vue'
+//import Avatar from '@/components/Avatar.vue'
 
 
 const searchStore = useSearchStore()
