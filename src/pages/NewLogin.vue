@@ -188,7 +188,23 @@ export default {
                 return;
             } else {
                 register(this.nickname, this.password, this.email, this.verificationCode).then((res: Type.RegisterReturn) => {
-                    console.log(res)
+                    if (res.flag == true) {
+                        ElMessage({
+                            message: `注册成功！`,
+                            type: 'success',
+                        })
+                        this.nickname = ''
+                        this.password = ''
+                        this.email = ''
+                        this.verificationCode = ''
+                        this.confirmPassword = ''
+                        this.play()
+                    } else {
+                        ElMessage({
+                            message: `注册失败！`,
+                            type: 'error',
+                        })
+                    }
                 }).catch(err => {
                     console.log(err)
                 })
@@ -300,19 +316,19 @@ export default {
         sendVerificationCode() {
             // 在这里执行发送邮箱验证码的逻辑
             // 设置 verificationCodeSent 为 true，防止重复发送验证码
-            console.log('发送邮箱验证码', this.f_email);
-            sendCode(this.f_email).then((res: Type.SendCodeReturn) => {
+            console.log('发送邮箱验证码', this.email);
+            sendCode(this.email).then((res: Type.SendCodeReturn) => {
                 if (res.flag == true) {
                     this.verificationCodeSent = true;
                     ElMessage({
-                            message: `验证码发送成功！`,
-                            type: 'success',
-                        })
+                        message: `验证码发送成功！`,
+                        type: 'success',
+                    })
                 } else {
                     ElMessage({
-                            message: `验证码发送失败！`,
-                            type: 'error',
-                        })
+                        message: `验证码发送失败！`,
+                        type: 'error',
+                    })
                     console.log(res)
                 }
             }).catch(err => {
