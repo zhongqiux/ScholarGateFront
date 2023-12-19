@@ -31,10 +31,25 @@ export function hello(): void {
 export function login(name: string, password: string): Promise<Type.LoginReturn> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.get("/login", {
+        axios.post("/users/login", {
+            userName: name,
+            password: password,
+        }).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function sendCode(email: string): Promise<Type.SendCodeReturn> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get("/users/sendCode", {
             params: {
-                userName: name,
-                password: password,
+                email: email,
             }
         }).then(res => {
             console.log(res);
@@ -46,13 +61,14 @@ export function login(name: string, password: string): Promise<Type.LoginReturn>
     })
 }
 
-export function register(name: string, password: string, email: string): Promise<Type.RegisterReturn> {
+export function register(name: string, password: string, email: string, code: string): Promise<Type.RegisterReturn> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.post("/register", {
-            name: name,
+        axios.post("/users/register", {
+            username: name,
             password: password,
             email: email,
+            code: code,
         }
             , {
                 headers: {
@@ -75,6 +91,27 @@ export function getMessageList(userId: number): Promise<Type.GetMessageListRetur
         axios.get("/getMessageList", {
             params: {
                 userId: userId,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }//get请求携带登录凭证
+        ).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function readMessage(messageId: number): Promise<Type.ReadMessageReturn> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get("/readMessage", {
+            params: {
+                messageId: messageId,
             },
             headers: {
                 Authorization: useUserStore().token,

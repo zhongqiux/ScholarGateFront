@@ -30,12 +30,12 @@ export const useUserStore = defineStore('user'/*store的唯一标识*/, {
 		avatar:-1,
 		email:undefined,
 		Auth:{} as Identity,
-		outdate:new Date('1919-5-4'),
+		outdate:new Date('1919-5-4').getTime(),
 	}),
 	getters: {
 		islogin(){
 			let now = new Date();
-			if(now.getTime() < this.outdate.getTime()){
+			if(now.getTime() < this.outdate){
 				return true;
 			}
 			return false;

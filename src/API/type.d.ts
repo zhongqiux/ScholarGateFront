@@ -13,6 +13,9 @@ export interface LoginReturn extends CommonReturnType {
 		email:string
 	}
 }
+export interface SendCodeReturn extends CommonReturnType {
+	data: null,
+}
 export interface RegisterReturn extends CommonReturnType {
 	data: null,
 }
@@ -25,9 +28,13 @@ export interface GetMessageListReturn extends CommonReturnType {
 			avatar: string,
 			time: string,
 			content: string,
-			unread: boolean,
+			ifread: boolean,
 		}[],
 	}
+}
+
+export interface ReadMessageReturn extends CommonReturnType {
+	data: null,
 }
 
 export interface GetUserDataReturn extends CommonReturnType {
