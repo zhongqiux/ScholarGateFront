@@ -72,6 +72,27 @@ export function register(name: string, password: string, email: string): Promise
     })
 }
 
+export function getMessageList(userId: number): Promise<Type.GetMessageListReturn> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get("/getMessageList", {
+            params: {
+                userId: userId,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }//get请求携带登录凭证
+        ).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
 export function getUserData(userId: number): Promise<Type.GetUserDataReturn> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法

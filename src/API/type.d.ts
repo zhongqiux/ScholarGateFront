@@ -16,6 +16,19 @@ export interface RegisterReturn extends CommonReturnType {
 	data: null,
 }
 
+export interface GetMessageListReturn extends CommonReturnType {
+	data: {
+		messages: {
+			messageid: string,
+			name: string,
+			avatar: string,
+			time: string,
+			content: string,
+			unread: boolean,
+		}[],
+	}
+}
+
 export interface GetUserDataReturn extends CommonReturnType {
 	data: {
 		name: string,
