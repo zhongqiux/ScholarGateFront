@@ -5,7 +5,8 @@ export const useHeaderStore = defineStore('header'/*store的唯一标识*/, {
 		search:true,
 		search_active:false,
 		display:true,
-		login:false,
+		suggestions:new Array<{display_name:string}>(),
+		serInput:''
 	}),
 	getters: {
 	},
