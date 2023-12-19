@@ -8,8 +8,9 @@ export interface LoginReturn extends CommonReturnType {
 	data: {
 		token: string,
 		userId: number,
-		name: string,
-		avatar: string
+		userName: string,
+		avatar: string,
+		email:string
 	}
 }
 export interface RegisterReturn extends CommonReturnType {
@@ -120,6 +121,14 @@ export interface FieldWorks extends CommonReturnType {
 					},
 				],
 			},
+		]
+	}
+}
+
+export interface autoCompleteReturn extends CommonReturnType{
+	data:{
+		results:[
+			{display_name:string}
 		]
 	}
 }

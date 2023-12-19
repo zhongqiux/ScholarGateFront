@@ -17,17 +17,46 @@
 	<div class="con center">
 		<div class="head">
 			<div class="image-box">
-				<img :src="metadata.image_url" class="image">
+				<el-skeleton animated :loading="loading">
+					<template #default>
+						<img :src="metadata.image_url" class="image">
+					</template>
+					<template #template>
+						<el-skeleton-item variant="image" style="width: 100px;height: 140px;margin-top: 20px;" />
+					</template>
+				</el-skeleton>
 			</div>
 			<div class="info">
-				<div class="title">{{ metadata.display_name }}</div>
+				<el-skeleton animated :loading="loading">
+					<template #default>
+						<div class="title">{{ metadata.display_name }}</div>
+					</template>
+					<template #template>
+						<el-skeleton-item variant="text" style="width: 100px;height: 30px; float: left" />
+					</template>
+				</el-skeleton>
+				
 				<div class="divide"></div>
 				<div>
-					<span class="intro"><span class="field-description">描述：</span>{{ metadata.description }}</span>
+					<el-skeleton animated :loading="loading">
+						<template #default>
+							<span class="intro"><span class="field-description">描述：</span>{{ metadata.description }}</span>
+						</template>
+						<template #template>
+							<el-skeleton-item variant="text" style="width: 300px;" />
+						</template>
+					</el-skeleton>
 				</div>
 				<div>
-					<span class="index mr-1.5"><span class="field-description">指数：</span>{{ metadata.summary_stats.h_index }}</span>
-					<span class="cite"><span class="field-description">被引用次数：</span>{{ metadata.cited_by_count }}</span>
+					<el-skeleton animated :loading="loading">
+						<template #default>
+							<span class="index mr-1.5"><span class="field-description">指数：</span>{{ metadata.summary_stats.h_index }}</span>
+							<span class="cite"><span class="field-description">被引用次数：</span>{{ metadata.cited_by_count }}</span>						</template>
+						<template #template>
+							<el-skeleton-item variant="text" style="width: 300px;" />
+						</template>
+					</el-skeleton>
+					
 				</div>
 			</div>
 		</div>
@@ -35,22 +64,31 @@
 		<div class="list">
 			<el-divider content-position="right">论文总数</el-divider>
 			<div class="layout">
-				<div class="paper flex flex-row align-top" v-for="item,index in works">
-					<!-- <div class="rank mr-3">
-						{{ index+1 }}
-					</div> -->
-					<div class="content">
-						<div class="article-title">{{ (currentPage * 10 + index -9)+" 、"+item.display_name }}</div>
-						<div class="keys flex start-1 items-center">
-							<span class="key-label">关键词：</span><span class="key mr-2" v-for="key in item.keywords">{{ key.keyword }}</span>
+				<el-skeleton :rows="5" animated  style="width: 100%" :loading="loading">
+					<template #template>
+						<div v-for=" in [0,1,2,3]">
+							<el-skeleton-item variant="text" style="height: 25px;" />
+							<el-skeleton-item variant="text" style="width: 70%;height: 25px; float: left;" />
+							<el-skeleton-item variant="text" class="mt-2" style="width: 60%; float: left;" />
+							<el-skeleton-item variant="text" class="mt-2 mb-3" style="width: 60%; float: left;" />
 						</div>
-						<div class="keys flex start-1 items-center">
-							<span class="key-label">作者：</span><span class="author mr-2" v-for="author in item.authorships">{{ author.author.display_name }}</span>
-							<span class="key-label">发表日期：</span><span class="mr-2">{{ item.publication_date }}</span>
-							<span class="key-label">被引次数：</span><span>{{ item.cited_by_count }}</span>
+					</template>
+					<template #default>
+						<div class="paper flex flex-row align-top" v-for="item,index in works">
+							<div class="content">
+								<div class="article-title">{{ (currentPage * 10 + index -9)+" 、"+item.display_name }}</div>
+								<div class="keys flex flex-wrap start-1 items-center">
+									<span class="key-label">关键词：</span><span class="key mr-2" v-for="key in item.keywords.slice(0,3)" >{{ key.keyword }}</span>
+									<span class="key-label">作者：</span><span class="author mr-2" v-for="author in item.authorships.slice(0,3)">{{ author.author.display_name }}</span>
+								</div>
+								<div class="keys flex flex-wrap start-1 items-center">
+									<span class="key-label">发表日期：</span><span class="mr-2">{{ item.publication_date }}</span>
+									<span class="key-label">被引次数：</span><span>{{ item.cited_by_count }}</span>
+								</div>
+							</div>
 						</div>
-					</div>
-				</div>
+					</template>
+				</el-skeleton>
 			</div>
 
 			<el-pagination
@@ -78,6 +116,7 @@ export default defineComponent({
 		getFieldData(this.$route.query.field).then(res=>{
 			this.metadata = res.data;
 			this.works = res.data.works.results;
+			this.loading = false;
 		})
 	},
 	components:{
@@ -85,6 +124,7 @@ export default defineComponent({
 	},
 	data(){
 		return {
+			loading:true,
 			works: [
 			{
 				"id": "https://openalex.org/W4293247451",
@@ -98,8 +138,8 @@ export default defineComponent({
 					{
 						"author_position": "first",
 						"author": {
-						"id": "https://openalex.org/A5021181975",
-						"display_name": "Marion M. Bradford"
+							"id": "https://openalex.org/A5021181975",
+							"display_name": "Marion M. Bradford"
 						},
 						"countries": [
 						"US"
@@ -115,21 +155,21 @@ export default defineComponent({
 			},
 			],
 			currentPage:1,
-			metadata:{
-				"id": "https://openalex.org/C71924100",
-				"wikidata": "https://www.wikidata.org/wiki/Q11190",
-				"display_name": "Medicine",
-				"level": 0,
-				"description": "field of study for diagnosing, treating and preventing disease",
-				"works_count": 60642777,
-				"cited_by_count": 641305635,
+			metadata:{} as {
+				"id": string,
+				"wikidata": string,
+				"display_name": string,
+				"level": number,
+				"description": string,
+				"works_count": number,
+				"cited_by_count": number,
 				"summary_stats": {
-					"twoyr_mean_citedness": 1.8344352436383313,
-					"h_index": 2752,
-					"i10_index": 11276630
+					"twoyr_mean_citedness": number,
+					"h_index": number,
+					"i10_index": number
 				},
-				"image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Asklepios.3.jpg",
-				"works_api_url": "https://api.openalex.org/works?filter=concepts.id:C71924100",
+				"image_url": string,
+				"works_api_url": string,
 			}
 		}
 	},
@@ -143,9 +183,11 @@ export default defineComponent({
 		},
 		updateWork(currentPage:number){
 			// console.log("sbdsfhf")
+			this.loading = true;
 			getFieldWorks(this.metadata.works_api_url,currentPage).then(res=>{
 				this.works = res.data.results;
 			})
+			this.loading = false;
 		}
 	}
 })

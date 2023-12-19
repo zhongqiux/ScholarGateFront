@@ -33,12 +33,9 @@ export function login(name: string, password: string): Promise<Type.LoginReturn>
         // axiso 自带 get 和 post 方法
         axios.get("/login", {
             params: {
-                name: name,
+                userName: name,
                 password: password,
-            },
-            headers: {
-                Authorization: useUserStore().token,
-            }//get请求携带登录凭证
+            }
         }).then(res => {
             console.log(res);
             resolve(res.data);
@@ -152,7 +149,7 @@ export function getFieldData(fieldId: string): Promise<Type.FieldData> {
 export function getFieldWorks(works_api_url: string,page:number): Promise<Type.FieldWorks> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.post('http://10.192.99.60:8080/concept/showWorks',{
+        axios.post('/concept/showWorks',{
             "url": works_api_url,
             "page": page,
             "pageSize": 10
@@ -174,6 +171,19 @@ export function getFields(page:number): Promise<Type.FieldWorks> {
                 "page": page,
             }
         }).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function autoComplete(author:string): Promise<Type.autoCompleteReturn> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get(`/search/autocomplete/authors/${author}`).then(res => {
             console.log(res);
             resolve(res.data);
         }).catch(err => {
