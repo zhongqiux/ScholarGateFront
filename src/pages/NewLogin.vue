@@ -198,6 +198,7 @@ export default {
                         this.email = ''
                         this.verificationCode = ''
                         this.confirmPassword = ''
+                        this.verificationCodeSent = false
                         this.play()
                     } else {
                         ElMessage({
