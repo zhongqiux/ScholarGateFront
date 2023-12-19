@@ -2,8 +2,8 @@
   <!-- 学术成果标题 -->
   <div>
     <div id="info" class="title">
-      <span class="title_name">我是标题我是标题我是标题我是标题</span>
-      <span class="title_type">[我是类型]</span>
+      <span class="title_name">{{ title }}</span>
+      <span class="title_type">[{{ paperType }}]</span>
     </div>
     <el-divider style="border-color: #d5d8e9; border-width: 2px"></el-divider>
 
@@ -12,7 +12,7 @@
     <!-- 作者信息: 学术成果状态下-->
     <div class="author_row" v-if="!isPatent">
       <Avatar class="icon"/>
-      <span class="author_name" @click="toAuthor(authors)" v-for="(authors, index) in authorNames">
+      <span class="author_name" @click="toAuthor(authors)" v-for="(authors, index) in authorNames">  <!-- 跳转科研人员页面 -->
         {{ authors }}
         <span v-if="index != authorNames.length - 1" style="color: #8590a6; font-weight: normal" @click.stop="">,</span>
       </span><!-- 跳转科研人员页面 -->
@@ -31,7 +31,12 @@
     <!-- 专利申请人：专利状态下 -->
     <div class="row" v-if="isPatent">
       <span class="text" style="font-weight: bold; color: #8590a6">申请人:</span>  <!-- 跳转科研人员页面 -->
-      <span class="author_name" @click="toAuthor('申请人姓名/单位')">申请人姓名/单位</span>  <!-- 跳转科研人员页面 -->
+      <span class="author_name" @click="toAuthor(assignee)" v-for="(assignee, index) in assigneeNames">
+        {{ assignee }}
+       <span v-if="index != assigneeNames.length - 1" style="color: #8590a6; font-weight: normal"
+             @click.stop="">,</span>
+      </span>
+
     </div>
 
     <!-- 其他信息：学术成果状态下 -->
@@ -43,12 +48,12 @@
     <div class="row" v-if="isPatent">
       <span class="text" style="color: #8590a6">申请日:</span>
       <span class="text">{{ registerDate }}</span>
-      <span class="text" style="color: #8590a6">申请号:</span>
-      <span class="text">{{ registerNo }}</span>
+      <!--      <span class="text" style="color: #8590a6">申请号:</span>-->
+      <!--      <span class="text">{{ registerNo }}</span>-->
       <span class="text" style="color: #8590a6">公开日:</span>
-      <span class="text">{{ openDate }}</span>
+      <span class="text">{{ publicationDate }}</span>
       <span class="text" style="color: #8590a6">公开号:</span>
-      <span class="text">{{ openNo }}</span>
+      <span class="text">{{ publicationNo }}</span>
       <span class="text" style="color: #8590a6">IPC分类号:</span>
       <span class="ipc_ext" v-for="(IPC, index) in IPCNo" key="index" @click="toIPC(index, IPC)">
         {{ IPC }}
@@ -134,6 +139,8 @@
 <script lang="ts">
 import {defineComponent} from 'vue'
 import {Avatar, ArrowDown, ArrowUp,} from '@element-plus/icons-vue'
+import {getPatentData} from "@/API"
+import {ElLoading} from "element-plus";
 
 export default defineComponent({
   name: "Result",
@@ -143,7 +150,7 @@ export default defineComponent({
     return {
       isExpand: false,
       maxHeight: 43,
-      message: "学术成果简介/信息 近年来，随着快速充电、数据中心和高能效电机等应用场景的出现，具有高开关速率、低导通电阻和小体积等优势的氮化镓功率器件获得了高速的发展。然而，相较于传统硅基功率器件，氮化镓（Gallium Nitride，GaN）功率器件的开关频率更高、受寄生参数影响更大、驱动电压范围更苛刻且栅极更易击穿，因此传统硅基功率器件的驱动芯片难以安全、有效地驱动GaN功率器件，并且在现有功率转换系统中，GaN功率器件也很难直接替代硅基功率器件。因此，可被现有功率转换电路兼容且内置专用驱动芯片的GaN集成功率器受到了越来越多的关注，成为学术界和工业界的研究热点。本文系统性地研究了应用于650V增强型GaN半桥集成功率器和650V耗尽型GaN集成功率器的专用集成电路，重点突破了栅压自举及保护技术、负压上电及保护技术、充电控制技术以及片上负压产生技术，解决了GaN驱动器在驱动与保护、上电与供电和瞬态抗扰等方面的技术瓶颈。在对驱动器流片后，设计集成功率器的系统级封装（System-in-package，SiP）形式，并对三相直流无刷电机和同步整流反激式电源的应用进行测试。论文的主要创新性研究如下：1. 创新性地提出了一种用于增强型GaN半桥驱动器器的栅压自举及栅极保护技术，通过数字阈值控制且由母线电压直接充电并结合补充电荷泵的方式实现。与传统自举结构相比，扩展了应用频率范围，实现了对GaN功率器件栅极的有效保护，并降低了低压差线性稳压器（Low Dropout Regulator，LDO）的设计难度。采用0.5um 700V BCDMOS工艺流片，测试结果表明，在开关频率5MHz时，高侧自举电压稳定在6V；在极低频甚至0Hz时，相比传统结构由几乎下降到0V提高到2.93V。2. 创新性地提出了一种用于耗尽型GaN驱动器的负压上电及系统保护技术，解决了负压上电过程中逻辑混乱的问题，保证芯片启动时寄生PN结不正向导通，为驱动电路提供了可靠的电源供电系统，并确保在故障（过压、欠压、过温和过流等）条件下芯片良好工作。采用0.25um 60V BCDMOS工艺流片，测试结果表明，电源上电时序正常，电源过压、电源欠压和负压欠压检测的滞回空间分别为0.5625V、0.5V和0.25V，错误标志位可根据芯片工作状况正常输出。3. 创新性地提出了一种用于耗尽型GaN驱动器的充电控制技术。通过大电流充电和可控涓流充电结合的方式，实现对GaN栅源电压的合理分段控制，从而限制开关节点电压摆率，增加瞬态抗扰性；并通过可配置涓流充电电流的策略，适配不同频率；通过可配置放电阵列，实现与开启时间相匹配的关断时间。仿真结果表明，该方案可实现耗尽型GaN的栅极的上升时间和下降时间相互匹配，且上升时间在19.65ns-42.5ns之间，下降时间在21.28ns-45.9ns之间，适用于MHz的工作频率。4. 创新性地提出了一种用于耗尽型GaN驱动器的片上负压产生技术。采用电流模式的降压直流/直流（DCDC）结构，利用轻载脉冲跳跃模式保证低负载情况下的效率，内置过温、欠压、过流等保护电路和软启动策略，产生稳定的片上可调负压输出。仿真结果表明，在100mA的负载电流下，可实现负压输出在-20V至-14V之间，且纹波小于等于3.478mV。",
+      message: "",
       keyWords: ["喵喵喵", "软分喵", "我是关键词1", "我是关键词2", "QAQ", "关键词333", "我我有一头小毛驴我从来也不骑 有一天我心血来潮骑着去赶集", "关键词4", "关键词4", "关键词4", "关键词4"],
       recommendation: [
         {title: "推荐1", info: "其他信息"},
@@ -157,12 +164,15 @@ export default defineComponent({
         {title: "推荐9", info: "其他信息"},
         {title: "推荐10", info: "其他信息"},
       ],
-      authorNames: ["作者1", "作者2"],
-      registerDate: "2023-08-14",
+      title: "",
+      paperType: "",
+      authorNames: [],
+      assigneeNames: [],
+      registerDate: "",
       registerNo: " CN202310829800.3",
-      openDate: "2023-09-08",
-      openNo: "CN116718812A",
-      IPCNo: ["G01R1/04", "G01R31/26"],
+      publicationDate: "",
+      publicationNo: "",
+      IPCNo: [],
       powerRequest: "1.一种用于半导体器件的测试装置的电接触端子，其特征在于，所述电接触端子包括：\n" +
           "\n" +
           "对称并排布置的一对接触引脚，连接到所述测试装置；\n" +
@@ -257,36 +267,83 @@ export default defineComponent({
 
     toIPC(index: number, IPC: String) {
       alert("跳转到" + IPC);
-    }
+    },
+
+
+    async patentDataGet(patentId: String) {
+      const loading = ElLoading.service({
+        lock: true,
+      })
+      const result = await getPatentData(patentId);
+      console.log(result);
+
+      if (result.flag) {
+        loading.close()
+        this.title = result.data.organic_results[0].title //标题
+        this.registerDate = result.data.organic_results[0].filing_date //申请日
+        this.publicationDate = result.data.organic_results[0].publication_date //公开日
+        this.publicationNo = result.data.organic_results[0].publication_number //公开号
+
+        var i: any
+        //申请人
+        for (i = 0; i < result.data.summary.assignee.length; i++) {
+          if (result.data.summary.assignee[i].key != "Total")
+            this.assigneeNames.push(result.data.summary.assignee[i].key)
+        }
+
+        //发明人
+        for (i = 0; i < result.data.summary.inventor.length; i++) {
+          if (result.data.summary.inventor[i].key != "Total")
+            this.authorNames.push(result.data.summary.inventor[i].key)
+        }
+
+        //IPC分类号
+        for (i = 0; i < result.data.summary.cpc.length; i++) {
+          if (result.data.summary.cpc[i].key != "Total")
+            this.IPCNo.push(result.data.summary.cpc[i].key)
+        }
+
+        //摘要
+        this.message = result.data.organic_results[0].snippet
+
+      }
+
+
+    },
+
+
+    // 调用API方法
+    // async 方法名() {
+    //
+    //   let data = {
+    //     //传输的数据
+    //   }
+    //
+    //   let result = await 调用的api名字(data)
+    //   console.log(result)
+    //
+    //   this.ret = result.flag //返回值
+    //
+    //   if (result.flag === 1) { //提示信息
+    //     this.$message({
+    //       type: 'success',
+    //       message: '保存成功'
+    //     })
+    //   } else {
+    //     this.$message({
+    //       type: 'error',
+    //       message: '保存失败'
+    //     })
+    //   }
+
   },
 
-
-  // 调用API方法
-  // async 方法名() {
-  //
-  //   let data = {
-  //     //传输的数据
-  //   }
-  //
-  //   let result = await 调用的api名字(data)
-  //   console.log(result)
-  //
-  //   this.ret = result.flag //返回值
-  //
-  //   if (result.flag === 1) { //提示信息
-  //     this.$message({
-  //       type: 'success',
-  //       message: '保存成功'
-  //     })
-  //   } else {
-  //     this.$message({
-  //       type: 'error',
-  //       message: '保存失败'
-  //     })
-  //   }
-  // },
-
-
+  mounted() {
+    if (this.isPatent) {
+      this.paperType = "专利"
+      this.patentDataGet('CN101232829B');
+    }
+  }
 })
 </script>
 
@@ -324,7 +381,8 @@ export default defineComponent({
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 30px;
+  flex-wrap: wrap;
+  height: auto;
   margin-top: -10px;
 }
 

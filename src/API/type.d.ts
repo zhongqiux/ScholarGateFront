@@ -40,3 +40,7 @@ export interface ClaimReturn extends CommonReturnType {
 export interface EditUserInfoReturn extends CommonReturnType {
 	data: null,
 }
+
+// export interface GetPatentDataReturn extends CommonReturnType {
+//
+// }

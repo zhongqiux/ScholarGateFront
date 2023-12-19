@@ -135,3 +135,22 @@ export function editUserInfo(background: string): Promise<Type.EditUserInfoRetur
         })
     })
 }
+
+export function getPatentData(patentId: String): Promise<null> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get("http://101.42.178.149:8080/patent/showOncePatent/" + patentId, {
+                headers: {
+                    Authorization: useUserStore().token,
+                }
+            }//get请求携带登录凭证
+        ).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+

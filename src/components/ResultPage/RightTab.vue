@@ -1,14 +1,14 @@
 <template>
-  <div class="container" :class="{'container2':isPatent}">
+  <div class="container">
     <!-- 下载 -->
-    <div v-if="isPatent == false" class="item" style="margin-top: 13px">
+    <div class="item" style="margin-top: 13px">
       <div class="title">
         <Link class="icon"/>
-        <span>合作资源方下载</span>
+        <span>资源下载</span>
       </div>
 
       <div class="button">
-        <el-button>下载链接</el-button>
+        <el-button>下载</el-button>
       </div>
     </div>
 
