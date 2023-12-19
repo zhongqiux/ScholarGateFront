@@ -17,15 +17,25 @@ export const useCounterStore = defineStore('counter'/*store的唯一标识*/, {
 	//数据持久化
 	persist: true,
 })
+
+enum Identity {
+	User = 0,
+	Scholar = 1,
+}
 export const useUserStore = defineStore('user'/*store的唯一标识*/, {
 	state: () => ({ 
 		token: undefined,
-		name:undefined,
-		id:undefined,
+		userName:undefined,
+		userId:undefined,
+		avatar:-1,
+		email:undefined,
+		Auth:{} as Identity,
+		outdate:new Date('1919-5-4'),
 	}),
 	getters: {
 		islogin(){
-			if(this.token){
+			let now = new Date();
+			if(now.getTime() < this.outdate.getTime()){
 				return true;
 			}
 			return false;
