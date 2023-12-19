@@ -151,6 +151,9 @@ export default {
                 login(this.username, this.pwd).then((res: Type.LoginReturn) => {
                     if (res.flag == true) {
                         this.store.outdate = Date.now() + 60 * 60 * 1000
+                        this.store.userId = res.data.userId
+                        this.store.userName = res.data.userName
+                        this.store.token = res.data.token
                         ElMessage({
                             message: `登录成功！`,
                             type: 'success',
