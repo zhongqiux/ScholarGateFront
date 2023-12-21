@@ -1,15 +1,18 @@
 <template>
+  <el-button @click="getSearchData">
+    搜索
+  </el-button>
   <div v-for="(item, index) in searchData.data">
     <el-container class="List__item">
       <el-aside width="60px" class="List__itemActions">
         <div class="List__itemAction">
-          <!-- <div class="List__itemIndex">{{ item.id }}.</div> -->
+          <div class="List__itemIndex">{{ item.position }}.</div>
         </div>
         <div class="List__itemAction">
           <div class="iconfont icon-quote-left QuoteButton"></div>
           <div class="CircleQuoteButton__label">
             引用
-            <span>{{ item.cited_by_count }}</span>  
+            <span>{{ item.cited_by_count }}</span>
           </div>
         </div>
         
@@ -17,33 +20,25 @@
   
       <div class="list-item">
         <!-- 标题 -->
-        <h2 class="ContentItem__titleText" @click="handleTitleClick">{{ item.display_name }}</h2>
+        <h2 class="ContentItem__titleText" @click="handleTitleClick">{{ item.title }}</h2>
         <!-- 作者 -->
         <div>
           <el-icon class="author-icon"><UserFilled /></el-icon>
-          <span  @click="handleAuthorClick">
-            <span v-for="(a, index) in item.authorships" class="Author-info__content">
-              {{ a }} &nbsp;
+          <span @click="handleAuthorClick">
+            <span class="Author-info__content">
+              {{ item.inventor }} &nbsp;
             </span>
           </span>
         </div>
 
         <!-- 发布时间 -->
         <div class="article-source__content">
-          <span>类型：{{ item.type }}</span>
-          发布时间 {{ item.publication_date }}</div>
+          <span>发布时间：{{ item.publication_date }}</span>
+        </div>
 
-        
-        <!-- concepts -->
-        <div class="concepts">
-          <span class="keywords__label">concepts:&nbsp;</span>
-          <span 
-            v-for="(value, index) in conceptsData.data.values"
-            class="keywords__content"
-            @click="handleConceptClick"
-          >
-            {{ value }} &nbsp;
-          </span>
+        <!-- snippet摘要 -->
+        <div class="article-brief__content">
+          <span>摘要：{{ item.snippet }}</span>
         </div>
         
         <!-- 关键词 -->
@@ -60,7 +55,7 @@
 
         <!-- 下载PDF -->
         <div>
-          <el-button @click="downLoadPdf(item.pdf_url)">下载PDF</el-button>
+          <el-button @click="downLoadPdf(item.pdf)">查看PDF</el-button>
           <el-button @click="landingPaper(item.landing_page_url)">landingPage</el-button>
         </div>
         
@@ -77,35 +72,29 @@
 import {reactive, onMounted, ref, watch} from 'vue'
 import "@/assets/ResultPageIconfont/iconfont.css"
 import axios from 'axios';
-import { getSearchResult } from '@/API'
+import { getPatentResult } from '@/API'
 import { useRoute, useRouter } from 'vue-router';
 
-
-// 可能会删除的代码
-const searchData = reactive({})
 const route = useRoute()
 const router = useRouter()
 
-const conceptsData = reactive({
-  data:{
-    keys:[],
-    values:[],
-  }
-})
 const getSearchData = () => {
-  let key = route.query.key
-  let value = route.query.value
+  const key = route.query.key
+  const value = route.query.value
   const params = {
-    name: value
+    theme: value,
+    page:"1",
+    num:"15",
   }
-  getSearchResult(params, 1).then(data => {
-    searchData.data = data.data
-    conceptsData.data.keys = Object.keys(data.data[0].concepts)
-    conceptsData.data.values = Object.values(data.data[0].concepts)
+  getPatentResult(params).then(result => {
+    console.log(result)
+    searchData.data = result.data.organic_results
   }).catch(error => {
     console.error(error);
   });
 }
+
+const searchData = reactive({})
 
 const showFlag = ref(true)
 
@@ -129,27 +118,9 @@ const handleConceptClick = () => {
   alert('搜索该concept相关文章')
 }
 
-const downLoadPdf = (pdf_url) => {
-  if (pdf_url == null) {
-    alert('该论文没有PDF!')
-  } else {
-    window.open(pdf_url, '_blank')
-  }
-}
-
-const landingPaper = (landing_page_url) => {
-  
-  if (landing_page_url == null) {
-    alert('该论文没有lading paper!')
-  } else {
-    window.open(landing_page_url, '_blank')
-  }
-}
-
 onMounted(() => {
   getSearchData()
 })
-
 watch(
   () => route.params, // 监听路由参数的变化
   (newParams, oldParams) => {

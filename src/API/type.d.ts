@@ -1,4 +1,5 @@
 import * as exp from "constants"
+import internal from "stream"
 
 export interface CommonReturnType {
 	msg: string,
@@ -195,4 +196,24 @@ export interface InstutionRank extends CommonReturnType{
 	data:{
 		results:[Institution],
 	}
+}
+
+export interface GetSearchResultReturn extends CommonReturnType {
+	data: {
+		"id": string, 
+		"display_name":	string,
+		"publication_year": string,
+		"publication_date": string,
+		"cited_by_count": number,
+		"type": string,
+		"pdf_url": string,
+		"landing_page_url": string,
+		"authorships": [string],
+		"concepts":{ }, 
+		"keywords": [string],
+	}
+}
+
+export interface GetPatentResultReturn extends CommonReturnType {
+	data: null,
 }

@@ -50,41 +50,44 @@
             <div class="AppSearchTab" :class="{'is-active': active_tab === 2}" @click="changeActiveTab(2)">专利</div>
           </div>
           <!-- 搜索筛选项 -->
+          <el-row class="AppSearchFilter">
+            <el-col :span="2">
+              <el-button @click="handleSearch">搜索</el-button>
+            </el-col>
+            <el-col :span="12">
+              <el-date-picker
+                v-model="dateValue"
+                type="daterange"
+                start-placeholder="Start date"
+                end-placeholder="End date"
+                format="YYYY/MM/DD"
+                value-format="YYYY-MM-DD"
+              />
+            </el-col>
+            <el-col :span="4">
+              <el-select v-model="SelectValue2" placeholder="排序方式" size="default">
+                <el-option
+                  v-for="item in options2"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-col>
+            <el-col :span="4">
+              <span class="base-switch__button">
+                <el-switch v-model="has_fulltextValue" />
+              </span>
+              <span class="base-switch__label">可获取全文</span>
+            </el-col>
+          </el-row>
           <div class="AppSearchTabContent">
             <div class="AppSearchFilters">
               <div class="AppFilterMeta">
-                <span>0 / </span>
-                <span class="total-num">100000条</span>
               </div>
               <div class="AppFilterInput">
-                <el-input
-                  v-model="SearchValue"
-                  placeholder="在结果中检索"
-                  :suffix-icon="Search"
-                />
               </div>
               <div class="AppFilterSelect">
-                <span>
-                  <el-select v-model="SelectValue1" placeholder="时间范围" size="default">
-                    <el-option
-                      v-for="item in options1"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </span>
-                <span>
-                  <el-select v-model="SelectValue2" placeholder="排序方式" size="default">
-                    <el-option
-                      v-for="item in options2"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </span>
-                
               </div>
             </div>
           </div>
@@ -101,7 +104,15 @@
           </div>
           <!-- 搜索详情 -->
           <div class="List"></div>
-          <SearchCard/>
+          <!-- 论文 -->
+          <div v-if="active_tab == 1">
+            <SearchCard/>
+          </div>
+          
+          <!-- 专利 -->
+          <div v-if="active_tab == 2">
+            <PatentSearchCard/>
+          </div>
         </div>
         
       </el-main>
@@ -114,24 +125,19 @@
 
 <script setup>
 import { onMounted, reactive, ref, shallowRef, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { ElCheckbox, ElCheckboxGroup, ElEmpty, ElNotification, ElPagination } from "element-plus";
 import { useSearchStore } from '../store/search.ts';
 import { Calendar, Search } from '@element-plus/icons-vue'
 
-import SearchInput from '../components/Search/SearchInput/Search.vue';
-import WorksResCard from '../components/Search/SearchCard/WorksResCard.vue';
-import AuthorsResCard from '../components/Search/SearchCard/AuthorsResCard.vue';
-import VenuesResCard from '../components/Search/SearchCard/VenuesResCard.vue';
-import InstitutionsResCard from '../components/Search/SearchCard/InstitutionsResCard.vue';
-import ConceptsResCard from '../components/Search/SearchCard/ConceptsResCard.vue';
 import SearchCard from '@/components/Search/SearchCard/SearchCard.vue'
-//import Avatar from '@/components/Avatar.vue'
-
+import PatentSearchCard from '@/components/Search/SearchCard/PatentSearchCard.vue'
+import { getSearchResult, getPatentResult } from '@/API'
 
 const searchStore = useSearchStore()
-const SelectValue1 = ref('')
-const SelectValue2 = ref('')
+const route = useRoute()
+const router = useRouter()
+const searchData = reactive({})
 
 const activeNames = ref(['1','2','3','4'])
 const options1 = [
@@ -173,9 +179,34 @@ const tab_contents = reactive({
   ],  
 })
 
+const conceptsData = reactive({
+  data:{
+    keys:[],
+    values:[],
+  }
+})
 
 const active_tab = ref(1)
-
+const handleSearch = () => {
+  let key = route.query.key
+  let value = route.query.value
+  const params = reactive({
+    name: value,
+    has_fulltext: has_fulltextValue,
+  })
+  if (dateValue.value != null) {
+    params.start_date = dateValue.value[0]
+    params.stop_date = dateValue.value[1]
+  }
+  getSearchResult(params, 1).then(data => {
+    console.log(1)
+    searchData.data = data.data
+    conceptsData.data.keys = Object.keys(data.data[0].concepts)
+    conceptsData.data.values = Object.values(data.data[0].concepts)
+  }).catch(error => {
+    console.error(error);
+  });
+}
 const changeActiveTab = (num) => {
   active_tab.value = num
 }
@@ -184,6 +215,9 @@ const SearchValue = ref('')
 const deleteSearchTab = () => {
   alert('删除搜索项')
 }
+
+const has_fulltextValue = ref(true)
+const dateValue = ref()
 
 </script>
 
@@ -432,8 +466,16 @@ const deleteSearchTab = () => {
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.List {
-  
+.base-switch__button {
+  margin-left: 10px;
+}
+.base-switch__label {
+  margin-left: 10px;
+  font-size: 12px;
+  color: #8590a6;
+}
+.AppSearchFilter {
+  margin-top: 12px;
 }
 
 </style>

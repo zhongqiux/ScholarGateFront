@@ -210,21 +210,29 @@ export function editUserInfo(background: string): Promise<Type.EditUserInfoRetur
     })
 }
 
-
-
-export function getSearchResult(name: string): Promise<Type.GetSearchResultReturn> {
+export function getSearchResult(
+    params:{
+        type:string,
+        concept:string,
+        name:string,
+        year:string,
+        has_fulltext:string,
+        start_date:string,
+        stop_date:string,
+        sort_func:string,
+        key_word:string
+    }, 
+    pageNo:number): Promise<Type.GetSearchResultReturn> {
     return new Promise((resolve, reject) => {
-        // axiso 自带 get 和 post 方法
-        axios.post("http://120.46.148.251:8080/search/work/filter/3", {
-            params: {
-                name: name,
-            },
+        axios.post(`/search/work/filter/${pageNo}`, {
+            name:params.name
+        },
+        {
             headers: {
                 Authorization: useUserStore().token,
             }
         }
         ).then(res => {
-            console.log(res);
             resolve(res.data);
         }).catch(err => {
             console.log(err)
@@ -232,6 +240,50 @@ export function getSearchResult(name: string): Promise<Type.GetSearchResultRetur
         })
     })
 }
+
+export function getPatentResult(
+    params:{
+        publication_number:string,
+        theme:string,
+        patent_name:string,
+        countries:string,
+        status:string,
+        type:string,
+        litigation:string,
+        inventor:string,
+        sortByTime:string,
+        filing_before:string,
+        filing_after:string,
+    }): Promise<Type.GetPatentResultReturn> {
+    return new Promise((resolve, reject) => {
+        axios.post(`/patent/showPatents`, {
+            publication_number:params.publication_number,
+            theme:params.theme,
+            patent_name:params.patent_name,
+            countries:params.countries,
+            status:params.status,
+            type:params.type,
+            litigation:params.litigation,
+            inventor:params.inventor,
+            sortByTime:params.sortByTime,
+            filing_before:params.filing_before,
+            filing_after:params.filing_after,
+        },
+        {
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }
+        ).then(res => {
+            console.log(useUserStore().token)
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
 
 export function getFieldData(fieldId: string): Promise<Type.FieldData> {
     return new Promise((resolve, reject) => {
@@ -275,7 +327,7 @@ export function getFieldWorks(works_api_url: string,page:number): Promise<Type.F
 export function getFields(page:number): Promise<Type.FieldWorks> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.get('/concept/showHeatConcept',{
+        axios.get('/concept/showHeatConcept/',{
             params:{
                 "page": page,
             },
