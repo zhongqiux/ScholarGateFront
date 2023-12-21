@@ -1,6 +1,7 @@
 // @ts-ignore
 import { defineStore } from 'pinia'
 export * from "./headerStore"
+export * from "./hotInfo"
 
 export const useCounterStore = defineStore('counter'/*store的唯一标识*/, {
 	state: () => ({ count: 0 }),
@@ -48,4 +49,3 @@ export const useUserStore = defineStore('user'/*store的唯一标识*/, {
 	persist: true,
 })
 
-export * from "./headerStore.ts"

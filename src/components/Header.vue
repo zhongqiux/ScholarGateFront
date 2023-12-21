@@ -8,13 +8,13 @@
 	</div>
 	<div class="search" v-show="store.search && store.display">
 		<el-dropdown>
-			<input type="text" v-model="option.label" readonly autocomplete="off" placeholder="请选择" class="base-input_inner">
+			<input type="text" v-model="store.option.label" readonly autocomplete="off" placeholder="请选择" class="base-input_inner">
 			<template #dropdown>
-				<el-dropdown-item v-for="item in options" @click="option = item">{{ item.label }}</el-dropdown-item>
+				<el-dropdown-item v-for="item in options" @click="store.option = item">{{ item.label }}</el-dropdown-item>
 			</template>
 		</el-dropdown>
 		<el-dropdown ref="dropdown2" trigger="contextmenu" placement="bottom-start">
-			<input type="text" autocomplete="off" @input="getSuggestion()" v-model="store.serInput" placeholder="搜索你感兴趣的内容..." class="top_input" @focus="store.search_active = true" @keyup.enter.native="push('/explorePaper',{key:option.value,value:store.serInput})">
+			<input type="text" autocomplete="off" @input="getSuggestion()" v-model="store.serInput" placeholder="搜索你感兴趣的内容..." class="top_input" @focus="store.search_active = true" @keyup.enter.native="push('/explorePaper',{key:store.option.value,value:store.serInput})">
 			<template #dropdown>
 					<el-dropdown-menu>
 						<el-dropdown-item v-for="item in store.suggestions" @click="store.serInput = item.display_name">{{ item.display_name }}</el-dropdown-item>
@@ -53,7 +53,7 @@ import { defineComponent } from 'vue'
 import { UserFilled } from '@element-plus/icons-vue'
 import { useHeaderStore,useUserStore } from "@/store"
 import GitAvatar from "@/components/small/GitAvatar.vue"
-import { autoComplete } from '@/API'
+import { autoComplete,completeBy } from '@/API'
 import LoginButton from '@/components/small/LoginButton.vue'
 // let store = useHeaderStore()
 
@@ -69,10 +69,10 @@ export default defineComponent({
 			input:'',
 			active:1,
 			options: [
-				{ value: '123',label: '主题',},
-				{ value: '456',label: '关键词',}
+				{ value: completeBy.concepts,label: '主题',},
+				{ value: completeBy.fields,label: '领域',},
+				{ value: completeBy.authors,label: '作者',}
 			],
-			option:{ value: '123',label: '主题',},
 			value:'123',
 			UserFilled,
 			store : useHeaderStore(),
@@ -96,7 +96,7 @@ export default defineComponent({
 			if(this.store.serInput != ''){
 				// @ts-ignore
 				this.clock = setTimeout(()=>{
-					autoComplete(this.store.serInput).then(res=>{
+					autoComplete(this.store.option.value,this.store.serInput).then(res=>{
 						console.log(res)
 						this.store.suggestions = res.data.results
 						console.log(this.store.suggestions)

@@ -250,10 +250,82 @@ export function getFields(page:number): Promise<Type.FieldWorks> {
     })
 }
 
-export function autoComplete(author:string): Promise<Type.autoCompleteReturn> {
+export enum RankedBy {
+    works=0,
+    cited=1,
+}
+export function getInstitionRank(page:number,rank:RankedBy): Promise<Type.InstutionRank> {
+    let tem:string='';
+    switch(rank){
+        case RankedBy.works:{
+            tem = 'works_count'
+            break;
+        }
+        case RankedBy.cited:{
+            tem = 'cited_by_count'
+            break;
+        }
+    }
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.get(`/search/autocomplete/authors/${author}`).then(res => {
+        axios.get(`/institution/rank/${page}`,{
+            params:{
+                rank:tem,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function getHotScholar(page:number,rank:RankedBy): Promise<Type.ScholarHotReturn> {
+    let tem:string='';
+    switch(rank){
+        case RankedBy.works:{
+            tem = 'works_count'
+            break;
+        }
+        case RankedBy.cited:{
+            tem = 'cited_by_count'
+            break;
+        }
+    }
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get(`/scholar/hot`,{
+            params:{
+                type:tem,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export enum completeBy{
+    authors='authors',
+    concepts='concepts',
+    fields='fields',
+    funders='funders'
+}
+export function autoComplete(key:completeBy,value:string): Promise<Type.autoCompleteReturn> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get(`/search/autocomplete/${key.toString()}/${value}`).then(res => {
             console.log(res);
             resolve(res.data);
         }).catch(err => {

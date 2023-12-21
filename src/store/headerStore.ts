@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia'
+import { completeBy } from '@/API';
+
 
 export const useHeaderStore = defineStore('header'/*store的唯一标识*/, {
 	state: () => ({
@@ -6,7 +8,9 @@ export const useHeaderStore = defineStore('header'/*store的唯一标识*/, {
 		search_active:false,
 		display:true,
 		suggestions:new Array<{display_name:string}>(),
-		serInput:''
+		serInput:'',
+		login:false,
+		option:{ value: completeBy.concepts,label: '主题',},
 	}),
 	getters: {
 	},
