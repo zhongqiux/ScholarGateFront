@@ -13,7 +13,27 @@ export interface LoginReturn extends CommonReturnType {
 		email:string
 	}
 }
+export interface SendCodeReturn extends CommonReturnType {
+	data: null,
+}
 export interface RegisterReturn extends CommonReturnType {
+	data: null,
+}
+
+export interface GetMessageListReturn extends CommonReturnType {
+	data: {
+		messages: {
+			messageid: string,
+			name: string,
+			avatar: string,
+			time: string,
+			content: string,
+			ifread: boolean,
+		}[],
+	}
+}
+
+export interface ReadMessageReturn extends CommonReturnType {
 	data: null,
 }
 
@@ -130,5 +150,45 @@ export interface autoCompleteReturn extends CommonReturnType{
 		results:[
 			{display_name:string}
 		]
+	}
+}
+export interface Institution{
+	"id": string,
+    "ror": string,
+    "display_name": string,
+    "type": string,
+    "homepage_url": string,
+    "works_count": number,
+    "cited_by_count": number,
+    "works_api_url": string
+}
+export interface Scholar {
+	"id": string,
+	"orcid": string,
+	"display_name": string,
+	"works_count": number,
+	"cited_by_count": number,
+	"summary_stats": {
+		"2yr_mean_citedness": number,
+		"h_index": number,
+		"i10_index": number
+	},
+	"last_known_institution": {
+		"id": string,
+		"ror": string,
+		"display_name": string,
+		"country_code": string,
+		"type": string,
+	},
+}
+export interface ScholarHotReturn extends CommonReturnType{
+	data:{
+		results:Scholar[],
+	}
+}
+
+export interface InstutionRank extends CommonReturnType{
+	data:{
+		results:[Institution],
 	}
 }

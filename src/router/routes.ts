@@ -12,6 +12,13 @@ export const routes = [
         }
       ]
     },
+    {path: '/hotInformation', name: '', title: '热门数据', component: ()=>import('@/pages/HotInformation'),
+      children:[
+        { path: 'field', name: '', title: '领域热门数据', component: ()=>import('@/pages/HotInformation/Field.vue') },
+        { path: 'institution', name: '', title: '机构热门数据', component: ()=>import('@/pages/HotInformation/Institution.vue') },
+        { path: 'scholar', name: '', title: '学者热门数据', component: ()=>import('@/pages/HotInformation/Scholar.vue')},
+      ]
+    },
     {path: '/', name: '', title: '首页', component: () => import('@/pages/MainPage.vue')},
     {path: '/index', name: 'index', title: '首页', component: () => import('@/pages/MainPage.vue')},
     {path: '/main', name: '', title: 'main', component: () => import('@/components/HelloWorld.vue')},
@@ -22,6 +29,8 @@ export const routes = [
     {path: '/explorePaper', name: '', title: 'explorePaper', component: () => import('@/pages/SearchDetail.vue')},
     {path: '/exploreAuthor', name: '', title: 'exploreAuthor', component: () => import('@/pages/SearchAuthor.vue')},
     {path: '/login', name: '', title: '登录', component: () => import('@/pages/NewLogin.vue')},
-	{ path: '/field', name: '', title: '领域', component: ()=>import('@/pages/FieldPage.vue') },
+	  { path: '/field', name: '', title: '领域', component: ()=>import('@/pages/FieldPage.vue') },
     {path: '/messages', name: 'Messages', title: '消息中心', component: ()=>import('@/pages/Messages.vue')},
+    {path: '/messagedetail', name: '', title: '消息', component: ()=>import('@/pages/MessageDetail.vue')},
+    
 ]

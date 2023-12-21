@@ -11,10 +11,10 @@ export function test(msg: String): Promise<Type.CommonReturnType> {
             params: {
                 message: msg
             },
-            headers: {
-                Authorization: useUserStore().token,
+            headers:{
+                Authorization:useUserStore().token,
             }
-        }).then(res => {
+        }).then(res=>{
             console.log(res);
             resolve(res.data);
         }).catch(err => {
@@ -31,10 +31,25 @@ export function hello(): void {
 export function login(name: string, password: string): Promise<Type.LoginReturn> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.get("/login", {
+        axios.post("/users/login", {
+            userName: name,
+            password: password,
+        }).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function sendCode(email: string): Promise<Type.SendCodeReturn> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get("/users/sendCode", {
             params: {
-                userName: name,
-                password: password,
+                email: email,
             }
         }).then(res => {
             console.log(res);
@@ -46,19 +61,62 @@ export function login(name: string, password: string): Promise<Type.LoginReturn>
     })
 }
 
-export function register(name: string, password: string, email: string): Promise<Type.RegisterReturn> {
+export function register(name: string, password: string, email: string, code: string): Promise<Type.RegisterReturn> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.post("/register", {
-            name: name,
+        axios.post("/users/register", {
+            username: name,
             password: password,
             email: email,
+            code: code,
         }
             , {
                 headers: {
                     Authorization: useUserStore().token,
                 }
             }//post请求携带登录凭证
+        ).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function getMessageList(userId: number): Promise<Type.GetMessageListReturn> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get("/getMessageList", {
+            params: {
+                userId: userId,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }//get请求携带登录凭证
+        ).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function readMessage(messageId: number): Promise<Type.ReadMessageReturn> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get("/readMessage", {
+            params: {
+                messageId: messageId,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }//get请求携带登录凭证
         ).then(res => {
             console.log(res);
             resolve(res.data);
@@ -118,11 +176,11 @@ export function editUserInfo(background: string): Promise<Type.EditUserInfoRetur
         axios.post("/editUserInfo", {
             background: background,
         }
-            , {
-                headers: {
-                    Authorization: useUserStore().token,
-                }
-            }//post请求携带登录凭证
+        , {
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }//post请求携带登录凭证
         ).then(res => {
             console.log(res);
             resolve(res.data);
@@ -136,39 +194,9 @@ export function editUserInfo(background: string): Promise<Type.EditUserInfoRetur
 export function getFieldData(fieldId: string): Promise<Type.FieldData> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.get(`/concept/showPointConcept/${fieldId}`).then(res => {
-            console.log(res);
-            resolve(res.data);
-        }).catch(err => {
-            console.log(err)
-            reject(err)
-        })
-    })
-}
-
-export function getFieldWorks(works_api_url: string, page: number): Promise<Type.FieldWorks> {
-    return new Promise((resolve, reject) => {
-        // axiso 自带 get 和 post 方法
-        axios.post('/concept/showWorks', {
-            "url": works_api_url,
-            "page": page,
-            "pageSize": 10
-        }).then(res => {
-            console.log(res);
-            resolve(res.data);
-        }).catch(err => {
-            console.log(err)
-            reject(err)
-        })
-    })
-}
-
-export function getFields(page: number): Promise<Type.FieldWorks> {
-    return new Promise((resolve, reject) => {
-        // axiso 自带 get 和 post 方法
-        axios.get('/concept/showHeatConcept', {
-            params: {
-                "page": page,
+        axios.get(`/concept/showPointConcept/${fieldId}`,{
+            headers: {
+                Authorization: useUserStore().token,
             }
         }).then(res => {
             console.log(res);
@@ -180,10 +208,124 @@ export function getFields(page: number): Promise<Type.FieldWorks> {
     })
 }
 
-export function autoComplete(author: string): Promise<Type.autoCompleteReturn> {
+export function getFieldWorks(works_api_url: string,page:number): Promise<Type.FieldWorks> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.get(`/search/autocomplete/authors/${author}`).then(res => {
+        axios.post('/concept/showWorks',{
+            "url": works_api_url,
+            "page": page,
+            "pageSize": 10
+        }, {
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }//post请求携带登录凭证
+        ).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function getFields(page:number): Promise<Type.FieldWorks> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get('/concept/showHeatConcept',{
+            params:{
+                "page": page,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export enum RankedBy {
+    works=0,
+    cited=1,
+}
+export function getInstitionRank(page:number,rank:RankedBy): Promise<Type.InstutionRank> {
+    let tem:string='';
+    switch(rank){
+        case RankedBy.works:{
+            tem = 'works_count'
+            break;
+        }
+        case RankedBy.cited:{
+            tem = 'cited_by_count'
+            break;
+        }
+    }
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get(`/institution/rank/${page}`,{
+            params:{
+                rank:tem,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function getHotScholar(page:number,rank:RankedBy): Promise<Type.ScholarHotReturn> {
+    let tem:string='';
+    switch(rank){
+        case RankedBy.works:{
+            tem = 'works_count'
+            break;
+        }
+        case RankedBy.cited:{
+            tem = 'cited_by_count'
+            break;
+        }
+    }
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get(`/scholar/hot`,{
+            params:{
+                type:tem,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export enum completeBy{
+    authors='authors',
+    concepts='concepts',
+    fields='fields',
+    funders='funders'
+}
+export function autoComplete(key:completeBy,value:string): Promise<Type.autoCompleteReturn> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get(`/search/autocomplete/${key.toString()}/${value}`).then(res => {
             console.log(res);
             resolve(res.data);
         }).catch(err => {

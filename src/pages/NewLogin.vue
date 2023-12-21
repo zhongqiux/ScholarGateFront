@@ -103,8 +103,9 @@
 // import useUserStore from '../store/modules/user'
 // import Cookies from 'js-cookie'
 import { ElMessage } from 'element-plus'
-import { login, register } from '@/API'
+import { login, register, sendCode } from '@/API'
 import * as Type from "@/API/type"
+import { useUserStore } from '@/store'
 
 
 
@@ -127,6 +128,7 @@ export default {
             verificationCodeSent: false,
             newPassword: '',
             confirmNewPassword: '',
+            store: useUserStore(),
         }
     },
     methods: {
@@ -143,9 +145,28 @@ export default {
                     type: 'error',
                 })
             } else {
-                this.$router.push('/')
+                // this.$router.push('/')
+                // this.store.outdate = new Date(Date.now() + 60 * 60 * 1000)
+                // console.log(Date.now() + 60 * 60 * 1000)
                 login(this.username, this.pwd).then((res: Type.LoginReturn) => {
-                    console.log(res)
+                    if (res.flag == true) {
+                        this.store.outdate = Date.now() + 60 * 60 * 1000
+                        this.store.userId = res.data.userId
+                        this.store.userName = res.data.userName
+                        this.store.token = res.data.token
+                        ElMessage({
+                            message: `登录成功！`,
+                            type: 'success',
+                        })
+                        this.$router.push('/')
+                        console.log(res)
+                    } else {
+                        ElMessage({
+                            message: `登录失败！`,
+                            type: 'error',
+                        })
+                        console.log(res)
+                    }
                 }).catch(err => {
                     console.log(err)
                 })
@@ -159,120 +180,161 @@ export default {
                     type: 'error',
                 })
                 return;
-            } else if (this.verificationCode != '1') {
+            } else if (this.verificationCode === '') {
                 ElMessage({
-                    message: `验证码不正确！`,
+                    message: `验证码不能为空！`,
                     type: 'error',
                 })
                 return;
             } else {
-                register(this.nickname, this.password, this.email).then((res: Type.RegisterReturn) => {
-                    console.log(res)
+                register(this.nickname, this.password, this.email, this.verificationCode).then((res: Type.RegisterReturn) => {
+                    if (res.flag == true) {
+                        ElMessage({
+                            message: `注册成功！`,
+                            type: 'success',
+                        })
+                        this.nickname = ''
+                        this.password = ''
+                        this.email = ''
+                        this.verificationCode = ''
+                        this.confirmPassword = ''
+                        this.verificationCodeSent = false
+                        this.play()
+                    } else {
+                        ElMessage({
+                            message: `注册失败！`,
+                            type: 'error',
+                        })
+                    }
                 }).catch(err => {
                     console.log(err)
                 })
             }
         },
 
-        // 注册
-        async register() {
-            if (this.password !== this.confirmPassword) {
-                alert('两次密码不一致！');
-                return;
-            }
-            // 在这里执行注册逻辑，可以发送请求给服务器或者执行其他操作
-            const data = {
-                'username': this.nickname,
-                'password': this.password,
-                'email': this.email,
-                'code': this.verificationCode,
-            }
-            console.log(data)
-            // try {
-            //     const response = await fetch('http://dev-cn.your-api-server.com/register', {
-            //         method: 'POST',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //         body: JSON.stringify(data),
-            //     })
+        // 注册旧
+        // async register() {
+        //     if (this.password !== this.confirmPassword) {
+        //         alert('两次密码不一致！');
+        //         return;
+        //     }
+        //     // 在这里执行注册逻辑，可以发送请求给服务器或者执行其他操作
+        //     const data = {
+        //         'username': this.nickname,
+        //         'password': this.password,
+        //         'email': this.email,
+        //         'code': this.verificationCode,
+        //     }
+        //     console.log(data)
+        //     // try {
+        //     //     const response = await fetch('http://dev-cn.your-api-server.com/register', {
+        //     //         method: 'POST',
+        //     //         headers: {
+        //     //             'Content-Type': 'application/json',
+        //     //         },
+        //     //         body: JSON.stringify(data),
+        //     //     })
 
-            //     if (response.status === 200) {
-            //         response.json().then(res => {
-            //             if (res.code === 200) {
-            //                 ElMessage({
-            //                     message: `注册成功！`,
-            //                     type: 'success',
-            //                     offset: 100,
-            //                 })
-            //                 this.nickname = ''
-            //                 this.email = ''
-            //                 this.password = ''
-            //                 this.confirmPassword = ''
-            //                 this.play()
-            //                 sessionStorage.setItem('showIntro', 'true')
-            //             } else if (res.code === 411) {
-            //                 ElMessage({
-            //                     message: `用户已存在！`,
-            //                     type: 'warning',
-            //                     offset: 100,
-            //                 })
-            //             } else if (res.code === 410) {
-            //                 ElMessage({
-            //                     message: `邮箱不合法！`,
-            //                     type: 'warning',
-            //                     offset: 100,
-            //                 })
-            //             } else {
-            //                 alert('da失败！')
-            //             }
-            //         })
-            //     } else {
-            //         alert('RERER！')
-            //     }
-            // } catch (error) {
-            //     console.log(error)
-            // }
-        },
+        //     //     if (response.status === 200) {
+        //     //         response.json().then(res => {
+        //     //             if (res.code === 200) {
+        //     //                 ElMessage({
+        //     //                     message: `注册成功！`,
+        //     //                     type: 'success',
+        //     //                     offset: 100,
+        //     //                 })
+        //     //                 this.nickname = ''
+        //     //                 this.email = ''
+        //     //                 this.password = ''
+        //     //                 this.confirmPassword = ''
+        //     //                 this.play()
+        //     //                 sessionStorage.setItem('showIntro', 'true')
+        //     //             } else if (res.code === 411) {
+        //     //                 ElMessage({
+        //     //                     message: `用户已存在！`,
+        //     //                     type: 'warning',
+        //     //                     offset: 100,
+        //     //                 })
+        //     //             } else if (res.code === 410) {
+        //     //                 ElMessage({
+        //     //                     message: `邮箱不合法！`,
+        //     //                     type: 'warning',
+        //     //                     offset: 100,
+        //     //                 })
+        //     //             } else {
+        //     //                 alert('da失败！')
+        //     //             }
+        //     //         })
+        //     //     } else {
+        //     //         alert('RERER！')
+        //     //     }
+        //     // } catch (error) {
+        //     //     console.log(error)
+        //     // }
+        // },
 
-        // 登录
-        async login(e: { preventDefault: () => void; }) {
-            e.preventDefault();
-            // 检验密码是否正确的逻辑
-            // 登录成功后修改isLoggedIn的值为true
-            if (this.username === '' || this.pwd === '') {
-                window.alert('账号和密码不能为空！')
-            } else {
-                const data = {
-                    'username': this.username,
-                    'password': this.pwd
+        // // 登录旧
+        // async login(e: { preventDefault: () => void; }) {
+        //     e.preventDefault();
+        //     // 检验密码是否正确的逻辑
+        //     // 登录成功后修改isLoggedIn的值为true
+        //     if (this.username === '' || this.pwd === '') {
+        //         window.alert('账号和密码不能为空！')
+        //     } else {
+        //         const data = {
+        //             'username': this.username,
+        //             'password': this.pwd
+        //         }
+        //         console.log(data)
+        //         this.$router.push('/')
+        //         // routes.push({ path: '/teams' })
+        //         // const response = await fetch('http://dev-cn.your-api-server.com/user/login', {
+        //         //     method: 'GET',
+        //         //     headers: {
+        //         //         'Content-Type': 'application/json',
+        //         //     },
+        //         //     body: JSON.stringify(data),
+        //         // });
+        //         // if (response.status === 200) {
+        //         //     response.json().then(res => {
+        //         //         if (res.code === 200) {
+        //         //             localStorage.setItem('isLoggedIn', 'true');
+        //         //             //userStore.getUserInfo(username.value)
+        //         //             sessionStorage.setItem('username', this.username)
+        //         //             sessionStorage.setItem('userId', res.data.userId)
+        //         //             // router.push({ path: '/teams' })
+        //         //         } else {
+        //         //             window.alert('账号或密码错误！请重新输入')
+        //         //         }
+        //         //     })
+        //         // } else {
+        //         //     window.alert('EEE')
+        //         // }
+        //     }
+        // },
+
+        // 邮箱验证码
+        sendVerificationCode() {
+            // 在这里执行发送邮箱验证码的逻辑
+            // 设置 verificationCodeSent 为 true，防止重复发送验证码
+            console.log('发送邮箱验证码', this.email);
+            sendCode(this.email).then((res: Type.SendCodeReturn) => {
+                if (res.flag == true) {
+                    this.verificationCodeSent = true;
+                    ElMessage({
+                        message: `验证码发送成功！`,
+                        type: 'success',
+                    })
+                } else {
+                    ElMessage({
+                        message: `验证码发送失败！`,
+                        type: 'error',
+                    })
+                    console.log(res)
                 }
-                console.log(data)
-                this.$router.push('/')
-                // routes.push({ path: '/teams' })
-                // const response = await fetch('http://dev-cn.your-api-server.com/user/login', {
-                //     method: 'GET',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //     },
-                //     body: JSON.stringify(data),
-                // });
-                // if (response.status === 200) {
-                //     response.json().then(res => {
-                //         if (res.code === 200) {
-                //             localStorage.setItem('isLoggedIn', 'true');
-                //             //userStore.getUserInfo(username.value)
-                //             sessionStorage.setItem('username', this.username)
-                //             sessionStorage.setItem('userId', res.data.userId)
-                //             // router.push({ path: '/teams' })
-                //         } else {
-                //             window.alert('账号或密码错误！请重新输入')
-                //         }
-                //     })
-                // } else {
-                //     window.alert('EEE')
-                // }
-            }
+            }).catch(err => {
+                console.log(err)
+            })
         },
 
         // 登录/忘记密码页面翻转
@@ -283,14 +345,6 @@ export default {
         //     this.playForget = !this.playForget
         // },
 
-        // 邮箱验证码
-        sendVerificationCode() {
-            // 在这里执行发送邮箱验证码的逻辑
-            // 设置 verificationCodeSent 为 true，防止重复发送验证码
-            console.log('发送邮箱验证码', this.f_email);
-            this.verificationCodeSent = true;
-        },
-        
         // 重置密码
         // resetPassword() {
         //     if (this.newPassword !== this.confirmNewPassword) {
@@ -309,14 +363,12 @@ export default {
         //         type: 'success',
         //         offset: 100,
         //     })
-
         //     this.f_username = ''
         //     this.f_email = ''
         //     this.verificationCode = ''
         //     this.verificationCodeSent = false
         //     this.newPassword = ''
         //     this.confirmNewPassword = ''
-
         //     // this.handleForgotPassword()
         // },
     }
