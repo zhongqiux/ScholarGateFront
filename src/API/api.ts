@@ -11,10 +11,10 @@ export function test(msg: String): Promise<Type.CommonReturnType> {
             params: {
                 message: msg
             },
-            headers:{
-                Authorization:useUserStore().token,
+            headers: {
+                Authorization: useUserStore().token,
             }
-        }).then(res=>{
+        }).then(res => {
             console.log(res);
             resolve(res.data);
         }).catch(err => {
@@ -146,10 +146,10 @@ export function getFieldData(fieldId: string): Promise<Type.FieldData> {
     })
 }
 
-export function getFieldWorks(works_api_url: string,page:number): Promise<Type.FieldWorks> {
+export function getFieldWorks(works_api_url: string, page: number): Promise<Type.FieldWorks> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.post('/concept/showWorks',{
+        axios.post('/concept/showWorks', {
             "url": works_api_url,
             "page": page,
             "pageSize": 10
@@ -163,11 +163,11 @@ export function getFieldWorks(works_api_url: string,page:number): Promise<Type.F
     })
 }
 
-export function getFields(page:number): Promise<Type.FieldWorks> {
+export function getFields(page: number): Promise<Type.FieldWorks> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.get('/concept/showHeatConcept',{
-            params:{
+        axios.get('/concept/showHeatConcept', {
+            params: {
                 "page": page,
             }
         }).then(res => {
@@ -180,7 +180,7 @@ export function getFields(page:number): Promise<Type.FieldWorks> {
     })
 }
 
-export function autoComplete(author:string): Promise<Type.autoCompleteReturn> {
+export function autoComplete(author: string): Promise<Type.autoCompleteReturn> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
         axios.get(`/search/autocomplete/authors/${author}`).then(res => {
@@ -196,11 +196,31 @@ export function autoComplete(author:string): Promise<Type.autoCompleteReturn> {
 export function getPatentData(patentId: String): Promise<null> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.get("http://101.42.178.149:8080/patent/showOncePatent/" + patentId, {
-                headers: {
-                    Authorization: useUserStore().token,
-                }
-            }//get请求携带登录凭证
+        axios.get("/patent/showOncePatent/" + patentId, {
+            headers: {
+                Authorization: useUserStore().token,
+            }
+
+        }//get请求携带登录凭证
+        ).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function getPaperData(paperId: String): Promise<null> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get("/works/" + paperId, {
+            headers: {
+                Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIxMjM0NSIsInVzZXJOYW1lIjoibXR5IiwicGFzc3dvcmQiOiIxMjMifQ.eUdmT1dOZaZXGVvn9VMoHvRfgTBr8RfZb00_W2iTyg4",
+            },
+        
+        }//get请求携带登录凭证
         ).then(res => {
             console.log(res);
             resolve(res.data);
