@@ -21,19 +21,21 @@ export interface RegisterReturn extends CommonReturnType {
 }
 
 export interface GetMessageListReturn extends CommonReturnType {
-	data: {
-		messages: {
-			messageid: string,
-			name: string,
-			avatar: string,
-			time: string,
-			content: string,
-			ifread: boolean,
-		}[],
-	}
+	data: []
 }
 
 export interface ReadMessageReturn extends CommonReturnType {
+	data: {
+		id: string,
+		userId: string,
+		name: string,
+		content: string,
+		time: string,
+		isRead: boolean,
+	}
+}
+
+export interface ReadAllMessageReturn extends CommonReturnType {
 	data: null,
 }
 

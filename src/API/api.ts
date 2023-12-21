@@ -85,12 +85,11 @@ export function register(name: string, password: string, email: string, code: st
     })
 }
 
-export function getMessageList(userId: number): Promise<Type.GetMessageListReturn> {
+export function getMessageList(): Promise<Type.GetMessageListReturn> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.get("/getMessageList", {
+        axios.get("/messages/lookAllMsg", {
             params: {
-                userId: userId,
             },
             headers: {
                 Authorization: useUserStore().token,
@@ -106,12 +105,32 @@ export function getMessageList(userId: number): Promise<Type.GetMessageListRetur
     })
 }
 
-export function readMessage(messageId: number): Promise<Type.ReadMessageReturn> {
+export function readMessage(messageId: string): Promise<Type.ReadMessageReturn> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.get("/readMessage", {
+        axios.get("/messages/lookOneMsg", {
             params: {
-                messageId: messageId,
+                id: messageId,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }//get请求携带登录凭证
+        ).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function readAllMessage(): Promise<Type.ReadAllMessageReturn> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get("/messages/readAllMsg", {
+            params: {
             },
             headers: {
                 Authorization: useUserStore().token,
