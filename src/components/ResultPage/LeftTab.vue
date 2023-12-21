@@ -1,18 +1,13 @@
 <template>
   <div>
     <div class="page_navigation">
-      <Promotion class="icon"/>
+      <Promotion class="icon" />
       <span class="page_navigation_title">页面导航</span>
     </div>
     <el-timeline>
-      <el-timeline-item v-for="(activity, index) in activities"
-                        :key="index"
-                        v-model="nowShowing"
-                        :hollow="index == nowShowing"
-                        :color="activity.color">
-        <el-card shadow="none"
-                 :class="{choose : nowShowing == index}"
-                 @click="handleClick(index, activity.hrefId)">
+      <el-timeline-item v-for="(activity, index) in activities" :key="index" v-model="nowShowing"
+        :hollow="index == nowShowing" :color="activity.color">
+        <el-card shadow="none" :class="{ choose: nowShowing == index }" @click="handleClick(index, activity.hrefId)">
           {{ activity.content }}
         </el-card>
 
@@ -22,12 +17,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
-import {ArrowDown, ArrowUp, Avatar, Promotion} from '@element-plus/icons-vue';
+import { defineComponent } from 'vue';
+import { ArrowDown, ArrowUp, Avatar, Promotion } from '@element-plus/icons-vue';
 
 export default defineComponent({
   name: "LeftTab",
-  components: {Promotion, ArrowDown, ArrowUp, Avatar},
+  components: { Promotion, ArrowDown, ArrowUp, Avatar },
   props: ['isPatent'],
   data() {
     return {
@@ -38,7 +33,7 @@ export default defineComponent({
           hrefId: "#info"
         },
         {
-          content: "相关推荐",
+          content: "相关领域",
           color: "#8590a6",
           hrefId: "#recommend"
         },
@@ -142,8 +137,11 @@ export default defineComponent({
         observer.observe(targetElement1);
         observer.observe(targetElement2);
         observer.observe(targetElement3);
-        observer.observe(targetElement4);
-        observer.observe(targetElement6);
+        if (this.isPatent) {
+          observer.observe(targetElement4);
+          observer.observe(targetElement6);
+        }
+
       }
     }
   },

@@ -15,7 +15,6 @@
         {{ authors }}
         <span v-if="index != authorNames.length - 1" style="color: #8590a6; font-weight: normal" @click.stop="">,</span>
       </span><!-- 跳转科研人员页面 -->
-      <p class="text"> 作者其他信息</p>
     </div>
 
     <!-- 作者信息: 专利状态下-->
@@ -39,7 +38,10 @@
 
     <!-- 其他信息：学术成果状态下 -->
     <div class="row" v-if="!isPatent">
-      <p class="text">其他信息（若有）</p>
+      <span class="text" style="color: #8590a6">发表日期:</span>
+      <span class="text">{{ publicationDate }}</span>
+      <span class="text" style="color: #8590a6">引用次数:</span>
+      <span class="text">{{ citationNum }}</span>
     </div>
 
     <!-- 其他信息：专利状态下 -->
@@ -53,7 +55,7 @@
       <span class="text" style="color: #8590a6">公开号:</span>
       <span class="text">{{ publicationNo }}</span>
       <span class="text" style="color: #8590a6">IPC分类号:</span>
-      <span class="ipc_ext" v-for="(IPC, index) in IPCNo" key="index" @click="toIPC(index, IPC)">
+      <span class="ipc_text" v-for="(IPC, index) in IPCNo" key="index">
         {{ IPC }}
         <span v-if="index != IPCNo.length - 1" style="color: #8590a6; font-weight: normal" @click.stop="">,</span>
       </span>
@@ -63,7 +65,7 @@
     <!--  简介内容  -->
     <div class="context">
       <div class="context_text">
-        <span @click="expandContent(0)">{{ isExpand ? message : filter(message) }}</span>
+        <span @click="expandContent(0)" v-if="message">{{ isExpand ? message : filter(message) }}</span>
         <span @click="expandContent(1)" class="expand_button" v-if="message">
           {{ isExpand ? '收起' : '阅读全部' }}
           <ArrowUp class="expand_icon" v-if="isExpand" />
@@ -98,7 +100,7 @@
   </div>
 
 
-  <!--  相关推荐    -->
+  <!--  相关领域    -->
   <div id="recommend">
     <div class="page_divider">
       <p class="divider_title">相关领域</p>
@@ -108,15 +110,21 @@
     <!-- 导航栏监听用 -->
     <div id="tag2" v-if="isPatent"></div>
 
-    <div v-for="(recommends, index) in recommendation" key="index" class="recommend_container">
-      <div class="recommend_list">
-        <span style="color: #2f3a91; font-size: 16px; height: 51px; width: 32px">{{ index + 1 }}.</span>
-        <div class="recommend_item">
-          <p class="recommend_title">{{ recommends.title }}</p>
-          <p class="recommend_info">{{ recommends.info }}</p>
+    <div v-if="recommendation.length != 0">
+      <div v-for="(recommends, index) in recommendation" key="index" class="recommend_container">
+        <div class="recommend_list">
+          <span style="color: #2f3a91; font-size: 16px; width: 32px">{{ index + 1 }}.</span>
+          <div class="recommend_item">
+            <p class="recommend_title" @click="toConcepts(recommends)">{{ recommends }}</p>
+          </div>
         </div>
       </div>
     </div>
+    <div v-else>
+      <el-empty description="无相关领域推荐" />
+    </div>
+
+
   </div>
 
   <!-- 导航栏监听用 -->
@@ -151,19 +159,8 @@ export default defineComponent({
       isExpand: false,
       maxHeight: 43,
       message: "",
-      keyWords: ["喵喵喵", "软分喵", "我是关键词1", "我是关键词2", "QAQ", "关键词333", "我我有一头小毛驴我从来也不骑 有一天我心血来潮骑着去赶集", "关键词4", "关键词4", "关键词4", "关键词4"],
-      recommendation: [
-        { title: "推荐1", info: "其他信息" },
-        { title: "推荐2", info: "其他信息" },
-        { title: "推荐3", info: "其他信息" },
-        { title: "推荐4", info: "其他信息" },
-        { title: "推荐5", info: "其他信息" },
-        { title: "推荐6", info: "其他信息" },
-        { title: "推荐7", info: "其他信息" },
-        { title: "推荐8", info: "其他信息" },
-        { title: "推荐9", info: "其他信息" },
-        { title: "推荐10", info: "其他信息" },
-      ],
+      keyWords: [],
+      recommendation: [],
       title: "",
       authorNames: [],
       assigneeNames: [],
@@ -171,6 +168,7 @@ export default defineComponent({
       registerNo: " CN202310829800.3",
       publicationDate: "",
       publicationNo: "",
+      citationNum: "",
       IPCNo: [],
       powerRequest: "1.一种用于半导体器件的测试装置的电接触端子，其特征在于，所述电接触端子包括：\n" +
         "\n" +
@@ -268,15 +266,15 @@ export default defineComponent({
 
     toAuthor(authors: String) {
       router.push({
-        path: '/explorePaper',
+        path: '/exploreAuthor',
         query: {
           title: authors,
         }
       })
     },
 
-    toIPC(index: number, IPC: String) {
-      alert("跳转到" + IPC);
+    toConcepts(name: String) {
+      alert("跳转到" + name)
     },
 
 
@@ -284,6 +282,7 @@ export default defineComponent({
       const loading = ElLoading.service({
         lock: true,
       })
+
       const result = await getPatentData(patentId);
       console.log(result);
 
@@ -316,7 +315,7 @@ export default defineComponent({
         //摘要
         this.message = result.data.organic_results[0].snippet
 
-      }else{
+      } else {
         alert("error")
       }
 
@@ -324,44 +323,39 @@ export default defineComponent({
     },
 
     async paperDataGet(paperId: String) {
+      const loading = ElLoading.service({
+        lock: true,
+      })
+
       const result = await getPaperData(paperId);
       console.log(result);
 
-      if(result.flag){
+      if (result.flag) {
+        loading.close()
         this.title = result.data.title
+        this.publicationDate = result.data.publication_date
+        this.citationNum = result.data.cited_by_count
+        //作者
+        for (var i = 0; i < result.data.authorships.length; i++) {
+          this.authorNames.push(result.data.authorships[i].author.display_name)
+        }
+
+        //关键词
+        for (var i = 0; i < result.data.keywords.length; i++) {
+          this.keyWords.push(result.data.keywords[i].keyword)
+        }
+
+        //相关领域
+        for (var i = 0; i < result.data.concepts.length; i++) {
+          this.recommendation.push(result.data.concepts[i].display_name)
+        }
       }
     }
-
-
-    // 调用API方法
-    // async 方法名() {
-    //
-    //   let data = {
-    //     //传输的数据
-    //   }
-    //
-    //   let result = await 调用的api名字(data)
-    //   console.log(result)
-    //
-    //   this.ret = result.flag //返回值
-    //
-    //   if (result.flag === 1) { //提示信息
-    //     this.$message({
-    //       type: 'success',
-    //       message: '保存成功'
-    //     })
-    //   } else {
-    //     this.$message({
-    //       type: 'error',
-    //       message: '保存失败'
-    //     })
-    //   }
 
   },
 
   mounted() {
     if (this.isPatent) {
-      this.paperType = "专利"
       this.patentDataGet('CN101232829B');
     } else {
       this.paperDataGet('W2138270253');
@@ -548,25 +542,17 @@ export default defineComponent({
   text-align: left;
 }
 
-.recommend_info {
-  color: #8590a6;
-  font-size: 14px;
-  margin: 0;
-  margin-top: 6px;
-  text-align: left;
-}
-
-.ipc_ext {
-  font-size: 15px;
-  padding: 5px;
-  text-align: start;
-  color: #121212;
-}
-
-.ipc_ext:hover {
+.recommend_title:hover {
   cursor: pointer;
   color: #2f3a91;
   text-decoration: underline;
   text-decoration-style: dotted;
+}
+
+.ipc_text {
+  font-size: 15px;
+  padding: 5px;
+  text-align: start;
+  color: #121212;
 }
 </style>
