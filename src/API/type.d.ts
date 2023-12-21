@@ -1,3 +1,5 @@
+import * as exp from "constants"
+
 export interface CommonReturnType {
 	msg: string,
 	flag: boolean,

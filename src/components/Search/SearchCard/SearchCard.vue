@@ -1,51 +1,48 @@
 <template>
-  <div v-for="(item, index) in searchData">
+  <el-button @click="getSearchData">
+    搜索
+  </el-button>
+  <div v-for="(item, index) in searchData.data">
     <el-container class="List__item">
       <el-aside width="60px" class="List__itemActions">
         <div class="List__itemAction">
-          <div class="List__itemIndex">{{ item.id }}.</div>
+          <!-- <div class="List__itemIndex">{{ item.id }}.</div> -->
         </div>
         <div class="List__itemAction">
           <div class="iconfont icon-quote-left QuoteButton"></div>
-          <div class="CircleQuoteButton__label">引用</div>
+          <div class="CircleQuoteButton__label">
+            引用
+            <span>{{ item.cited_by_count }}</span>  
+          </div>
         </div>
         
       </el-aside>
   
       <div class="list-item">
         <!-- 标题 -->
-        <h2 class="ContentItem__titleText" @click="handleTitleClick">{{ item.title }}</h2>
+        <h2 class="ContentItem__titleText" @click="handleTitleClick">{{ item.display_name }}</h2>
         <!-- 作者 -->
         <div>
           <el-icon class="author-icon"><UserFilled /></el-icon>
           <span  @click="handleAuthorClick">
-            <span v-for="(a, index) in item.author" class="Author-info__content">
+            <span v-for="(a, index) in item.authorships" class="Author-info__content">
               {{ a }} &nbsp;
             </span>
           </span>
         </div>
 
-        <!-- 来源 -->
-        <div class="article-source__content">{{ item.source }}</div>
+        <!-- 发布时间 -->
+        <div class="article-source__content">
+          <span>类型：{{ item.type }}</span>
+          发布时间 {{ item.publication_date }}</div>
 
-        <!-- 简介 -->
-        <div class="article-brief__content" v-if="item.showFlag">
-          {{ item.abstract.slice(0,100) }}
-          <!-- 展开 收回 -->
-          <span @click="item.showFlag=false" v-if="item.abstract.length > 100">
-            
-            ...
-            <span class="expand-unexpand" >阅读全部</span>
-            <el-icon><ArrowDown /></el-icon>
-          </span>
-        </div>
-        <div class="article-brief__content" v-if="!item.showFlag">
-          {{ item.abstract}}
-          <!-- 展开 收回 -->
-          <span class="expand-unexpand" @click="item.showFlag=true">
-            收起
-            <el-icon><ArrowUp /></el-icon>
-          </span>
+        
+        <!-- concepts -->
+        <div>
+          concepts
+          <div v-for="(value, index) in conceptsData.data.values">
+            {{ value }} 
+          </div>
         </div>
         
         <!-- 关键词 -->
@@ -58,8 +55,10 @@
           >
             {{ keyword }} &nbsp;
           </span>
-          
         </div>
+
+        <!-- 下载PDF -->
+        
       </div>
     </el-container>
     <el-divider class="item-divider"/>
@@ -72,11 +71,54 @@
 <script setup>
 import {reactive, onMounted, ref} from 'vue'
 import "@/assets/ResultPageIconfont/iconfont.css"
+import axios from 'axios';
+
+async function searchWorkByName(name) {
+  try {
+    const url = 'http://120.46.148.251:8080/search/work/filter/3';
+    const response = await axios.post(url, {
+      params: {
+        name: name
+      }
+    });    
+    // 返回响应数据
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    // 处理错误
+    throw new Error('请求接口失败');
+  }
+}
 
 
+const getSearchData = () => {
+  searchWorkByName('ai')
+  .then(data => {
+    // 在这里处理返回的数据
+    searchData.data = data.data
+    // console.log(data);
+    
+    conceptsData.data.keys = Object.keys(data.data[0].concepts)
+    conceptsData.data.values = Object.values(data.data[0].concepts)
+    console.log(conceptsData.data.keys)
+    console.log(conceptsData.data.values)
+  })
+  .catch(error => {
+    // 处理错误
+    console.error(error);
+  });
+}
 
-const searchData = reactive(
-  [{
+const conceptsData = reactive({
+  data:{
+    keys:[],
+    values:[],
+  }
+})
+
+
+const searchData = reactive({
+  data:[{
     id:1,
     title: '我是标题我是标题我是标题我是标题我是',
     author: ['作者1', '作者2'],
@@ -120,8 +162,8 @@ const searchData = reactive(
     abstract: '识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
     keywords: ['知识脉络'],
     showFlag: true
-  },
-]) 
+  }]
+})
 
 const showFlag = ref(true)
 
