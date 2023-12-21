@@ -126,7 +126,6 @@ import VenuesResCard from '../components/Search/SearchCard/VenuesResCard.vue';
 import InstitutionsResCard from '../components/Search/SearchCard/InstitutionsResCard.vue';
 import ConceptsResCard from '../components/Search/SearchCard/ConceptsResCard.vue';
 import SearchCard from '@/components/Search/SearchCard/SearchCard.vue'
-import Avatar from '@/components/Avatar.vue'
 
 
 const searchStore = useSearchStore()

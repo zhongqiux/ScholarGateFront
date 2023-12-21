@@ -135,3 +135,24 @@ export function editUserInfo(background: string): Promise<Type.EditUserInfoRetur
         })
     })
 }
+
+export function getSearchResult(name: string): Promise<Type.GetSearchResultReturn> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.post("http://120.46.148.251:8080/search/work/filter/3", {
+            params: {
+                name: name,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }
+        ).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}

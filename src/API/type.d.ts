@@ -1,3 +1,5 @@
+import * as exp from "constants"
+
 export interface CommonReturnType {
 	msg: string,
 	flag: boolean,
@@ -39,4 +41,8 @@ export interface ClaimReturn extends CommonReturnType {
 
 export interface EditUserInfoReturn extends CommonReturnType {
 	data: null,
+}
+
+export interface GetSearchResultReturn extends CommonReturnType {
+	data: null;
 }
