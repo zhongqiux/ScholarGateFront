@@ -9,7 +9,7 @@ export interface LoginReturn extends CommonReturnType {
 		token: string,
 		userId: number,
 		userName: string,
-		avatar: string,
+		avatar: number,
 		email:string
 	}
 }
