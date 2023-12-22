@@ -1,100 +1,152 @@
 <template>
-  <el-container>
-    <el-aside width="150px" class="AppSearchAggregation">
-      <div class="AppSearchAggregation__label">分类浏览</div>
-      <div class="demo-collapse">
-        <el-collapse v-model="activeNames">
-          <el-collapse-item title="论文类型" name="1">
-            <div>
-              <span>期刊论文  </span> <span>10000</span>
-            </div>
-            <div>
-              <span>预印本论文  </span> <span>10000</span>
-            </div>
-          </el-collapse-item>
-          <el-collapse-item title="学科分类" name="2">
-            <div>文化、科学、教育、体育</div>
-            <div>预防医学、卫生学</div>
-            <div>公路运输</div>
-            <div>电脑、计算机</div>
-          </el-collapse-item>
-          <el-collapse-item title="出版年" name="3">
-            <div>2023</div>
-            <div>2022</div>
-            <div>2021</div>
-          </el-collapse-item>
-          <el-collapse-item title="出版物" name="4">
-            <div>劳动保护</div>
-            <div>健康生活</div>
-            <div>汽车杂志</div>
-          </el-collapse-item>
-        </el-collapse>
-      </div>
-    </el-aside>
-  
-
-    <el-main>
-      <div class="card">
-        <el-header>
-          <div>
-            <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-              <el-tab-pane label="论文" name="first">
-                <div>
-                  <el-select v-model="value" class="" placeholder="时间范围" size="large">
-                    <el-option
-                      v-for="item in options1"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                  <el-select v-model="value" class="" placeholder="时间排序" size="large">
-                    <el-option
-                      v-for="item in options2"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
+  <div class="body">
+    <el-container class="ContentLayout">
+      <!-- 左边栏 -->
+      <el-aside width="150px" class="AppSearchAggregation ContentLayout__sideColumn">
+        <div class="AppSearchAggregation__label">分类浏览</div>
+        <div class="demo-collapse">
+          <el-collapse v-model="activeNames">
+            <el-collapse-item title="论文类型" name="1">
+              <div>
+                <div v-for="(item, index) in tab_contents.item1" class="AggregationListItem">
+                  <span class="AggregationListItemKey">{{ item.label }}</span>
+                  <span class="AggregationListItemNumber">{{ item.num }}</span>
                 </div>
-                <el-divider/>  
-
-                <!-- 卡片内容 -->
-                <SearchCard/>
-
-              </el-tab-pane>
-              <el-tab-pane label="专利" name="second">
-                Config
-              </el-tab-pane>
-            </el-tabs>
+              </div>
+            </el-collapse-item>
+            <el-collapse-item title="学科分类" name="2">
+              <div>
+                <div v-for="(item, index) in tab_contents.item2" class="AggregationListItem">
+                  <span class="AggregationListItemKey">{{ item.label }}</span>
+                  <span class="AggregationListItemNumber">{{ item.num }}</span>
+                </div>
+              </div>
+            </el-collapse-item>
+            <el-collapse-item title="出版年" name="3">
+              <div>
+                <div v-for="(item, index) in tab_contents.item2" class="AggregationListItem">
+                  <span class="AggregationListItemKey">{{ item.label }}</span>
+                  <span class="AggregationListItemNumber">{{ item.num }}</span>
+                </div>
+              </div>
+            </el-collapse-item>
+            <el-collapse-item title="出版物" name="4">
+              <div>
+                <div v-for="(item, index) in tab_contents.item2" class="AggregationListItem">
+                  <span class="AggregationListItemKey">{{ item.label }}</span>
+                  <span class="AggregationListItemNumber">{{ item.num }}</span>
+                </div>
+              </div>
+            </el-collapse-item>
+          </el-collapse>
+        </div>
+      </el-aside>
+    
+      <!-- 中间栏 -->
+      <el-main>
+        <div class="card">
+          <!-- 搜索标签 -->
+          <div class="AppSearchTabs">
+            <div class="AppSearchTab" :class="{'is-active': active_tab === 1}" @click="changeActiveTab(1)">论文</div>
+            <div class="AppSearchTab" :class="{'is-active': active_tab === 2}" @click="changeActiveTab(2)">专利</div>
+          </div>
+          <!-- 搜索筛选项 -->
+          <el-row class="AppSearchFilter">
+            <el-col :span="2">
+              <el-button @click="handleSearch">搜索</el-button>
+            </el-col>
+            <el-col :span="12">
+              <el-date-picker
+                v-model="dateValue"
+                type="daterange"
+                start-placeholder="Start date"
+                end-placeholder="End date"
+                format="YYYY/MM/DD"
+                value-format="YYYY-MM-DD"
+              />
+            </el-col>
+            <el-col :span="4">
+              <el-select v-model="SelectValue2" placeholder="排序方式" size="default">
+                <el-option
+                  v-for="item in options2"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-col>
+            <el-col :span="4">
+              <span class="base-switch__button">
+                <el-switch v-model="has_fulltextValue" />
+              </span>
+              <span class="base-switch__label">可获取全文</span>
+            </el-col>
+          </el-row>
+          <div class="AppSearchTabContent">
+            <div class="AppSearchFilters">
+              <div class="AppFilterMeta">
+              </div>
+              <div class="AppFilterInput">
+              </div>
+              <div class="AppFilterSelect">
+              </div>
+            </div>
+          </div>
+          <!-- 筛选条件 -->
+          <div class="AppSearchRefineItems">
+            <div class="AppSearchRefineLabel">筛选条件</div>
+            <span class="AppSearchRefineItem">
+              <span class="AppSearchRefineItemText">
+                <span class="Highlight">主题：</span>
+                化学
+              </span>
+              <el-icon class="delete" @click="deleteSearchTab"><Close/></el-icon>
+            </span>
+          </div>
+          <!-- 搜索详情 -->
+          <div class="List"></div>
+          <!-- 论文 -->
+          <div v-if="active_tab == 1">
+            <SearchCard/>
           </div>
           
-        </el-header>
+          <!-- 专利 -->
+          <div v-if="active_tab == 2">
+            <PatentSearchCard/>
+          </div>
+        </div>
         
-      </div>
+      </el-main>
       
-    </el-main>
-
-  </el-container>
+      <!-- 右边栏 -->
+      <el-aside width="40px">
+        <el-button @click="scrollToTop" class="scroll-top-button">
+          回到顶部
+        </el-button>
+      </el-aside>
+    </el-container>
+  </div>
+  
 </template>
 
 
 <script setup>
 import { onMounted, reactive, ref, shallowRef, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { ElCheckbox, ElCheckboxGroup, ElEmpty, ElNotification, ElPagination } from "element-plus";
 import { useSearchStore } from '../store/search.ts';
+import { Calendar, Search } from '@element-plus/icons-vue'
 
-import SearchInput from '../components/Search/SearchInput/Search.vue';
-import WorksResCard from '../components/Search/SearchCard/WorksResCard.vue';
-import AuthorsResCard from '../components/Search/SearchCard/AuthorsResCard.vue';
-import VenuesResCard from '../components/Search/SearchCard/VenuesResCard.vue';
-import InstitutionsResCard from '../components/Search/SearchCard/InstitutionsResCard.vue';
-import ConceptsResCard from '../components/Search/SearchCard/ConceptsResCard.vue';
 import SearchCard from '@/components/Search/SearchCard/SearchCard.vue'
+import PatentSearchCard from '@/components/Search/SearchCard/PatentSearchCard.vue'
+import { getSearchResult, getPatentResult } from '@/API'
 
 const searchStore = useSearchStore()
-const value = ref('')
+const route = useRoute()
+const router = useRouter()
+const searchData = reactive({})
+
+const activeNames = ref(['1','2','3','4'])
 const options1 = [
   {value: 'Option1',label: '今年',},
   {value: 'Option2',label: '近三年',},
@@ -107,15 +159,119 @@ const options2 = [
   {value: 'Option3',label: '相关排序',},
 ]
 
+const tab_contents = reactive({
+  item1:[
+    {label: '期刊论文',num: 10000,},
+    {label: '学位论文',num: 8755,},
+    {label: '预印本论文',num: 230,},
+    {label: '会议论文',num: 120,},
+  ],
+  item2:[
+    {label: '文化、科学、教育、体育',num: 10000,},
+    {label: '预防医学、卫生学',num: 8755,},
+    {label: '公路运输',num: 230,},
+    {label: '电脑、计算机',num: 120,},
+  ],
+  item3:[
+    {label: '2023',num: 10000,},
+    {label: '2022',num: 8755,},
+    {label: '2021',num: 230,},
+    {label: '2020',num: 120,},
+  ],
+  item4:[
+    {label: '劳动保护',num: 10000,},
+    {label: '健康生活',num: 8755,},
+    {label: '汽车杂志',num: 230,},
+    {label: '汽车杂志',num: 120,},
+  ],  
+})
+
+const conceptsData = reactive({
+  data:{
+    keys:[],
+    values:[],
+  }
+})
+
+const active_tab = ref(1)
+const has_fulltextValue = ref(true)
+const dateValue = ref()
+
+const handleSearch = () => {
+  let key = route.query.key
+  let value = route.query.value
+  const params = reactive({
+    name: value,
+    has_fulltext: has_fulltextValue,
+  })
+  if (dateValue.value != null) {
+    params.start_date = dateValue.value[0]
+    params.stop_date = dateValue.value[1]
+  }
+  getSearchResult(params, 1).then(data => {
+    console.log(1)
+    searchData.data = data.data
+    conceptsData.data.keys = Object.keys(data.data[0].concepts)
+    conceptsData.data.values = Object.values(data.data[0].concepts)
+  }).catch(error => {
+    console.error(error);
+  });
+}
+const changeActiveTab = (num) => {
+  active_tab.value = num
+}
+
+const SearchValue = ref('')
+const deleteSearchTab = () => {
+  alert('删除搜索项')
+}
+
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // 可选，平滑滚动效果
+  });
+}
+
+
 </script>
 
 <style>
+.body {
+  background-color: #f3f5f8;
+  padding: 0 0;
+  margin: 0 0;
+}
+.ContentLayout {
+  position: relative;
+  width: 1200px;
+  margin: 10px auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+}
+.ContentLayout__sideColumn {
+  width: 280px;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  top: 0;
+  bottom: 0;
+  -webkit-transition: bottom .3s cubic-bezier(.25,.8,.5,1);
+  transition: bottom .3s cubic-bezier(.25,.8,.5,1);
+}
+
 .AppSearchAggregation {
   margin-top: 20px;
   margin-left: 20px;
   padding: 0 10px 10px;
   background-color: #bfc3de;
-  border-radius: 4px;
+  border-radius: 8px;
   
 }
 
@@ -129,12 +285,39 @@ const options2 = [
   letter-spacing: 4px;
 }
 
+.base-collapse {
+
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  list-style-type: none;
+  padding: 0;
+  width: 100%;
+  z-index: 1;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 1 auto;
+  flex: 0 1 auto;
+  position: relative;
+  max-width: 100%;
+  -webkit-transition: .3s cubic-bezier(.25,.8,.5,1);
+  transition: .3s cubic-bezier(.25,.8,.5,1);
+}
+
 .el-collapse-item__header {
+  padding-left: 20px;
   height: 42px;
   line-height: 42px;
   color: #3d485d;
   font-weight: 600;
   font-size: 15px;
+}
+.el-collapse-item__content {
+  padding-bottom: 0;
 }
 
 .el-tabs__nav-scroll{
@@ -142,28 +325,176 @@ const options2 = [
   border-bottom: 2px solid #bfc3de;
 }
 
-.el-tabs__item {
-  .is-active {
-    border-color: #2f3a91;
-    background-color: #2f3a91;
-    color: #fff;
-  }
-  
-}
-.is-active {
-  border-color: #2f3a91;
-  background-color: #2f3a91;
-  color: #fff;
-}
-
 .card {
+  padding-top: 0;
+  padding-left: 0;
   text-align: left;
-  height: 500px;
   margin-bottom: 10px;
   background: #fff;
   overflow: hidden;
   border-radius: 2px;
   -webkit-box-shadow: 0 1px 3px rgba(18,18,18,.1);
   box-shadow: 0 1px 3px rgba(18,18,18,.1);
+}
+
+.AggregationListItem {
+  height: auto;
+  color: #121212;
+  font-size: 15px;
+  font-weight: 400;
+  padding: 5px 16px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  cursor: pointer;
+  -webkit-transition: background-color .3s;
+  transition: background-color .3s;
+  background-color: #f3f5f8;;
+  .AggregationListItemKey {
+    text-align: left;
+    margin-left: 20px;
+    width: 154px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-transition: opacity .3s;
+    transition: opacity .3s;
+    word-break: break-all;
+    height: auto;
+    line-height: 1.9;
+  }
+  .AggregationListItemNumber {
+    color: #8590a6;
+    -webkit-transition: opacity .3s;
+    transition: opacity .3s;
+  }
+}
+.AppSearchTabs {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border-bottom: 2px solid #bfc3de;
+}
+.AppSearchTab{
+  
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  height: 48px;
+  border-right: 2px solid #ebebeb;
+  font-size: 16px;
+  font-weight: 600;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+}
+.AppSearchTab:hover {
+  border-color: #2f3a91;
+  background-color: #2f3a91;
+  color: #fff;
+}
+
+.AppSearchTab.is-active {
+  border-color: #2f3a91;
+  background-color: #2f3a91;
+  color: #fff;
+}
+
+.AppSearchTabContent {
+  .AppSearchFilters {
+    padding: 12px 20px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+}
+.AppFilterMeta {
+  color: #8590a6;
+  font-size: 15px;
+  .total-num {
+    color: #050505;
+  }
+}
+.AppFilterInput {
+  margin-left: 20px;
+  width: 200px;
+}
+.AppFilterSelect {
+  margin-left: 20px;
+  
+}
+.AppSearchRefineItems {
+  background-color: #f3f5f8;
+  padding: 13px 20px 0;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin: 0 20px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+.AppSearchRefineLabel {
+  margin-right: 16px;
+  margin-bottom: 13px;
+  color: #646464;
+  font-size: 13px;
+}
+.AppSearchRefineItem {
+  background-color: #fff;
+  border: 1px solid transparent;
+  -webkit-box-shadow: 2px 2px 5px 0 rgba(55,99,170,.1), -2px -2px 5px 0 #fff, inset 0 1px 5px 0 hsla(0,0%,100%,.5);
+  box-shadow: 2px 2px 5px 0 rgba(55,99,170,.1), -2px -2px 5px 0 #fff, inset 0 1px 5px 0 hsla(0,0%,100%,.5);
+  padding: 5px 6px 5px 10px;
+  margin-right: 13px;
+  margin-bottom: 13px;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  .delete {
+    margin-left: 5px;
+    cursor: pointer;
+  }
+}
+.AppSearchRefineItemText {
+  max-width: 140px;
+  display: inline-block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.base-switch__button {
+  margin-left: 10px;
+}
+.base-switch__label {
+  margin-left: 10px;
+  font-size: 12px;
+  color: #8590a6;
+}
+.AppSearchFilter {
+  margin-top: 12px;
+}
+.scroll-top-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
 }
 </style>

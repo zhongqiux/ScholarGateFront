@@ -1,6 +1,7 @@
 // @ts-ignore
 import { defineStore } from 'pinia'
 export * from "./headerStore"
+export * from "./hotInfo"
 
 export const useCounterStore = defineStore('counter'/*store的唯一标识*/, {
 	state: () => ({ count: 0 }),
@@ -17,15 +18,25 @@ export const useCounterStore = defineStore('counter'/*store的唯一标识*/, {
 	//数据持久化
 	persist: true,
 })
+
+enum Identity {
+	User = 0,
+	Scholar = 1,
+}
 export const useUserStore = defineStore('user'/*store的唯一标识*/, {
 	state: () => ({ 
-		token: undefined,
-		name:undefined,
-		id:undefined,
+		token: '',
+		userName:'',
+		userId:-1,
+		avatar:-1,
+		email:'',
+		Auth:{} as Identity,
+		outdate:new Date('1919-5-4').getTime(),
 	}),
 	getters: {
 		islogin(){
-			if(this.token){
+			let now = new Date();
+			if(now.getTime() < this.outdate){
 				return true;
 			}
 			return false;
@@ -38,4 +49,3 @@ export const useUserStore = defineStore('user'/*store的唯一标识*/, {
 	persist: true,
 })
 
-export * from "./headerStore.ts"

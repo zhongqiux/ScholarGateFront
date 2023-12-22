@@ -5,14 +5,9 @@
       <span class="page_navigation_title">页面导航</span>
     </div>
     <el-timeline>
-      <el-timeline-item v-for="(activity, index) in activities"
-                        :key="index"
-                        v-model="nowShowing"
-                        :hollow="index == nowShowing"
-                        :color="activity.color">
-        <el-card shadow="none"
-                 :class="{choose : nowShowing == index}"
-                 @click="handleClick(index, activity.hrefId)">
+      <el-timeline-item v-for="(activity, index) in activities" :key="index" v-model="nowShowing"
+                        :hollow="index == nowShowing" :color="activity.color">
+        <el-card shadow="none" :class="{ choose: nowShowing == index }" @click="handleClick(index, activity.hrefId)">
           {{ activity.content }}
         </el-card>
 
@@ -38,7 +33,7 @@ export default defineComponent({
           hrefId: "#info"
         },
         {
-          content: "相关推荐",
+          content: "相关领域",
           color: "#8590a6",
           hrefId: "#recommend"
         },
@@ -94,30 +89,17 @@ export default defineComponent({
           // 执行滚动到目标元素时的逻辑
           let targetId = entry.target.id
 
-          if (!this.isPatent) {
-            if (targetId == "tag1") {
-              this.handleClick(0, null);
-            } else if (targetId == "tag6") {
-              this.handleClick(0, null);
-            } else if (targetId == "tag2") {
-              this.handleClick(1, null);
-            } else if (targetId == "tag3") {
-              this.handleClick(2, null);
-            }
+          if (window.scrollY < 10) {
+            this.handleClick(0, null);
           } else {
             if (targetId == "tag1") {
               this.handleClick(0, null);
-            } else if (targetId == "tag6") {
-              this.handleClick(0, null);
             } else if (targetId == "tag2") {
-              this.handleClick(2, null);
-            } else if (targetId == "tag3") {
-              this.handleClick(3, null);
-            } else if (targetId == "tag4") {
               this.handleClick(1, null);
+            } else if (targetId == "tag3") {
+              this.handleClick(2, null);
             }
           }
-
 
         }
       });
@@ -128,8 +110,6 @@ export default defineComponent({
       let targetElement1 = document.getElementById("tag1")
       let targetElement2 = document.getElementById("tag2")
       let targetElement3 = document.getElementById("tag3")
-      let targetElement4 = document.getElementById("tag4")
-      let targetElement6 = document.getElementById("tag6")
 
       const observer = new IntersectionObserver(this.handleIntersection, {
         root: null,
@@ -142,39 +122,12 @@ export default defineComponent({
         observer.observe(targetElement1);
         observer.observe(targetElement2);
         observer.observe(targetElement3);
-        observer.observe(targetElement4);
-        observer.observe(targetElement6);
       }
     }
   },
 
   mounted() {
     window.addEventListener("scroll", this.handleScroll);
-
-    if (this.isPatent) {
-      this.activities = [
-        {
-          content: "基本信息",
-          color: "#2f3a91",
-          hrefId: "#info"
-        },
-        {
-          content: "权利要求",
-          color: "#8590a6",
-          hrefId: "#power"
-        },
-        {
-          content: "相关推荐",
-          color: "#8590a6",
-          hrefId: "#recommend"
-        },
-        {
-          content: "交流评论",
-          color: "#8590a6",
-          hrefId: "#comment"
-        }
-      ]
-    }
   }
 })
 </script>
