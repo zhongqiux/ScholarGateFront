@@ -97,7 +97,7 @@
         <div class="recommend_list">
           <span style="color: #2f3a91; font-size: 16px; width: 32px">{{ index + 1 }}.</span>
           <div class="recommend_item">
-            <p class="recommend_title" @click="toConcepts(recommends)">{{ recommends }}</p>
+            <p class="recommend_title" @click="toConcepts(index)">{{ recommends }}</p>
           </div>
         </div>
       </div>
@@ -181,6 +181,7 @@ export default defineComponent({
       dialogVisible: false,
       alignCenter: true,
       showClose: false,
+      conceptId: []
     }
   },
 
@@ -223,7 +224,7 @@ export default defineComponent({
 
 
     toAuthor(authors: any) {
-      if(!this.isPatent){
+      if (!this.isPatent) {
         router.push({
           path: '/researcher',
           query: {
@@ -234,8 +235,15 @@ export default defineComponent({
 
     },
 
-    toConcepts(name: String) {
-      alert("跳转到" + name)
+    toConcepts(index: any) {
+      if (this.conceptId.length != 0) {
+        router.push({
+          path: '/field',
+          query: {
+            field: this.conceptId[index],
+          }
+        })
+      }
     },
 
     toLogin() {
@@ -251,7 +259,7 @@ export default defineComponent({
       })
 
       const result = await getPatentData(patentId);
-      console.log(result);
+      console.log(result)
 
       if (result.flag) {
         loading.close()
@@ -297,7 +305,7 @@ export default defineComponent({
       })
 
       const result = await getPaperData(paperId);
-      console.log(result);
+      console.log(result)
 
       if (result.flag) {
         loading.close()
@@ -318,6 +326,13 @@ export default defineComponent({
         //相关领域
         for (var i = 0; i < result.data.concepts.length; i++) {
           this.recommendation.push(result.data.concepts[i].display_name)
+
+          var str: any = result.data.concepts[i].id
+          var index = str.lastIndexOf("\/")
+          str = str.substring(index + 1, str.length)
+
+          this.conceptId.push(str)
+
         }
       } else {
         if (useUserStore().token == "undefined") {
@@ -386,6 +401,7 @@ export default defineComponent({
   font-weight: bold;
   color: #121212;
 }
+
 .author_name2 {
   font-size: 15px;
   padding: 5px;
