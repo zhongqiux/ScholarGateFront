@@ -220,9 +220,8 @@ export function getSearchResult(
         start_date:string,
         stop_date:string,
         sort_func:string,
-        key_word:string
-    }, 
-    pageNo:number): Promise<Type.GetSearchResultReturn> {
+        key_word:string,
+    }, pageNo: number): Promise<Type.GetSearchResultReturn> {
     return new Promise((resolve, reject) => {
         axios.post(`/search/work/filter/${pageNo}`, {
             name:params.name

@@ -68,6 +68,15 @@
     </el-container>
     <el-divider class="item-divider"/>
   </div>
+  <div class="paginationStyle">
+    <el-pagination 
+      background 
+      layout="prev, pager, next" 
+      :total="1000" 
+      v-model:current-page="currentPage"
+      @current-change="changeCurrentPage"
+    />
+  </div>
   
   
 
@@ -92,13 +101,23 @@ const conceptsData = reactive({
     values:[],
   }
 })
+
+const showFlag = ref(true)
+
+const currentPage = ref(1)
+const pageNum = ref()
+
+const changeShowFlag = (item, flag) => {
+  item = flag
+}
 const getSearchData = () => {
   let key = route.query.key
   let value = route.query.value
+  let pageNo = currentPage.value
   const params = {
-    name: value
+    name: value,
   }
-  getSearchResult(params, 1).then(data => {
+  getSearchResult(params, pageNo).then(data => {
     searchData.data = data.data
     conceptsData.data.keys = Object.keys(data.data[0].concepts)
     conceptsData.data.values = Object.values(data.data[0].concepts)
@@ -106,13 +125,6 @@ const getSearchData = () => {
     console.error(error);
   });
 }
-
-const showFlag = ref(true)
-
-const changeShowFlag = (item, flag) => {
-  item = flag
-}
-
 const handleTitleClick = () => {
   alert('跳转到该文章')
 }
@@ -144,6 +156,10 @@ const landingPaper = (landing_page_url) => {
   } else {
     window.open(landing_page_url, '_blank')
   }
+}
+
+const changeCurrentPage = () => {
+  getSearchData()
 }
 
 onMounted(() => {
@@ -287,5 +303,8 @@ watch(
   .keywords__content:hover {
     color: #2f3a91;
   }
+}
+.paginationStyle {
+  margin-left: 20px;
 }
 </style>
