@@ -23,10 +23,10 @@
 					</el-dropdown-menu>
 				</template>
 			</el-dropdown>
-			<input class="search-btn" type="button" value="" @click="go('/explorePaper',{key:store.option.value,value:store.serInput})">
+			<input class="search-btn" type="button" @click="go('/explorePaper',{key:store.option.value,value:store.serInput})">
 			<div class="exten">
-				<div class="advanced">高级检索<span class="w-2 inline-block"></span><svg t="1700095260301" class="icon w-2 h-2" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3992" width="200" height="200"><path d="M312.888889 995.555556c-17.066667 0-28.444444-5.688889-39.822222-17.066667-22.755556-22.755556-17.066667-56.888889 5.688889-79.644445l364.088888-329.955555c11.377778-11.377778 17.066667-22.755556 17.066667-34.133333 0-11.377778-5.688889-22.755556-17.066667-34.133334L273.066667 187.733333c-22.755556-22.755556-28.444444-56.888889-5.688889-79.644444 22.755556-22.755556 56.888889-28.444444 79.644444-5.688889l364.088889 312.888889c34.133333 28.444444 56.888889 73.955556 56.888889 119.466667s-17.066667 85.333333-51.2 119.466666l-364.088889 329.955556c-11.377778 5.688889-28.444444 11.377778-39.822222 11.377778z" fill="#999999" p-id="3993"></path></svg></div>
-				<div class="scholar" @click="go('/explorePaper',{})">检索学者<span class="w-2 inline-block"></span><svg t="1700095260301" class="icon w-2 h-2" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3992" width="200" height="200"><path d="M312.888889 995.555556c-17.066667 0-28.444444-5.688889-39.822222-17.066667-22.755556-22.755556-17.066667-56.888889 5.688889-79.644445l364.088888-329.955555c11.377778-11.377778 17.066667-22.755556 17.066667-34.133333 0-11.377778-5.688889-22.755556-17.066667-34.133334L273.066667 187.733333c-22.755556-22.755556-28.444444-56.888889-5.688889-79.644444 22.755556-22.755556 56.888889-28.444444 79.644444-5.688889l364.088889 312.888889c34.133333 28.444444 56.888889 73.955556 56.888889 119.466667s-17.066667 85.333333-51.2 119.466666l-364.088889 329.955556c-11.377778 5.688889-28.444444 11.377778-39.822222 11.377778z" fill="#999999" p-id="3993"></path></svg></div>
+				<div class="advanced" @click="go('/exploreAuthor',{key:'institutions',value:''})">检索机构<span class="w-2 inline-block"></span><svg t="1700095260301" class="icon w-2 h-2" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3992" width="200" height="200"><path d="M312.888889 995.555556c-17.066667 0-28.444444-5.688889-39.822222-17.066667-22.755556-22.755556-17.066667-56.888889 5.688889-79.644445l364.088888-329.955555c11.377778-11.377778 17.066667-22.755556 17.066667-34.133333 0-11.377778-5.688889-22.755556-17.066667-34.133334L273.066667 187.733333c-22.755556-22.755556-28.444444-56.888889-5.688889-79.644444 22.755556-22.755556 56.888889-28.444444 79.644444-5.688889l364.088889 312.888889c34.133333 28.444444 56.888889 73.955556 56.888889 119.466667s-17.066667 85.333333-51.2 119.466666l-364.088889 329.955556c-11.377778 5.688889-28.444444 11.377778-39.822222 11.377778z" fill="#999999" p-id="3993"></path></svg></div>
+				<div class="scholar" @click="go('/exploreAuthor',{key:'authors',value:''})">检索学者<span class="w-2 inline-block"></span><svg t="1700095260301" class="icon w-2 h-2" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3992" width="200" height="200"><path d="M312.888889 995.555556c-17.066667 0-28.444444-5.688889-39.822222-17.066667-22.755556-22.755556-17.066667-56.888889 5.688889-79.644445l364.088888-329.955555c11.377778-11.377778 17.066667-22.755556 17.066667-34.133333 0-11.377778-5.688889-22.755556-17.066667-34.133334L273.066667 187.733333c-22.755556-22.755556-28.444444-56.888889-5.688889-79.644444 22.755556-22.755556 56.888889-28.444444 79.644444-5.688889l364.088889 312.888889c34.133333 28.444444 56.888889 73.955556 56.888889 119.466667s-17.066667 85.333333-51.2 119.466666l-364.088889 329.955556c-11.377778 5.688889-28.444444 11.377778-39.822222 11.377778z" fill="#999999" p-id="3993"></path></svg></div>
 			</div>
 		</div>
 	</div>
@@ -64,12 +64,12 @@
 				<el-table-column type="index" width="50" />
 				<el-table-column prop="display_name" label="领域">
 					<template #="scope">
-						<span class="hover:cursor-pointer hover:text-blue-400" @click="go('/field',{field:getLastUrl(fields[scope.$index].id)})">{{fields[scope.$index].display_name }}</span>
+						<div class="hover:cursor-pointer hover-blue" @click="go('/field',{field:getLastUrl(fields[scope.$index].id)})">{{fields[scope.$index].display_name }}</div>
 					</template>
 				</el-table-column>
 				<el-table-column prop="cited_by_count" label="概念引用数"></el-table-column>
 			</el-table>
-
+			<!-- <HotField></HotField> -->
 		</div>
 	</div>
 </template>
@@ -78,20 +78,25 @@
 import { defineComponent } from 'vue'
 import { getFields,autoComplete,completeBy } from '@/API'
 import { useHeaderStore } from "@/store"
+import HotField from "@/pages/HotInformation/Field.vue"
 
 export default defineComponent({
 	name:"MainPages",
 	mounted:function(){
 		this.getHotFields();
 	},
+	components:{
+		HotField,
+	},
 	data(){
 		return {
 			input:'',
 			active:1,
 			options: [
-				{ value: completeBy.concepts,label: '主题',},
-				{ value: completeBy.fields,label: '领域',},
-				{ value: completeBy.authors,label: '作者',}
+				{ value: completeBy.works,label: '关键词',},
+				{ value: completeBy.concepts,label: '领域',},
+				{ value: completeBy.institutions,label: '机构',},
+				{ value: completeBy.authors,label: '作者',},
 			],
 			value:'123',
 			selecting:false,
@@ -195,6 +200,9 @@ h3,p {
 }
 .field-column:hover {
 	background-color: #cfcfcf;
+}
+.hover-blue:hover {
+	color: #409eff;
 }
 .search {
 	display: flex;

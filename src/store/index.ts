@@ -25,11 +25,11 @@ enum Identity {
 }
 export const useUserStore = defineStore('user'/*store的唯一标识*/, {
 	state: () => ({ 
-		token: 'undefined',
-		userName:'undefined',
+		token: '',
+		userName:'',
 		userId:-1,
 		avatar:-1,
-		email:'undefined',
+		email:'',
 		Auth:{} as Identity,
 		outdate:new Date('1919-5-4').getTime(),
 	}),

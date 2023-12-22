@@ -4,6 +4,7 @@
 import { hello,test } from '@/API'
 import * as Type from "@/API/type"
 
+import RelationVue from "@/components/RelationGraphic"
 //接口的二次封装
 const APITest = function(msg:String):void{
     test(msg).then((res:Type.CommonReturnType)=>{
@@ -33,6 +34,8 @@ const store = useCounterStore()
   <button class="btn btn-success" @click="hello">Success</button><br>
   <button class="btn btn-success" @click="APITest('hello')">hello</button><br>
   <button class="btn btn-primary" @click="store.increment">increment</button><span>{{ store.count }}</span>
+
+  <RelationVue ></RelationVue>
 </template>
 
 <style scoped>

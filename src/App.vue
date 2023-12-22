@@ -26,6 +26,7 @@ const store  = useHeaderStore();
 }
 .el-header {
   padding: 0;
+  min-width: 1061px;
 }
 .el-main {
   padding: 10px 0 0 0;
