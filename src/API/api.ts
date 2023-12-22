@@ -85,12 +85,11 @@ export function register(name: string, password: string, email: string, code: st
     })
 }
 
-export function getMessageList(userId: number): Promise<Type.GetMessageListReturn> {
+export function getMessageList(): Promise<Type.GetMessageListReturn> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.get("/getMessageList", {
+        axios.get("/messages/lookAllMsg", {
             params: {
-                userId: userId,
             },
             headers: {
                 Authorization: useUserStore().token,
@@ -106,12 +105,32 @@ export function getMessageList(userId: number): Promise<Type.GetMessageListRetur
     })
 }
 
-export function readMessage(messageId: number): Promise<Type.ReadMessageReturn> {
+export function readMessage(messageId: string): Promise<Type.ReadMessageReturn> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.get("/readMessage", {
+        axios.get("/messages/lookOneMsg", {
             params: {
-                messageId: messageId,
+                id: messageId,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }//get请求携带登录凭证
+        ).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function readAllMessage(): Promise<Type.ReadAllMessageReturn> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get("/messages/readAllMsg", {
+            params: {
             },
             headers: {
                 Authorization: useUserStore().token,
@@ -191,6 +210,81 @@ export function editUserInfo(background: string): Promise<Type.EditUserInfoRetur
     })
 }
 
+export function getSearchResult(
+    params:{
+        type:string,
+        concept:string,
+        name:string,
+        year:string,
+        has_fulltext:string,
+        start_date:string,
+        stop_date:string,
+        sort_func:string,
+        key_word:string
+    }, 
+    pageNo:number): Promise<Type.GetSearchResultReturn> {
+    return new Promise((resolve, reject) => {
+        axios.post(`/search/work/filter/${pageNo}`, {
+            name:params.name
+        },
+        {
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }
+        ).then(res => {
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function getPatentResult(
+    params:{
+        publication_number:string,
+        theme:string,
+        patent_name:string,
+        countries:string,
+        status:string,
+        type:string,
+        litigation:string,
+        inventor:string,
+        sortByTime:string,
+        filing_before:string,
+        filing_after:string,
+    }): Promise<Type.GetPatentResultReturn> {
+    return new Promise((resolve, reject) => {
+        axios.post(`/patent/showPatents`, {
+            publication_number:params.publication_number,
+            theme:params.theme,
+            patent_name:params.patent_name,
+            countries:params.countries,
+            status:params.status,
+            type:params.type,
+            litigation:params.litigation,
+            inventor:params.inventor,
+            sortByTime:params.sortByTime,
+            filing_before:params.filing_before,
+            filing_after:params.filing_after,
+        },
+        {
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }
+        ).then(res => {
+            console.log(useUserStore().token)
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+
 export function getFieldData(fieldId: string): Promise<Type.FieldData> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
@@ -233,7 +327,7 @@ export function getFieldWorks(works_api_url: string,page:number): Promise<Type.F
 export function getFields(page:number): Promise<Type.FieldWorks> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.get('/concept/showHeatConcept',{
+        axios.get('/concept/showHeatConcept/',{
             params:{
                 "page": page,
             },
@@ -335,3 +429,45 @@ export function autoComplete(key:completeBy,value:string): Promise<Type.autoComp
         })
     })
 }
+
+export function getPatentData(patentId: String): Promise<null> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get("/patent/showOncePatent/" + patentId, {
+            headers: {
+                Authorization: useUserStore().token,
+                // Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIxMjM0NSIsInVzZXJOYW1lIjoibXR5IiwicGFzc3dvcmQiOiIxMjMifQ.eUdmT1dOZaZXGVvn9VMoHvRfgTBr8RfZb00_W2iTyg4",
+
+            }
+
+        }//get请求携带登录凭证
+        ).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function getPaperData(paperId: String): Promise<null> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get("/works/" + paperId, {
+            headers: {
+                Authorization: useUserStore().token,
+                // Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIxMjM0NSIsInVzZXJOYW1lIjoibXR5IiwicGFzc3dvcmQiOiIxMjMifQ.eUdmT1dOZaZXGVvn9VMoHvRfgTBr8RfZb00_W2iTyg4",
+            },
+        
+        }//get请求携带登录凭证
+        ).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+

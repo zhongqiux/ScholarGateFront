@@ -7,7 +7,7 @@
           <!-- 搜索标签 -->
           <div class="AppSearchTabs">
             <div class="AppSearchTab" :class="{'is-active': active_tab === 1}" @click="changeActiveTab(1)">作者</div>
-            <div class="AppSearchTab" :class="{'is-active': active_tab === 2}" @click="changeActiveTab(2)">待定</div>
+            <div class="AppSearchTab" :class="{'is-active': active_tab === 2}" @click="changeActiveTab(2)">机构</div>
           </div>
           <!-- 搜索筛选项 -->
           <div class="AppSearchTabContent">

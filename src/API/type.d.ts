@@ -1,3 +1,6 @@
+import * as exp from "constants"
+import internal from "stream"
+
 export interface CommonReturnType {
 	msg: string,
 	flag: boolean,
@@ -9,7 +12,7 @@ export interface LoginReturn extends CommonReturnType {
 		token: string,
 		userId: number,
 		userName: string,
-		avatar: string,
+		avatar: number,
 		email:string
 	}
 }
@@ -21,19 +24,21 @@ export interface RegisterReturn extends CommonReturnType {
 }
 
 export interface GetMessageListReturn extends CommonReturnType {
-	data: {
-		messages: {
-			messageid: string,
-			name: string,
-			avatar: string,
-			time: string,
-			content: string,
-			ifread: boolean,
-		}[],
-	}
+	data: []
 }
 
 export interface ReadMessageReturn extends CommonReturnType {
+	data: {
+		id: string,
+		userId: string,
+		name: string,
+		content: string,
+		time: string,
+		isRead: boolean,
+	}
+}
+
+export interface ReadAllMessageReturn extends CommonReturnType {
 	data: null,
 }
 
@@ -194,4 +199,24 @@ export interface InstutionRank extends CommonReturnType{
 	data:{
 		results:[Institution],
 	}
+}
+
+export interface GetSearchResultReturn extends CommonReturnType {
+	data: {
+		"id": string, 
+		"display_name":	string,
+		"publication_year": string,
+		"publication_date": string,
+		"cited_by_count": number,
+		"type": string,
+		"pdf_url": string,
+		"landing_page_url": string,
+		"authorships": [string],
+		"concepts":{ }, 
+		"keywords": [string],
+	}
+}
+
+export interface GetPatentResultReturn extends CommonReturnType {
+	data: null,
 }
