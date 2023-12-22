@@ -1,5 +1,8 @@
 <template>
-	<div id="form"></div>
+  <div class="container">
+    <div id="form"></div>
+  </div>
+
 </template>
 
 <script lang="ts">
@@ -414,9 +417,23 @@ export default defineComponent({
 </script>
 
 <style scoped>
+page{
+  background-color: red;
+}
 #form {
+  margin: 10px;
   height: 800px;
   width: 800px;
   background-color: rgb(192, 214, 255);
+}
+
+
+.container{
+  min-height: 98vh;
+  min-width: 99vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #EEF1F3;
 }
 </style>
