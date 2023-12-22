@@ -39,6 +39,7 @@ import { ref } from 'vue';
 import { ElMessage } from 'element-plus'
 import { claim } from '@/API'
 import * as Type from "@/API/type"
+import { useUserStore } from '@/store'
 
 
 export default {
@@ -64,7 +65,7 @@ export default {
                 message: '提交认领请求成功，请耐心等待审核~',
                 type: 'success',
             });
-            claim(doi, "111@qq.com").then((res: Type.ClaimReturn) => {
+            claim(doi, useUserStore().email).then((res: Type.ClaimReturn) => {
                 console.log(res);
             }).catch(err => {
                 console.log(err);
