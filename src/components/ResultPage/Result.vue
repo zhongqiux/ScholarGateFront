@@ -18,7 +18,7 @@
     <!-- 作者信息: 专利状态下-->
     <div class="author_row" v-if="isPatent">
       <span class="text" style="font-weight: bold; color: #8590a6">发明人:</span> <!-- 跳转科研人员页面 -->
-      <span class="author_name" @click="toAuthor(authors)" v-for="(authors, index) in authorNames">
+      <span class="author_name2" @click="toAuthor(authors)" v-for="(authors, index) in authorNames">
         {{ authors }}
         <span v-if="index != authorNames.length - 1" style="color: #8590a6; font-weight: normal" @click.stop="">,</span>
       </span> <!-- 跳转科研人员页面 -->
@@ -27,7 +27,7 @@
     <!-- 专利申请人：专利状态下 -->
     <div class="row" v-if="isPatent">
       <span class="text" style="font-weight: bold; color: #8590a6">申请人:</span> <!-- 跳转科研人员页面 -->
-      <span class="author_name" @click="toAuthor(assignee)" v-for="(assignee, index) in assigneeNames">
+      <span class="author_name2" @click="toAuthor(assignee)" v-for="(assignee, index) in assigneeNames">
         {{ assignee }}
         <span v-if="index != assigneeNames.length - 1" style="color: #8590a6; font-weight: normal"
               @click.stop="">,</span>
@@ -122,7 +122,7 @@
   <!-- 导航栏监听用 -->
   <div id="tag3">
     <div style="border: #8590a6 solid 1px; height: 300px; width: 100%">
-      <el-input v-model="input" disabled placeholder="评论功能暂缓开放，感谢您的支持"
+      <el-input disabled placeholder="评论功能暂缓开放，感谢您的支持"
                 style="width: 95%; margin-top: 20px;margin-bottom: 50px"/>
       <div style="display: flex; flex-direction: column;align-items: center; justify-content: center">
         <el-icon style="color: #909399; font-size: 100px">
@@ -133,6 +133,19 @@
 
     </div>
   </div>
+
+
+  <el-dialog v-model="dialogVisible" title="用户未登录" width="30%" :center="alignCenter" :align-center="alignCenter"
+             :show-close="showClose" :close-on-click-modal="showClose" :close-on-press-escape="showClose">
+    <span>请先进行登录/注册</span>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button type="primary" @click="toLogin">
+          登录/注册
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script lang="ts">
@@ -142,6 +155,7 @@ import {getPatentData, getPaperData} from "@/API"
 import {ElLoading} from "element-plus"
 import {router} from '@/router'
 import {adaptSummary} from "@/API";
+import {useUserStore} from '@/store'
 
 export default defineComponent({
   name: "Result",
@@ -164,61 +178,9 @@ export default defineComponent({
       citationNum: "",
       IPCNo: [],
       longMsg: false,
-      powerRequest: "1.一种用于半导体器件的测试装置的电接触端子，其特征在于，所述电接触端子包括：\n" +
-          "\n" +
-          "对称并排布置的一对接触引脚，连接到所述测试装置；\n" +
-          "\n" +
-          "可拆卸地安装在每个所述接触引脚上的接触端，所述接触端由高硬度且可承受高电流的材料制成，\n" +
-          "\n" +
-          "其中，当利用所述测试装置测试所述半导体器件时，所述半导体器件的器件引脚与每个所述接触引脚上的所述接触端电接触。\n" +
-          "\n" +
-          "2.根据权利要求1所述的电接触端子，其特征在于，所述接触端由合金制成。\n" +
-          "\n" +
-          "3.根据权利要求1所述的电接触端子，其特征在于，每个所述接触引脚具有沿着纵向延伸的颈部、以及与所述颈部连接并沿着与所述纵向垂直的横向延伸的悬臂部，所述颈部包括上端部，所述接触端可拆卸地安装在所述上端部上。\n" +
-          "\n" +
-          "4.根据权利要求3所述的电接触端子，其特征在于，所述上端部上设置有至少一个第一导向孔，所述接触端上设置有至少一个第二导向孔，所述至少一个第一导向孔和所述至少一个第二导向孔分别一一对应，\n" +
-          "\n" +
-          "其中，借助于所述至少一个第一导向孔和所述至少一个第二导向孔，通过附接部件或焊接工艺将所述接触端可拆卸地安装在所述上端部上。\n" +
-          "\n" +
-          "5.根据权利要求3所述的电接触端子，其特征在于，所述颈部还包括柔性部，所述柔性部包括与所述上端部的下方连接的延伸部、以及与所述悬臂部的一端连接的弯曲部，\n" +
-          "\n" +
-          "其中，借助于所述柔性部，所述接触引脚能够在所述纵向或所述横向上移动。\n" +
-          "\n" +
-          "6.根据权利要求3所述的电接触端子，其特征在于，所述上端部与所述接触端由不同的材料制成。\n" +
-          "\n" +
-          "7.根据权利要求1所述的电接触端子，其特征在于，所述悬臂部的下方设置有导向钩部，借助于所述导向钩部，将所述接触引脚连接到所述测试装置。\n" +
-          "\n" +
-          "8.根据权利要求5所述的电接触端子，其特征在于，所述悬臂部的另一端设置有连接部，用于使所述接触引脚与所述测试装置的负载板建立电连接。\n" +
-          "\n" +
-          "9.一种用于半导体器件的测试装置，其特征在于，所述测试装置包括：\n" +
-          "\n" +
-          "底座；\n" +
-          "\n" +
-          "根据权利要求1-8中任一项所述的电接触端子，所述电接触端子中的一对接触引脚连接到所述底座；\n" +
-          "\n" +
-          "夹紧部，所述夹紧部在第一位置和第二位置之间切换，\n" +
-          "\n" +
-          "其中，当所述夹紧部位于所述第二位置时，将所述半导体器件的器件引脚放入所述测试装置或从所述测试装置移除，当所述夹紧部位于所述第一位置时，使放入所述测试装置的所述半导体器件的所述器件引脚同时电接触每个所述接触引脚上的接触端。\n" +
-          "\n" +
-          "10.根据权利要求9所述的测试装置，其特征在于，所述夹紧部与弹性装置连接，当所述弹性装置处于压缩状态时，所述夹紧部位于所述第二位置，当所述弹性装置处于伸长状态时，所述夹紧部位于所述第一位置。\n" +
-          "\n" +
-          "11.根据权利要求10所述的测试装置，其特征在于，当所述夹紧部位于所述第二位置时，带有所述器件引脚的所述半导体器件在竖直方向上放入所述测试装置，使得所述器件引脚被插入一对接触引脚的一对上端部之间，\n" +
-          "\n" +
-          "当所述夹紧部位于所述第一位置时，使所述半导体器件的器件引脚被一对上端部上的一对接触端夹紧，并同时电接触所述一对接触端。\n" +
-          "\n" +
-          "12.根据权利要求11所述的测试装置，其特征在于，所述测试装置包含第一器件保持器，用于固定插入的半导体器件，并容纳每个接触引脚的所述上端部。\n" +
-          "\n" +
-          "13.根据权利要求12所述的电接触端子，其特征在于，所述第一器件保持器中设置有切口，所述半导体器件通过所述切口插入所述第一器件保持器，并且当所述夹紧部位于所述第一位置时，所述夹紧部通过所述切口与所述一对上端部之一接触，以使所述器件引脚被所述一对接触端夹紧。\n" +
-          "\n" +
-          "14.根据权利要求10所述的测试装置，其特征在于，当所述夹紧部位于所述第二位置时，带有所述器件引脚的所述半导体器件在横向方向上放入所述测试装置，使得所述器件引脚被放置在一对接触引脚的一对上端部上方，\n" +
-          "\n" +
-          "当所述夹紧部位于所述第一位置时，从所述器件引脚上方施加压力，使所述器件引脚在所述夹紧部和一对上端部上的一对接触端之间被夹紧，并同时电接触所述一对接触端。\n" +
-          "\n" +
-          "15.根据权利要求14所述的测试装置，其特征在于，所述测试装置包含第二器件保持器，用于支撑在横向方向上放入所述测试装置的所述半导体器件。\n" +
-          "\n" +
-          "16.根据权利要求9所述的测试装置，其特征在于，所述底座上设置有导向槽，其中，通过将设置在每个所述接触引脚上的导向钩部置于所述导向槽中，使每个所述接触引脚连接到所述底座。\n" +
-          "\n" +
-          "17.根据权利要求9所述的测试装置，其特征在于，其特征在于，还包括下盖板，所述下盖板安装在所述底座上，用于将所述接触引脚与所述底座固定在一起。"
+      dialogVisible: false,
+      alignCenter: true,
+      showClose: false,
     }
   },
 
@@ -250,7 +212,7 @@ export default defineComponent({
       }
     },
 
-    toKeyWord(keyword: String) {
+    toKeyWord(keyword: any) {
       router.push({
         path: '/explorePaper',
         query: {
@@ -260,17 +222,26 @@ export default defineComponent({
     },
 
 
-    toAuthor(authors: String) {
-      router.push({
-        path: '/exploreAuthor',
-        query: {
-          title: authors,
-        }
-      })
+    toAuthor(authors: any) {
+      if(!this.isPatent){
+        router.push({
+          path: '/researcher',
+          query: {
+            doi: authors,
+          }
+        })
+      }
+
     },
 
     toConcepts(name: String) {
       alert("跳转到" + name)
+    },
+
+    toLogin() {
+      router.push({
+        path: '/login'
+      })
     },
 
 
@@ -311,6 +282,10 @@ export default defineComponent({
         //摘要
         this.message = result.data.organic_results[0].snippet
 
+      } else {
+        if (useUserStore().token == "undefined") {
+          alert("请登录")
+        }
       }
 
 
@@ -344,6 +319,12 @@ export default defineComponent({
         for (var i = 0; i < result.data.concepts.length; i++) {
           this.recommendation.push(result.data.concepts[i].display_name)
         }
+      } else {
+        if (useUserStore().token == "undefined") {
+          loading.close()
+          this.dialogVisible = true
+        }
+
       }
     }
 
@@ -399,6 +380,13 @@ export default defineComponent({
 }
 
 .author_name {
+  font-size: 15px;
+  padding: 5px;
+  text-align: start;
+  font-weight: bold;
+  color: #121212;
+}
+.author_name2 {
   font-size: 15px;
   padding: 5px;
   text-align: start;
