@@ -319,8 +319,9 @@ export function getHotScholar(page:number,rank:RankedBy): Promise<Type.ScholarHo
 export enum completeBy{
     authors='authors',
     concepts='concepts',
-    fields='fields',
-    funders='funders'
+    institutions='institutions',
+    works='works',
+    name='name'
 }
 export function autoComplete(key:completeBy,value:string): Promise<Type.autoCompleteReturn> {
     return new Promise((resolve, reject) => {

@@ -79,6 +79,9 @@ export interface FieldData extends CommonReturnType {
 		"image_url": string,
 		"works_api_url": string,
 		"works":{
+			"meta": {
+                "count": number,
+            },
 			"results":[
 				{
 					"id": string,

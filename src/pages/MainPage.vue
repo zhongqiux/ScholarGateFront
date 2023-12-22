@@ -89,9 +89,11 @@ export default defineComponent({
 			input:'',
 			active:1,
 			options: [
-				{ value: completeBy.concepts,label: '主题',},
-				{ value: completeBy.fields,label: '领域',},
-				{ value: completeBy.authors,label: '作者',}
+				{ value: completeBy.works,label: '主题',},
+				{ value: completeBy.concepts,label: '领域',},
+				{ value: completeBy.institutions,label: '机构',},
+				{ value: completeBy.authors,label: '作者',},
+				{ value: completeBy.name,label: '篇名',},
 			],
 			value:'123',
 			selecting:false,

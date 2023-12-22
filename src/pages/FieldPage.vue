@@ -13,6 +13,7 @@
 			<div class="PageNavigator__item is-active"><div class="PageNavigator__itemTitle">基本信息</div></div>
 			<div class="PageNavigator__item is-active"><div class="PageNavigator__itemTitle">基本信息</div></div>
 		</div>
+		<!-- <LeftTab></LeftTab> -->
 	</div>
 	<div class="con center">
 		<div class="head">
@@ -62,7 +63,7 @@
 		</div>
 		
 		<div class="list">
-			<el-divider content-position="right">论文总数</el-divider>
+			<el-divider content-position="right">论文</el-divider>
 			<div class="layout">
 				<el-skeleton :rows="5" animated  style="width: 100%" :loading="loading">
 					<template #template>
@@ -76,7 +77,7 @@
 					<template #default>
 						<div class="paper flex flex-row align-top" v-for="item,index in works">
 							<div class="content">
-								<div class="article-title">{{ (currentPage * 10 + index -9)+" 、"+item.display_name }}</div>
+								<div @click="go('/result',{doi:getLastUrl(item.id)})" class="article-title">{{ (currentPage * 10 + index -9)+" 、"+item.display_name }}</div>
 								<div class="keys flex flex-wrap start-1 items-center">
 									<span class="key-label">关键词：</span><span class="key mr-2" v-for="key in item.keywords.slice(0,3)" >{{ key.keyword }}</span>
 									<span class="key-label">作者：</span><span class="author mr-2" v-for="author in item.authorships.slice(0,3)">{{ author.author.display_name }}</span>
@@ -108,6 +109,7 @@
 import { defineComponent } from 'vue'
 import { Picture as IconPicture } from '@element-plus/icons-vue'
 import { getFieldData,getFieldWorks } from '@/API'
+import LeftTab from "@/components/ResultPage/LeftTab.vue"
 
 export default defineComponent({
 	name:"FieldPage",
@@ -117,43 +119,41 @@ export default defineComponent({
 			this.metadata = res.data;
 			this.works = res.data.works.results;
 			this.loading = false;
+			this.metadata.works_count = res.data.works.meta.count;
 		})
 	},
 	components:{
 		IconPicture,
+		LeftTab,
 	},
 	data(){
 		return {
 			loading:true,
-			works: [
-			{
-				"id": "https://openalex.org/W4293247451",
-				"doi": "https://doi.org/10.1016/0003-2697(76)90527-3",
-				"title": "A rapid and sensitive method for the quantitation of microgram quantities of protein utilizing the principle of protein-dye binding",
-				"display_name": "A rapid and sensitive method for the quantitation of microgram quantities of protein utilizing the principle of protein-dye binding",
-				"publication_year": 1976,
-				"publication_date": "1976-05-01",
-				"cited_by_count": 180075,
+			works: [] as {
+				"id": string,
+				"doi": string,
+				title: string,
+				display_name: string,
+				"publication_year": number,
+				"publication_date": string,
+				"cited_by_count": number,
 				"authorships": [
 					{
-						"author_position": "first",
+						"author_position":string,
 						"author": {
-							"id": "https://openalex.org/A5021181975",
-							"display_name": "Marion M. Bradford"
+							"id": string,
+							"display_name": string
 						},
-						"countries": [
-						"US"
-						]
+						"countries": string[]
 					}
 				],
 				"keywords": [
 					{
-						"keyword": "microgram quantities",
-						"score": 0.4242
+						"keyword": string,
+						"score": number
 					},
 				],
-			},
-			],
+			}[],
 			currentPage:1,
 			metadata:{} as {
 				"id": string,
@@ -181,6 +181,9 @@ export default defineComponent({
 			});
 			return tem;
 		},
+		go(path:string,query:any){
+			this.$router.push({path:path,query:query})
+		},
 		updateWork(currentPage:number){
 			// console.log("sbdsfhf")
 			this.loading = true;
@@ -188,7 +191,10 @@ export default defineComponent({
 				this.works = res.data.results;
 			})
 			this.loading = false;
-		}
+		},
+		getLastUrl(url:string):string{
+			return url.substring(url.lastIndexOf('/')+1)
+		},
 	}
 })
 
