@@ -1,6 +1,7 @@
 <template>
   <div class="body">
     <el-container class="ContentLayout">
+      <!-- 左边栏 -->
       <el-aside width="150px" class="AppSearchAggregation ContentLayout__sideColumn">
         <div class="AppSearchAggregation__label">分类浏览</div>
         <div class="demo-collapse">
@@ -41,7 +42,7 @@
         </div>
       </el-aside>
     
-  
+      <!-- 中间栏 -->
       <el-main>
         <div class="card">
           <!-- 搜索标签 -->
@@ -116,7 +117,13 @@
         </div>
         
       </el-main>
-  
+      
+      <!-- 右边栏 -->
+      <el-aside width="40px">
+        <el-button @click="scrollToTop" class="scroll-top-button">
+          回到顶部
+        </el-button>
+      </el-aside>
     </el-container>
   </div>
   
@@ -187,6 +194,9 @@ const conceptsData = reactive({
 })
 
 const active_tab = ref(1)
+const has_fulltextValue = ref(true)
+const dateValue = ref()
+
 const handleSearch = () => {
   let key = route.query.key
   let value = route.query.value
@@ -216,8 +226,13 @@ const deleteSearchTab = () => {
   alert('删除搜索项')
 }
 
-const has_fulltextValue = ref(true)
-const dateValue = ref()
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // 可选，平滑滚动效果
+  });
+}
+
 
 </script>
 
@@ -477,5 +492,9 @@ const dateValue = ref()
 .AppSearchFilter {
   margin-top: 12px;
 }
-
+.scroll-top-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
 </style>
