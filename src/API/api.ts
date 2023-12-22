@@ -327,7 +327,7 @@ export function getFieldWorks(works_api_url: string,page:number): Promise<Type.F
 export function getFields(page:number): Promise<Type.FieldWorks> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
-        axios.get('/concept/showHeatConcept/',{
+        axios.get('/concept/showHeatConcept',{
             params:{
                 "page": page,
             },
@@ -415,7 +415,7 @@ export enum completeBy{
     concepts='concepts',
     institutions='institutions',
     works='works',
-    name='name'
+    funders='funders'
 }
 export function autoComplete(key:completeBy,value:string): Promise<Type.autoCompleteReturn> {
     return new Promise((resolve, reject) => {
