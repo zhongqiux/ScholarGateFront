@@ -18,22 +18,23 @@ export interface RegisterReturn extends CommonReturnType {
 
 export interface GetUserDataReturn extends CommonReturnType {
 	data: {
-		name: string,
-		organization: string,
-		background: string,
+		displayName: string,
+		institutionDisplayName: string,
+		backGround: string,
 		avatar: string,
-		paper: {
-			name: string,
-			date: string,
+		works: {
+			workName: string,
+			publicationDate: string,
 		}[],
-		patent: {
-			name: string,
-			date: string,
-		}[],
+		
 	}
 }
 
 export interface ClaimReturn extends CommonReturnType {
+	data: null,
+}
+
+export interface verifyCodeReturn extends CommonReturnType {
 	data: null,
 }
 

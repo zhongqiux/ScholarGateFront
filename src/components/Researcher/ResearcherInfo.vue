@@ -2,60 +2,82 @@
     <div class="header-container">
         <div class="left">
             <div class="info-container">
-                <div class="name">{{ form.name }}</div>
-                <div class="organization">{{ form.organization }}</div>
+                <div class="name">{{ displayName }}</div>
+                <div class="organization">{{ institutionDisplayName }}</div>
                 <div class="background"><el-text class="background-text" line-clamp="5">
-                        {{ form.background }}
+                        {{ backGround }}
                     </el-text>
                 </div>
-                <div class="data"><strong>总发文量：</strong>{{ form.totalposts }}&nbsp;&nbsp;&nbsp;<strong>总下载量：</strong>{{
-                    form.totaldownloads }}</div>
-
             </div>
         </div>
 
         <div class="right">
-            <el-button type="primary" round>实名认证</el-button>
+            <el-button type="primary" round v-if="!isRealNameAuthenticated" @click="dialogVisible = true">认领此门户</el-button>
             <el-divider direction="vertical" border-style="dashed" class="custom-divider" />
-            <div class="samename">
-                <el-card class="box-card">
-                    <template #header>
-                        <div class="card-header">
-                            <span>同名作者</span>
-                        </div>
-                    </template>
-                    <div v-for="o in 4" :key="o" class="text item"><strong>{{ '作者 ' + o }}</strong> {{ '机构 ' + o }}</div>
-                </el-card>
-            </div>
+            <el-icon class="is-loading" :size="220">
+                <Sunny />
+            </el-icon>
         </div>
     </div>
+
+    <el-dialog v-model="dialogVisible" title="认领门户" width="30%" class="dialog">
+        <span>确定认领此门户？</span>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="dialogVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="handleConfirm">
+                    Confirm
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
   
 <script lang="ts">
 import Avatar from "@/components/User/Avatar.vue";
-import { ref, reactive } from 'vue';
+import { ref } from 'vue';
+import { ElMessage } from 'element-plus'
+import { claim } from '@/API'
+import * as Type from "@/API/type"
+
 
 export default {
     components: {
         Avatar,
     },
-    setup() {
-        const dialogFormVisible = ref(false);
+    props: {
+        displayName: String,
+        backGround: String,
+        institutionDisplayName: String,
+        doi: String
+    },
+    setup(props) {
+        const dialogVisible = ref(false);
         const formLabelWidth = '80px';
+        const isRealNameAuthenticated = ref(false);
 
-        const form = reactive({
-            name: '我是原神高手',
-            realname: '',
-            organization: '提瓦特大学',
-            background: '原神,启动！原神,启动！原神,启动！原神,启动！原神,启动！原神,启动！原神,启动！原神,启动！原神,启动！原神,启动！原神,启动！原神,启动！原神,启动！原神,启动！原神,启动！原神,启动！原神,启',
-            totalposts: '152',
-            totaldownloads: '1312',
-        });
+
+        const handleConfirm = () => {
+            const doi = props.doi as string;
+            console.log(doi);
+            ElMessage({
+                message: '提交认领请求成功，请耐心等待审核~',
+                type: 'success',
+            });
+            claim(doi, "111@qq.com").then((res: Type.ClaimReturn) => {
+                console.log(res);
+            }).catch(err => {
+                console.log(err);
+            });
+            dialogVisible.value = false;
+
+        };
 
         return {
-            dialogFormVisible,
+            dialogVisible,
             formLabelWidth,
-            form,
+            isRealNameAuthenticated,
+            handleConfirm
         };
     },
 };
@@ -110,6 +132,8 @@ export default {
     width: 100%;
     /* background-color: black; */
 }
+
+
 
 .info-container {
     display: flex;
