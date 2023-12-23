@@ -1,6 +1,7 @@
 import { routes } from "./routes";
 import { createRouter, createWebHistory } from 'vue-router'
 import { useHeaderStore } from '@/store'
+import { completeBy } from "@/API";
 
 // 路由参数配置
 export const router = createRouter({
@@ -27,6 +28,12 @@ router.beforeEach((to, from, next) => {
         useHeaderStore().login = false;
     }else {
         useHeaderStore().login = true;
+    }
+    if(to.path === '/exploreAuthor'){
+        useHeaderStore().inAuthorPage = true;
+        useHeaderStore().option = { value: completeBy.works,label: '关键词' };
+    }else {
+        useHeaderStore().inAuthorPage = false;
     }
     console.log(from)
     console.log(to)

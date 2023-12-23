@@ -13,7 +13,7 @@ export interface LoginReturn extends CommonReturnType {
 		userId: number,
 		userName: string,
 		avatar: number,
-		email:string
+		email: string
 	}
 }
 export interface SendCodeReturn extends CommonReturnType {
@@ -44,22 +44,27 @@ export interface ReadAllMessageReturn extends CommonReturnType {
 
 export interface GetUserDataReturn extends CommonReturnType {
 	data: {
-		name: string,
-		organization: string,
-		background: string,
+		displayName: string,
+		institutionDisplayName: string,
+		backGround: string,
 		avatar: string,
-		paper: {
-			name: string,
-			date: string,
+		works: {
+			workName: string,
+			publicationDate: string,
 		}[],
-		patent: {
+		stars: {
+			id: string,
 			name: string,
-			date: string,
 		}[],
+
 	}
 }
 
 export interface ClaimReturn extends CommonReturnType {
+	data: null,
+}
+
+export interface verifyCodeReturn extends CommonReturnType {
 	data: null,
 }
 
@@ -82,9 +87,14 @@ export interface FieldData extends CommonReturnType {
 			"i10_index": number
 		},
 		"image_url": string,
+		related_concepts:{display_name: string, id:string}[],
+		counts_by_year:{cited_by_count: number ,works_count: number ,year: number}[],
 		"works_api_url": string,
-		"works":{
-			"results":[
+		"works": {
+			"meta": {
+				"count": number,
+			},
+			"results": [
 				{
 					"id": string,
 					"doi": string,
@@ -118,7 +128,7 @@ export interface FieldData extends CommonReturnType {
 }
 export interface FieldWorks extends CommonReturnType {
 	data: {
-		"results":[
+		"results": [
 			{
 				"id": string,
 				"doi": string,
@@ -150,22 +160,22 @@ export interface FieldWorks extends CommonReturnType {
 	}
 }
 
-export interface autoCompleteReturn extends CommonReturnType{
-	data:{
-		results:[
-			{display_name:string}
+export interface autoCompleteReturn extends CommonReturnType {
+	data: {
+		results: [
+			{ display_name: string }
 		]
 	}
 }
-export interface Institution{
+export interface Institution {
 	"id": string,
-    "ror": string,
-    "display_name": string,
-    "type": string,
-    "homepage_url": string,
-    "works_count": number,
-    "cited_by_count": number,
-    "works_api_url": string
+	"ror": string,
+	"display_name": string,
+	"type": string,
+	"homepage_url": string,
+	"works_count": number,
+	"cited_by_count": number,
+	"works_api_url": string
 }
 export interface Scholar {
 	"id": string,
@@ -186,22 +196,22 @@ export interface Scholar {
 		"type": string,
 	},
 }
-export interface ScholarHotReturn extends CommonReturnType{
-	data:{
-		results:Scholar[],
+export interface ScholarHotReturn extends CommonReturnType {
+	data: {
+		results: Scholar[],
 	}
 }
 
-export interface InstutionRank extends CommonReturnType{
-	data:{
-		results:[Institution],
+export interface InstutionRank extends CommonReturnType {
+	data: {
+		results: [Institution],
 	}
 }
 
 export interface GetSearchResultReturn extends CommonReturnType {
 	data: {
-		"id": string, 
-		"display_name":	string,
+		"id": string,
+		"display_name": string,
 		"publication_year": string,
 		"publication_date": string,
 		"cited_by_count": number,
@@ -209,7 +219,7 @@ export interface GetSearchResultReturn extends CommonReturnType {
 		"pdf_url": string,
 		"landing_page_url": string,
 		"authorships": [string],
-		"concepts":{ }, 
+		"concepts": {},
 		"keywords": [string],
 	}
 }
