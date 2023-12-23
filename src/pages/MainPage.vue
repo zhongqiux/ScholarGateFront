@@ -42,18 +42,17 @@
 	
 	<div class="display center">
 		<div class="papers">
-			<div class="title">热门文章<span class="w-10 inline-block"></span><span class="text-sm hover:text-blue-500 hover:cursor-pointer" @click="go('/hotInformation/scholar',{})">查看更多</span></div>
+			<div class="title">热门文章</div>
 			<div class="layout">
-				<div class="paper" v-for="item in rpapers">
-					<h3 class="article-title">{{ item.title }}</h3>
-					<p class="desc">{{ item.abstract }}</p>
-					<div class="flex flex-row">
-						<div class="keys flex items-center">
-							<span class="key-label">关键词</span><div class="key" v-for="key in item.keywords">{{ key }}</div>
-						</div>
-						<div class="authos flex items-center">
-							<span class="key-label">作者</span><span class="author">{{ join(item.authorNames) }}</span>
-						</div>
+				<div class="paper mb-4" v-for="item in rpapers" >
+					<h3 class="article-title" @click="go('/result',{id:getLastUrl(item.id)})">{{ item.title }}</h3>
+					<div class="keys flex items-center flex-wrap">
+						<span class="key-label">关键词</span><div class="author mr-2" v-for="key in item.keywords">{{ key.keyword }}</div>
+						<span class="key-label">作者</span><span class="author mr-2" v-for="aut in item.authorships">{{ aut.author.display_name }}</span>
+					</div>
+					<div class="flex flex-row items-start">
+						<span class="key-label">日期</span><span class="author">{{ item.publication_date }}</span>
+						<span class="key-label">领域</span>
 					</div>
 				</div>
 			</div>
@@ -76,7 +75,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { getFields,autoComplete,completeBy } from '@/API'
+import { getFields,autoComplete,completeBy,getHotWorks } from '@/API'
 import { useHeaderStore } from "@/store"
 import HotField from "@/pages/HotInformation/Field.vue"
 
@@ -84,6 +83,7 @@ export default defineComponent({
 	name:"MainPages",
 	mounted:function(){
 		this.getHotFields();
+		this.updateHotWorks();
 	},
 	components:{
 		HotField,
@@ -100,14 +100,21 @@ export default defineComponent({
 			],
 			value:'123',
 			selecting:false,
-			
-			rpapers:[{title:"机器学习模型辅助抗菌肽设计",abstract:"抗菌肽是一类具有抗菌活性的小分子多肽，其研究开发具有重要的学术意义和产业前景。与传统从自然界中发现和分离抗菌肽等实验手段相比，基于模型预测和设计的方法具有高效快捷、成本低廉等特点，是今后抗菌肽研发的趋势。但由于抗菌肽序列及其活性之间存在着异常复杂的非线性映射关系，由序列准确预测其活性仍然十分困难。抗菌肽序列是如何决定其抑菌活性的？高活性序列存在哪些关键特征？这是高活性抗菌肽设计需要解决的关键科学问题。为回答这些问题，本项目拟采用BP神经网络、支持向量机、深度学习等非线性映射能力很强的机器学习算法来构建高效的抗菌肽序列-活性定量预测模型，并基于模型的精准预测，实现高效低毒的新抗菌肽设计。本研究建立的模型、方法和工具有望为一类共性科学问题（即序列-活性之间的函数关联）提供新的解决方案，亦能为抗菌肽产品的研发提供理论依据和平台支持。",keywords:["AI","算法"],authorNames:["张三"],publishDate:''},
-			],
-			fields:[] as {
-					cited_by_count: number,
-					id: string,
-					display_name: string,
+			rpapers:[] as {
+				title:string,
+				publication_date:string,
+				keywords:{keyword:string}[],
+				concepts:{display_name:string, id:string}[],
+				authorships:{
+					author:{display_name:string, id:string},
 				}[],
+				id:string,
+			}[],
+			fields:[] as {
+				cited_by_count: number,
+				id: string,
+				display_name: string,
+			}[],
 			clock:null,
 			store:useHeaderStore()
 		}
@@ -135,7 +142,6 @@ export default defineComponent({
 				// @ts-ignore
 				this.clock = setTimeout(()=>{
 					autoComplete(this.store.option.value,this.store.serInput).then(res=>{
-						console.log(res)
 						this.store.suggestions = res.data.results
 						console.log(this.store.suggestions)
 						if(this.store.suggestions.length > 0)
@@ -150,9 +156,14 @@ export default defineComponent({
 		},
 		getHotFields(){
 			getFields(1).then(res=>{
-				console.log(res)
 				// @ts-ignore
 				this.fields = res.data.results;
+			})
+		},
+		updateHotWorks(){
+			getHotWorks().then(res=>{
+				console.log(res)
+				this.rpapers = res.data.results
 			})
 		}
 	}
@@ -354,9 +365,5 @@ h3,p {
 	width: 100%;
 	align-items: center;
 	padding: 5px;
-}
-.keys,
-.authors {
-	width: 50%;
 }
 </style>

@@ -467,6 +467,22 @@ export function getHotScholar(page:number,rank:RankedBy): Promise<Type.ScholarHo
         })
     })
 }
+export function getHotWorks(): Promise<Type.HotWorks> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get(`/works/showHeatWork`,{
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
 
 export enum completeBy{
     authors='authors',

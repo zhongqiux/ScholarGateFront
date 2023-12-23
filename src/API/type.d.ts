@@ -71,7 +71,21 @@ export interface verifyCodeReturn extends CommonReturnType {
 export interface EditUserInfoReturn extends CommonReturnType {
 	data: null,
 }
-
+export interface HotWorks extends CommonReturnType{
+	data:{
+		results:{
+			title:string,
+			publication_date:string,
+			keywords:{keyword:string}[],
+			concepts:{display_name:string, id:string}[],
+			authorships:{
+				author:{display_name:string, id:string},
+			}[],
+			id:string,
+		}[],
+		size:number,
+	},
+}
 export interface FieldData extends CommonReturnType {
 	data: {
 		"id": string,
