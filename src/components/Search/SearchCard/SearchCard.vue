@@ -159,7 +159,7 @@ const getSearchData = () => {
 }
 const handleTitleClick = (url) => {
   const id = url.substring(url.lastIndexOf('/') + 1);
-  router.push(`field?field=${id}`)
+  router.push(`result?id=${id}`)
 }
 
 const handleAuthorClick = () => {
