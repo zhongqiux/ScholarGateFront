@@ -8,26 +8,47 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 import { router } from "@/router";
 import { reactive, ref } from "vue";
-import { VerifyClaim } from "@/API"
-const loading = ref(true);
-const time = reactive({count:10});
+import { verifyCode } from "@/API"
+import * as Type from "@/API/type";
 
-function countdown() {
-    let timer = setInterval(() => {
-        if(time.count > 0) {
-            time.count--;
-        } else {
-            clearInterval(Number(timer));
-            router.push("/");
+export default {
+    data(){
+        return{
+            loading : ref(true),
+            time : reactive({count:10}),
         }
-    },1000)
-}
+    },
+    methods: {
+        countdown(): void {
+        let timer = setInterval(() => {
+            if(this.time.count > 0) {
+              this.time.count--;
+            } else {
+                clearInterval(Number(timer));
+                router.push("/");
+            }
+            },1000)
+        },
 
-function verify() {
-    
+        verify() : void {
+            const doi = this.$route.query.doi as string;
+            const email = this.$route.query.email as string;
+            const code = this.$route.query.code as string;
+            verifyCode(doi, email, code).then((res: Type.verifyCodeReturn) => {
+                this.loading = false;
+                console.log(res);
+                this.countdown();
+            }).catch(err => {
+                console.log(err);
+            });
+        }
+    },
+    created() {
+        this.verify();
+    },
 }
 
 </script>

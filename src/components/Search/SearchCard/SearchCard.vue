@@ -1,50 +1,56 @@
 <template>
-  <div v-for="(item, index) in searchData">
+  <div v-for="(item, index) in searchData.data">
     <el-container class="List__item">
       <el-aside width="60px" class="List__itemActions">
         <div class="List__itemAction">
-          <div class="List__itemIndex">{{ item.id }}.</div>
+          <!-- <div class="List__itemIndex">{{ item.id }}.</div> -->
         </div>
         <div class="List__itemAction">
           <div class="iconfont icon-quote-left QuoteButton"></div>
-          <div class="CircleQuoteButton__label">引用</div>
+          <div class="CircleQuoteButton__label">
+            引用
+            <span>{{ item.cited_by_count }}</span>  
+          </div>
         </div>
         
       </el-aside>
   
       <div class="list-item">
         <!-- 标题 -->
-        <h2 class="ContentItem__titleText" @click="handleTitleClick">{{ item.title }}</h2>
+        <h2 class="ContentItem__titleText" @click="handleTitleClick(item.id)" v-html="item.display_name"></h2>
         <!-- 作者 -->
         <div>
           <el-icon class="author-icon"><UserFilled /></el-icon>
           <span  @click="handleAuthorClick">
-            <span v-for="(a, index) in item.author" class="Author-info__content">
+            <span v-for="(a, index) in item.authorships" class="Author-info__content">
               {{ a }} &nbsp;
             </span>
           </span>
         </div>
 
-        <!-- 来源 -->
-        <div class="article-source__content">{{ item.source }}</div>
 
-        <!-- 简介 -->
-        <div class="article-brief__content" v-if="item.showFlag">
-          {{ item.abstract.slice(0,100) }}
-          <!-- 展开 收回 -->
-          <span @click="item.showFlag=false" v-if="item.abstract.length > 100">
-            
-            ...
-            <span class="expand-unexpand" >阅读全部</span>
-            <el-icon><ArrowDown /></el-icon>
-          </span>
+        <!-- 类型 -->
+        <div class="keywords">
+          <span class="keywords__label">类型：&nbsp;</span>
+          <span class="keywords__content">{{ item.type }}</span>
         </div>
-        <div class="article-brief__content" v-if="!item.showFlag">
-          {{ item.abstract}}
-          <!-- 展开 收回 -->
-          <span class="expand-unexpand" @click="item.showFlag=true">
-            收起
-            <el-icon><ArrowUp /></el-icon>
+
+        <!-- 发布时间 -->
+        <div class="keywords">
+          <span class="keywords__label">发布时间：&nbsp;</span>
+          <span class="keywords__content">{{ item.publication_date }}</span>
+        </div>
+        
+        
+        <!-- concepts -->
+        <div class="concepts">
+          <span class="keywords__label">concepts:&nbsp;</span>
+          <span 
+            v-for="(value, key, index) in item.concepts"
+            class="keywords__content"
+            @click="handleConceptClick(key, value, index)"
+          >
+            {{ value }} &nbsp;
           </span>
         </div>
         
@@ -54,15 +60,36 @@
           <span 
             v-for="(keyword, index) in item.keywords" 
             class="keywords__content"
-            @click="handleKeywordClick"
+            @click="handleKeywordClick(keyword, index)"
           >
-            {{ keyword }} &nbsp;
+            <span v-html="keyword"></span>
+            <span>&nbsp;</span>
           </span>
-          
         </div>
+
+        <!-- 下载PDF -->
+        <div class="downloadPdf">
+          <el-button @click="downLoadPdf(item.pdf_url)">下载PDF</el-button>
+          <el-button @click="landingPaper(item.landing_page_url)">landingPage</el-button>
+        </div>
+        
       </div>
     </el-container>
     <el-divider class="item-divider"/>
+  </div>
+
+  <div v-if="searchData.data==''">
+    <el-empty description="无结果" />
+  </div>
+
+  <div class="paginationStyle">
+    <el-pagination 
+      background 
+      layout="prev, pager, next" 
+      :total="1000" 
+      v-model:current-page="currentPage"
+      @current-change="changeCurrentPage"
+    />
   </div>
   
   
@@ -70,77 +97,163 @@
 </template>
 
 <script setup>
-import {reactive, onMounted, ref} from 'vue'
+import {reactive, onMounted, ref, watch} from 'vue'
 import "@/assets/ResultPageIconfont/iconfont.css"
+import axios from 'axios';
+import { getSearchResult } from '@/API'
+import { useRoute, useRouter } from 'vue-router'
+import { useSearchStore } from '@/store'
 
 
+const searchStore = useSearchStore()
 
-const searchData = reactive(
-  [{
-    id:1,
-    title: '我是标题我是标题我是标题我是标题我是',
-    author: ['作者1', '作者2'],
-    source: '《招生考试通讯:高考版》 2023 年第 3 期 16 - 18 , 共 3 页',
-    abstract: '攻略一回归教材，查缺补漏一、厘清知识脉络，完善知识体系回归教材不是从头到尾读教材，也不是把书后习题个再做一遍。考生需要根据自己的学习情况，精读自己掌握得最薄弱的章节，准备一张白纸，先凭印象画出这部分内容的简略图，再结合教材和课堂笔记，增减内容。结合笔记能更好地抓住重点，在之前学习、复习过程中老师给出的小结和重点知识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
-    keywords: ['知识脉络', '回归教材', '抓住重点'],
-    showFlag: true
-  },
-  {
-    id:2,
-    title: '文章22222',
-    author: ['作者1', '作者2'],
-    source: '《招生考试通讯:高考版》 2023 年第 3 期 16 - 18 , 共 3 页',
-    abstract: '攻略一回归教材，查缺补漏一、厘清知识脉络，完善知识体系回归教材不是从头到尾读教材，也不是把书后习题个再做一遍。考生需要根据自己的学习情况，精读自己掌握得最薄弱的章节，准备一张白纸，先凭印象画出这部分内容的简略图，再结合教材和课堂笔记，增减内容。结合笔记能更好地抓住重点，在之前学习、复习过程中老师给出的小结和重点知识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
-    keywords: ['知识脉络'],
-    showFlag: true
-  },
-  {
-    id:3,
-    title: '文章22222',
-    author: ['作者1', '作者2'],
-    source: '《招生考试通讯:高考版》 2023 年第 3 期 16 - 18 , 共 3 页',
-    abstract: '攻略一回归教材，查缺补漏一、厘清知识脉络，完善知识体系回归教材不是从头到尾读教材，也不是把书后习题个再做一遍。考生需要根据自己的学习情况，精读自己掌握得最薄弱的章节，准备一张白纸，先凭印象画出这部分内容的简略图，再结合教材和课堂笔记，增减内容。结合笔记能更好地抓住重点，在之前学习、复习过程中老师给出的小结和重点知识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
-    keywords: ['知识脉络'],
-    showFlag: true
-  },
-  {
-    id:4,
-    title: '文章22222',
-    author: ['作者1', '作者2'],
-    source: '《招生考试通讯:高考版》 2023 年第 3 期 16 - 18 , 共 3 页',
-    abstract: '攻略一回归教材，查缺补漏一、厘清知识脉络，完善知识体系回归教材不是从头到尾读教材，也不是把书后习题个再做一遍。考生需要根据自己的学习情况，精读自己掌握得最薄弱的章节，准备一张白纸，先凭印象画出这部分内容的简略图，再结合教材和课堂笔记，增减内容。结合笔记能更好地抓住重点，在之前学习、复习过程中老师给出的小结和重点知识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
-    keywords: ['知识脉络'],
-    showFlag: true
-  },
-  {
-    id:5,
-    title: '文章22222',
-    author: ['作者1', '作者2'],
-    source: '《招生考试通讯:高考版》 2023 年第 3 期 16 - 18 , 共 3 页',
-    abstract: '识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
-    keywords: ['知识脉络'],
-    showFlag: true
-  },
-]) 
+const searchData = reactive({})
+const route = useRoute()
+const router = useRouter()
 
+const conceptsData = reactive({
+  data:{
+    keys:[],
+    values:[],
+  }
+})
 const showFlag = ref(true)
+const currentPage = ref(1)
+const pageNum = ref()
+const filterItems = ref([])
 
 const changeShowFlag = (item, flag) => {
   item = flag
 }
 
-const handleTitleClick = () => {
-  alert('跳转到该文章')
+const getSearchData = () => {
+  let key = route.query.key
+  let value = route.query.value
+  let pageNo = currentPage.value
+
+  const params = reactive({
+    name: value,
+  })
+
+  // 可获取全文
+  params.has_fulltext = searchStore.hasFullTextValue ? "true" : "false"
+
+  // 日期查询
+  if (searchStore.dateValue !== undefined) {
+    params.start_date = searchStore.dateValue[0]
+    params.stop_date = searchStore.dateValue[1]
+  }
+
+  // 排序方式
+  if (searchStore.sortFunc !== undefined) {
+    params.sort_func = searchStore.sortFunc
+  }
+  
+  // 类型
+  if (searchStore.typeValue !== '') {
+    params.type = searchStore.typeValue
+  }
+
+  // concept key_word
+  if (filterItems.value.length !== 0) {
+    const conceptValue = filterItems.value
+      .filter(item => item.label === 'concept')
+      .map(item => item.id)
+      .join('|');
+    const keyWordValue = filterItems.value
+      .filter(item => item.label === 'key_word')
+      .map(item => item.content)
+      .join('|');
+    console.log(keyWordValue)
+    if (conceptValue != '') {
+      params.concept = conceptValue
+    }
+    if (keyWordValue != '') {
+      params.key_word = keyWordValue
+    }
+  }
+  // TODO
+  console.log(params)
+  getSearchResult(params, pageNo).then(result => {
+    searchData.data = result.data
+    searchStore.concepts = result.data[0].concepts
+  }).catch(error => {
+    console.error(error);
+  });
+}
+const handleTitleClick = (url) => {
+  const id = url.substring(url.lastIndexOf('/') + 1);
+  router.push(`result?id=${id}`)
 }
 
 const handleAuthorClick = () => {
   alert('搜索该作者相关文章')
 }
 
-const handleKeywordClick = () => {
-  alert('搜索该关键词相关文章')
+const handleKeywordClick = (keyword, index) => {
+  const obj = {
+    label: 'key_word',
+    content: keyword,
+    id:'',
+  }
+  const isDuplicate = filterItems.value.some(item => item.content === obj.content);
+  filterItems.value.push(obj)
+  searchStore.filterItems = filterItems.value
 }
 
+const handleConceptClick = (key, value, index) => {
+  const obj = {
+    label: 'concept',
+    content: value,
+    id: key
+  }
+  // 判断元素是否重复
+  const isDuplicate = filterItems.value.some(item => item.id === obj.id);
+  if (!isDuplicate) {
+    filterItems.value.push(obj)
+    searchStore.filterItems = filterItems.value
+  }
+}
+
+const downLoadPdf = (pdf_url) => {
+  if (pdf_url == null) {
+    alert('该论文没有PDF!')
+  } else {
+    window.open(pdf_url, '_blank')
+  }
+}
+
+const landingPaper = (landing_page_url) => {
+  if (landing_page_url == null) {
+    alert('该论文没有lading paper!')
+  } else {
+    window.open(landing_page_url, '_blank')
+  }
+}
+
+const changeCurrentPage = () => {
+  getSearchData()
+}
+
+// 父组件传给子组件的对象
+const props = defineProps([])
+
+// 向父组件暴露的函数
+defineExpose({
+  getSearchData,
+})
+
+onMounted(() => {
+  getSearchData()
+})
+
+watch(
+  () => route.params,
+  (new1,new2) => {
+    getSearchData()
+  },
+  { immediate: true }
+)
 </script>
 
 <style>
@@ -192,11 +305,13 @@ const handleKeywordClick = () => {
   color: #2f3a91;
 }
 .keywords {
-  margin-top: 10px;
+  display: flex;
+  margin-top: 20px;
+  margin-right: 10px;
   font-size: 14px;
   color: #646464;
   cursor: pointer;
-  margin-right: 10px;
+  
   -webkit-transition: all .3s;
   transition: all .3s;
   word-break: break-word;
@@ -206,6 +321,9 @@ const handleKeywordClick = () => {
   }
   .keywords__content:hover {
     color: #2f3a91;
+  }
+  .keywords__content {
+    margin-left: 5px;
   }
 }
 .List__item {
@@ -251,5 +369,29 @@ const handleKeywordClick = () => {
 }
 .item-divider {
   margin-left: 20px;
+}
+.concepts {
+  margin-right: 10px;
+  margin-bottom: 0px;
+  padding-bottom: 15px;
+  font-size: 14px;
+  color: #646464;
+  cursor: pointer;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+  word-break: break-word;
+  height: 24px;
+  .keywords__label {
+    color:#aeadad
+  }
+  .keywords__content:hover {
+    color: #2f3a91;
+  }
+}
+.paginationStyle {
+  margin-left: 20px;
+}
+.downloadPdf {
+  margin-top: 20px;
 }
 </style>

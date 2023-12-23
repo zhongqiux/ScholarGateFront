@@ -4,29 +4,29 @@
 			<div class="sort-default" @click="selecting = true">
 				<el-dropdown>
 					<div class="op outline-none">
-						<span>{{ option.label+" " }}</span>
+						<span>{{ store.option.label+" " }}</span>
 						<i class="sort-icon">▼</i>
 					</div>
 					<template #dropdown>
 					<el-dropdown-menu>
-						<el-dropdown-item v-for="item in options" @click="option = item">{{ item.label }}</el-dropdown-item>
+						<el-dropdown-item v-for="item in options" @click="store.option = item">{{ item.label }}</el-dropdown-item>
 					</el-dropdown-menu>
 					</template>
 				</el-dropdown>
 			</div>
 			
 			<el-dropdown ref="dropdown1" trigger="contextmenu" placement="bottom-start">
-				<input class="search-input"  @input="getSuggestion()" autocomplete="off" id="txt_SearchText" name="txt_SearchText" type="text" placeholder="中文文献、外文文献" maxlength="100" style="color: rgb(125, 125, 125);" v-model="store.serInput" @keyup.enter.native="go('/explorePaper',{key:option.value,value:store.serInput})">
+				<input class="search-input"  @input="getSuggestion()" autocomplete="off" id="txt_SearchText" name="txt_SearchText" type="text" placeholder="中文文献、外文文献" maxlength="100" style="color: rgb(125, 125, 125);" v-model="store.serInput" @keyup.enter.native="go('/explorePaper',{key:store.option.value,value:store.serInput})">
 				<template #dropdown>
 					<el-dropdown-menu>
 						<el-dropdown-item v-for="item in store.suggestions" @click="store.serInput = item.display_name">{{ item.display_name }}</el-dropdown-item>
 					</el-dropdown-menu>
 				</template>
 			</el-dropdown>
-			<input class="search-btn" type="button" value="" @click="go('/explorePaper',{key:option.value,value:store.serInput})">
+			<input class="search-btn" type="button" @click="go('/explorePaper',{key:store.option.value,value:store.serInput})">
 			<div class="exten">
-				<div class="advanced">高级检索<span class="w-2 inline-block"></span><svg t="1700095260301" class="icon w-2 h-2" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3992" width="200" height="200"><path d="M312.888889 995.555556c-17.066667 0-28.444444-5.688889-39.822222-17.066667-22.755556-22.755556-17.066667-56.888889 5.688889-79.644445l364.088888-329.955555c11.377778-11.377778 17.066667-22.755556 17.066667-34.133333 0-11.377778-5.688889-22.755556-17.066667-34.133334L273.066667 187.733333c-22.755556-22.755556-28.444444-56.888889-5.688889-79.644444 22.755556-22.755556 56.888889-28.444444 79.644444-5.688889l364.088889 312.888889c34.133333 28.444444 56.888889 73.955556 56.888889 119.466667s-17.066667 85.333333-51.2 119.466666l-364.088889 329.955556c-11.377778 5.688889-28.444444 11.377778-39.822222 11.377778z" fill="#999999" p-id="3993"></path></svg></div>
-				<div class="scholar">检索学者<span class="w-2 inline-block"></span><svg t="1700095260301" class="icon w-2 h-2" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3992" width="200" height="200"><path d="M312.888889 995.555556c-17.066667 0-28.444444-5.688889-39.822222-17.066667-22.755556-22.755556-17.066667-56.888889 5.688889-79.644445l364.088888-329.955555c11.377778-11.377778 17.066667-22.755556 17.066667-34.133333 0-11.377778-5.688889-22.755556-17.066667-34.133334L273.066667 187.733333c-22.755556-22.755556-28.444444-56.888889-5.688889-79.644444 22.755556-22.755556 56.888889-28.444444 79.644444-5.688889l364.088889 312.888889c34.133333 28.444444 56.888889 73.955556 56.888889 119.466667s-17.066667 85.333333-51.2 119.466666l-364.088889 329.955556c-11.377778 5.688889-28.444444 11.377778-39.822222 11.377778z" fill="#999999" p-id="3993"></path></svg></div>
+				<div class="advanced" @click="go('/exploreAuthor',{key:'institutions',value:''})">检索机构<span class="w-2 inline-block"></span><svg t="1700095260301" class="icon w-2 h-2" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3992" width="200" height="200"><path d="M312.888889 995.555556c-17.066667 0-28.444444-5.688889-39.822222-17.066667-22.755556-22.755556-17.066667-56.888889 5.688889-79.644445l364.088888-329.955555c11.377778-11.377778 17.066667-22.755556 17.066667-34.133333 0-11.377778-5.688889-22.755556-17.066667-34.133334L273.066667 187.733333c-22.755556-22.755556-28.444444-56.888889-5.688889-79.644444 22.755556-22.755556 56.888889-28.444444 79.644444-5.688889l364.088889 312.888889c34.133333 28.444444 56.888889 73.955556 56.888889 119.466667s-17.066667 85.333333-51.2 119.466666l-364.088889 329.955556c-11.377778 5.688889-28.444444 11.377778-39.822222 11.377778z" fill="#999999" p-id="3993"></path></svg></div>
+				<div class="scholar" @click="go('/exploreAuthor',{key:'authors',value:''})">检索学者<span class="w-2 inline-block"></span><svg t="1700095260301" class="icon w-2 h-2" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3992" width="200" height="200"><path d="M312.888889 995.555556c-17.066667 0-28.444444-5.688889-39.822222-17.066667-22.755556-22.755556-17.066667-56.888889 5.688889-79.644445l364.088888-329.955555c11.377778-11.377778 17.066667-22.755556 17.066667-34.133333 0-11.377778-5.688889-22.755556-17.066667-34.133334L273.066667 187.733333c-22.755556-22.755556-28.444444-56.888889-5.688889-79.644444 22.755556-22.755556 56.888889-28.444444 79.644444-5.688889l364.088889 312.888889c34.133333 28.444444 56.888889 73.955556 56.888889 119.466667s-17.066667 85.333333-51.2 119.466666l-364.088889 329.955556c-11.377778 5.688889-28.444444 11.377778-39.822222 11.377778z" fill="#999999" p-id="3993"></path></svg></div>
 			</div>
 		</div>
 	</div>
@@ -36,13 +36,13 @@
 			<li><svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-left: 0px; margin-right: 0px;"><path d="M1 1L6 6.00031L1 11" stroke="black" stroke-opacity="0.8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></li>
 			<li>学术成果查询</li> 
 			<li><svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-left: 0px; margin-right: 0px;"><path d="M1 1L6 6.00031L1 11" stroke="black" stroke-opacity="0.8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></li>
-			<li>增值服务</li>
+			<li>工作台</li>
 		</ul>
 	</div>
 	
 	<div class="display center">
 		<div class="papers">
-			<div class="title">热门文章<span class="w-10 inline-block"></span><span class="text-sm hover:text-blue-500 hover:cursor-pointer">查看更多</span></div>
+			<div class="title">热门文章<span class="w-10 inline-block"></span><span class="text-sm hover:text-blue-500 hover:cursor-pointer" @click="go('/hotInformation/scholar',{})">查看更多</span></div>
 			<div class="layout">
 				<div class="paper" v-for="item in rpapers">
 					<h3 class="article-title">{{ item.title }}</h3>
@@ -59,43 +59,48 @@
 			</div>
 		</div>
 		<div class="index">
-			<div class="title">热点领域<span class="w-10 inline-block"></span><span class="text-sm hover:text-blue-500 hover:cursor-pointer">查看更多</span></div>
+			<div class="title">热点领域<span class="w-10 inline-block"></span><span class="text-sm hover:text-blue-500 hover:cursor-pointer" @click="go('/hotInformation/field',{})">查看更多</span></div>
 			<el-table :data="fields" :fit="true" :strip="true">
 				<el-table-column type="index" width="50" />
 				<el-table-column prop="display_name" label="领域">
 					<template #="scope">
-						<span class="hover:cursor-pointer hover:text-blue-400" @click="go('/field',{field:getLastUrl(fields[scope.$index].id)})">{{fields[scope.$index].display_name }}</span>
+						<div class="hover:cursor-pointer hover-blue" @click="go('/field',{field:getLastUrl(fields[scope.$index].id)})">{{fields[scope.$index].display_name }}</div>
 					</template>
 				</el-table-column>
 				<el-table-column prop="cited_by_count" label="概念引用数"></el-table-column>
 			</el-table>
-
+			<!-- <HotField></HotField> -->
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { getFields,autoComplete } from '@/API'
+import { getFields,autoComplete,completeBy } from '@/API'
 import { useHeaderStore } from "@/store"
+import HotField from "@/pages/HotInformation/Field.vue"
 
 export default defineComponent({
 	name:"MainPages",
 	mounted:function(){
 		this.getHotFields();
 	},
+	components:{
+		HotField,
+	},
 	data(){
 		return {
 			input:'',
 			active:1,
 			options: [
-				{ value: 'topic',label: '主题',},
-				{ value: 'key',label: '关键词',},
-				{ value: 'title',label: '篇名',}
+				{ value: completeBy.works,label: '关键词',},
+				{ value: completeBy.concepts,label: '领域',},
+				{ value: completeBy.institutions,label: '机构',},
+				{ value: completeBy.authors,label: '作者',},
 			],
 			value:'123',
 			selecting:false,
-			option:{ value: '123',label: '主题',},
+			
 			rpapers:[{title:"机器学习模型辅助抗菌肽设计",abstract:"抗菌肽是一类具有抗菌活性的小分子多肽，其研究开发具有重要的学术意义和产业前景。与传统从自然界中发现和分离抗菌肽等实验手段相比，基于模型预测和设计的方法具有高效快捷、成本低廉等特点，是今后抗菌肽研发的趋势。但由于抗菌肽序列及其活性之间存在着异常复杂的非线性映射关系，由序列准确预测其活性仍然十分困难。抗菌肽序列是如何决定其抑菌活性的？高活性序列存在哪些关键特征？这是高活性抗菌肽设计需要解决的关键科学问题。为回答这些问题，本项目拟采用BP神经网络、支持向量机、深度学习等非线性映射能力很强的机器学习算法来构建高效的抗菌肽序列-活性定量预测模型，并基于模型的精准预测，实现高效低毒的新抗菌肽设计。本研究建立的模型、方法和工具有望为一类共性科学问题（即序列-活性之间的函数关联）提供新的解决方案，亦能为抗菌肽产品的研发提供理论依据和平台支持。",keywords:["AI","算法"],authorNames:["张三"],publishDate:''},
 			],
 			fields:[] as {
@@ -120,6 +125,7 @@ export default defineComponent({
 		},
 		go(path:string,query:any){
 			this.$router.push({path:path,query:query})
+			// this.$router.push({name:'researcher',params:{doi:'123'}})
 		},
 		getSuggestion(){
 			if(this.clock)
@@ -128,7 +134,7 @@ export default defineComponent({
 			if(this.store.serInput != ''){
 				// @ts-ignore
 				this.clock = setTimeout(()=>{
-					autoComplete(this.store.serInput).then(res=>{
+					autoComplete(this.store.option.value,this.store.serInput).then(res=>{
 						console.log(res)
 						this.store.suggestions = res.data.results
 						console.log(this.store.suggestions)
@@ -195,6 +201,9 @@ h3,p {
 }
 .field-column:hover {
 	background-color: #cfcfcf;
+}
+.hover-blue:hover {
+	color: #409eff;
 }
 .search {
 	display: flex;

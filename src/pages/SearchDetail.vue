@@ -1,47 +1,62 @@
 <template>
   <div class="body">
     <el-container class="ContentLayout">
+      <!-- 左边栏 -->
       <el-aside width="150px" class="AppSearchAggregation ContentLayout__sideColumn">
         <div class="AppSearchAggregation__label">分类浏览</div>
         <div class="demo-collapse">
-          <el-collapse v-model="activeNames">
-            <el-collapse-item title="论文类型" name="1">
+          <el-collapse v-model="activeNames"> 
+            <!-- 论文的左框 -->
+            <el-collapse-item title="论文类型" name="1" v-if="active_tab==1">
               <div>
                 <div v-for="(item, index) in tab_contents.item1" class="AggregationListItem">
-                  <span class="AggregationListItemKey">{{ item.label }}</span>
-                  <span class="AggregationListItemNumber">{{ item.num }}</span>
+                  <span class="AggregationListItemKey">
+                    <el-checkbox 
+                      v-model="item.checkbox"
+                      label="" 
+                      size=""
+                      class="checkbox" 
+                    />
+                    {{ item.label }}
+                  </span>
                 </div>
               </div>
             </el-collapse-item>
-            <el-collapse-item title="学科分类" name="2">
+
+            <!-- 专利的左框 -->
+            <el-collapse-item title="国家" name="4" v-if="active_tab==2">
               <div>
-                <div v-for="(item, index) in tab_contents.item2" class="AggregationListItem">
-                  <span class="AggregationListItemKey">{{ item.label }}</span>
-                  <span class="AggregationListItemNumber">{{ item.num }}</span>
+                <div v-for="(item, index) in tab_contents.item4" class="AggregationListItem">
+                  <span class="AggregationListItemKey">
+                    <el-checkbox 
+                      v-model="item.checkbox"
+                      label="" 
+                      size=""
+                      class="checkbox" 
+                    />
+                    {{ item.name }}
+                  </span>
                 </div>
               </div>
             </el-collapse-item>
-            <el-collapse-item title="出版年" name="3">
+
+            <el-collapse-item title="专利类型" name="5" v-if="active_tab==2">
               <div>
-                <div v-for="(item, index) in tab_contents.item2" class="AggregationListItem">
-                  <span class="AggregationListItemKey">{{ item.label }}</span>
-                  <span class="AggregationListItemNumber">{{ item.num }}</span>
-                </div>
-              </div>
-            </el-collapse-item>
-            <el-collapse-item title="出版物" name="4">
-              <div>
-                <div v-for="(item, index) in tab_contents.item2" class="AggregationListItem">
-                  <span class="AggregationListItemKey">{{ item.label }}</span>
-                  <span class="AggregationListItemNumber">{{ item.num }}</span>
+                <div class="AggregationListItem">
+                  <span class="AggregationListItemKey">
+                    <el-radio-group v-model="patentTypeRatio" class="ml-4">
+                      <el-radio label="PATENT" size="large">专利</el-radio>
+                      <el-radio label="DESIGN" size="large">设计</el-radio>
+                    </el-radio-group>
+                  </span>
                 </div>
               </div>
             </el-collapse-item>
           </el-collapse>
         </div>
       </el-aside>
-    
-  
+      
+      <!-- 中间栏 -->
       <el-main>
         <div class="card">
           <!-- 搜索标签 -->
@@ -50,41 +65,62 @@
             <div class="AppSearchTab" :class="{'is-active': active_tab === 2}" @click="changeActiveTab(2)">专利</div>
           </div>
           <!-- 搜索筛选项 -->
+          <el-row class="AppSearchFilter">
+            <el-col :span="2">
+              <el-button @click="handleSearch">搜索</el-button>
+            </el-col>
+            <el-col :span="12">
+              <el-date-picker
+                v-model="dateValue"
+                type="daterange"
+                start-placeholder="Start date"
+                end-placeholder="End date"
+                format="YYYY/MM/DD"
+                value-format="YYYY-MM-DD"
+              />
+            </el-col>
+            <el-col :span="4">
+              <!-- 论文 -->
+              <el-select v-model="sortFunc" placeholder="排序方式" size="default" v-if="active_tab==1">
+                <el-option
+                  v-for="item in options2"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+              <!-- 专利 -->
+              <el-select v-model="sortByTime" placeholder="时间排序" size="default" v-if="active_tab==2">
+                <el-option
+                  v-for="item in options3"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-col>
+            <el-col :span="4">
+              <!-- 论文 -->
+              <span class="base-switch__button" v-if="active_tab==1">
+                <el-switch v-model="hasFullTextValue" />
+                <span class="base-switch__label">可获取全文</span>
+              </span>
+              
+              <!-- 专利 -->
+              <span class="base-switch__button" v-if="active_tab==2">
+                <el-switch v-model="patentStatus" />
+                <span class="base-switch__label" v-if="patentStatus">已授予</span>
+                <span class="base-switch__label" v-if="!patentStatus">申请中</span>
+              </span>
+            </el-col>
+          </el-row>
           <div class="AppSearchTabContent">
             <div class="AppSearchFilters">
               <div class="AppFilterMeta">
-                <span>0 / </span>
-                <span class="total-num">100000条</span>
               </div>
               <div class="AppFilterInput">
-                <el-input
-                  v-model="SearchValue"
-                  placeholder="在结果中检索"
-                  :suffix-icon="Search"
-                />
               </div>
               <div class="AppFilterSelect">
-                <span>
-                  <el-select v-model="SelectValue1" placeholder="时间范围" size="default">
-                    <el-option
-                      v-for="item in options1"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </span>
-                <span>
-                  <el-select v-model="SelectValue2" placeholder="排序方式" size="default">
-                    <el-option
-                      v-for="item in options2"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </span>
-                
               </div>
             </div>
           </div>
@@ -92,20 +128,35 @@
           <div class="AppSearchRefineItems">
             <div class="AppSearchRefineLabel">筛选条件</div>
             <span class="AppSearchRefineItem">
-              <span class="AppSearchRefineItemText">
-                <span class="Highlight">主题：</span>
-                化学
+              <span v-if="filterItems.length===0">空</span>
+              <span v-for="(item, index) in filterItems" class="AppSearchRefineItemText">
+                <span class="Highlight">{{ item.label }}:</span>
+                {{ item.content }}
+                <el-icon class="delete" @click="deleteSearchTab(index)"><Close/></el-icon>
               </span>
-              <el-icon class="delete" @click="deleteSearchTab"><Close/></el-icon>
             </span>
           </div>
           <!-- 搜索详情 -->
           <div class="List"></div>
-          <SearchCard/>
+          <!-- 论文 -->
+          <div v-if="active_tab == 1">
+            <SearchCard ref="SearchCardRef"/>
+          </div>
+          
+          <!-- 专利 -->
+          <div v-if="active_tab == 2">
+            <PatentSearchCard ref="PantentCardRef"/>
+          </div>
         </div>
         
       </el-main>
-  
+      
+      <!-- 右边栏 -->
+      <el-aside width="40px">
+        <el-button @click="scrollToTop" class="scroll-top-button">
+          回到顶部
+        </el-button>
+      </el-aside>
     </el-container>
   </div>
   
@@ -114,26 +165,47 @@
 
 <script setup>
 import { onMounted, reactive, ref, shallowRef, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { ElCheckbox, ElCheckboxGroup, ElEmpty, ElNotification, ElPagination } from "element-plus";
-import { useSearchStore } from '../store/search.ts';
 import { Calendar, Search } from '@element-plus/icons-vue'
 
-import SearchInput from '../components/Search/SearchInput/Search.vue';
-import WorksResCard from '../components/Search/SearchCard/WorksResCard.vue';
-import AuthorsResCard from '../components/Search/SearchCard/AuthorsResCard.vue';
-import VenuesResCard from '../components/Search/SearchCard/VenuesResCard.vue';
-import InstitutionsResCard from '../components/Search/SearchCard/InstitutionsResCard.vue';
-import ConceptsResCard from '../components/Search/SearchCard/ConceptsResCard.vue';
 import SearchCard from '@/components/Search/SearchCard/SearchCard.vue'
-//import Avatar from '@/components/Avatar.vue'
+import PatentSearchCard from '@/components/Search/SearchCard/PatentSearchCard.vue'
+import { getSearchResult, getPatentResult } from '@/API'
+import { useSearchStore } from '@/store'
 
 
 const searchStore = useSearchStore()
-const SelectValue1 = ref('')
-const SelectValue2 = ref('')
+const route = useRoute()
+const router = useRouter()
 
+const searchData = reactive({})
+
+// 论文面板的ref
+const SearchCardRef = ref(null)
+// 专利面板的ref
+const PantentCardRef = ref(null)
 const activeNames = ref(['1','2','3','4'])
+const active_tab = ref(1)
+const typeCheckbox = ref()
+const conceptsCheckboxs = ref()
+const SearchValue = ref('')
+
+
+// 传递给子组件的对象
+const hasFullTextValue = ref(true)
+const dateValue = ref()
+const typeValue = ref()
+const countryValue = ref()
+const sortFunc = ref()
+const sortByTime = ref()
+const patentStatus = ref()
+const patentTypeRatio = ref()
+
+const filterItems = ref([
+  'nihao','nihaoma'
+])
+
 const options1 = [
   {value: 'Option1',label: '今年',},
   {value: 'Option2',label: '近三年',},
@@ -141,49 +213,140 @@ const options1 = [
   {value: 'Option4',label: '近十年',},
 ]
 const options2 = [
-  {value: 'Option1',label: '综合排序',},
-  {value: 'Option2',label: '时间排序',},
-  {value: 'Option3',label: '相关排序',},
+  {value: 'display_name',label: '名称排序(升序)',},
+  {value: 'display_name:desc',label: '名称排序(降序)',},
+  {value: 'relevance_score:desc',label: '综合排序',},
+  {value: 'publication_date',label: '发布时间(升序)',},
+  {value: 'publication_date:desc',label: '发布时间(降序)',},
+  {value: 'cited_by_count',label: '引用次数(升序)',},
+  {value: 'cited_by_count:desc',label: '引用次数(降序)',},
+]
+const options3 = [
+  {value: 'new',label: '从新到旧',},
+  {value: 'old',label: '从旧到新',},
 ]
 
 const tab_contents = reactive({
   item1:[
-    {label: '期刊论文',num: 10000,},
-    {label: '学位论文',num: 8755,},
-    {label: '预印本论文',num: 230,},
-    {label: '会议论文',num: 120,},
+    // 论文类型
+    {label: 'article', checkbox: false},
+    {label: 'book-chapter', checkbox: false},
+    {label: 'book', checkbox: false},
+    {label: 'dissertation', checkbox: false},
+    {label: 'dataset', checkbox: false},
+    {label: 'report', checkbox: false},
+    {label: 'letter', checkbox: false},
+    {label: 'standard', checkbox: false},
+    {label: 'editorial', checkbox: false},
+    {label: 'paratext', checkbox: false},
+    {label: 'other', checkbox: false},
   ],
-  item2:[
-    {label: '文化、科学、教育、体育',num: 10000,},
-    {label: '预防医学、卫生学',num: 8755,},
-    {label: '公路运输',num: 230,},
-    {label: '电脑、计算机',num: 120,},
-  ],
+  // 年份
   item3:[
-    {label: '2023',num: 10000,},
-    {label: '2022',num: 8755,},
-    {label: '2021',num: 230,},
-    {label: '2020',num: 120,},
+    {label: '2023',checkbox: false},
+    {label: '2022',checkbox: false},
+    {label: '2021',checkbox: false},
+    {label: '2020',checkbox: false},
   ],
+  // 国家
   item4:[
-    {label: '劳动保护',num: 10000,},
-    {label: '健康生活',num: 8755,},
-    {label: '汽车杂志',num: 230,},
-    {label: '汽车杂志',num: 120,},
-  ],  
+    {label: 'US',checkbox: false, name: '美国'},
+    {label: 'WO',checkbox: false, name: '世界知识产权组织'},
+    {label: 'CN',checkbox: false, name: '中国'},
+    {label: 'JP',checkbox: false, name: '日本'},
+    {label: 'DE',checkbox: false, name: '德国'},
+    {label: 'FR',checkbox: false, name: '法国'},
+    {label: 'GB',checkbox: false, name: '英国'},
+    {label: 'CA',checkbox: false, name: '加拿大'},
+    {label: 'AU',checkbox: false, name: '澳大利亚'},
+    {label: 'IN',checkbox: false, name: '印度'},
+  ],
+  // litigation
+  item7:[
+    {label: 'YES',checkbox: false, name: 'yes'},
+    {label: 'NO',checkbox: false, name: 'no'},
+  ]
 })
 
+const conceptsData = reactive({
+  data:{
+    keys:[],
+    values:[],
+  }
+})
 
-const active_tab = ref(1)
+// 搜索按钮
+const handleSearch = () => {
+  if (active_tab.value === 1) {
+    handleType()
+    searchStore.hasFullTextValue = hasFullTextValue
+    searchStore.dateValue = dateValue
+    searchStore.typeValue = typeValue
+    searchStore.sortFunc = sortFunc
+    SearchCardRef.value.getSearchData()
+  } else {
+    handleCountry()
+    searchStore.dateValue = dateValue
+    searchStore.countryValue = countryValue
+    searchStore.sortByTime = sortByTime
+    searchStore.patentStatus = patentStatus
+    searchStore.patentTypeRatio = patentTypeRatio
+    PantentCardRef.value.getSearchData()
+  }
+}
 
 const changeActiveTab = (num) => {
   active_tab.value = num
 }
 
-const SearchValue = ref('')
-const deleteSearchTab = () => {
-  alert('删除搜索项')
+// 处理type
+const handleType = () => {
+  let result = ''
+  for (let item of tab_contents.item1) {
+    if (item.checkbox) {
+      result += item.label;
+      result +='|'
+    }
+  }
+  typeValue.value = result
 }
+
+// 处理国家
+const handleCountry = () => {
+  let result = ''
+  for (let item of tab_contents.item4) {
+    if (item.checkbox) {
+      result += item.label
+      result += ','
+    }
+  }
+  countryValue.value = result
+}
+
+// 添加筛选条件
+const addFilterItem = () => {
+  filterItems.value.push('')
+}
+
+const deleteSearchTab = (index) => {
+  filterItems.value.splice(index, 1)
+}
+
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // 可选，平滑滚动效果
+  });
+}
+
+watch(
+  () => searchStore.filterItems,
+  (newVal, oldVal) => {
+    filterItems.value = newVal
+    console.log(newVal)
+  }, 
+  { immediate: true, deep: true })
+
 
 </script>
 
@@ -309,7 +472,7 @@ const deleteSearchTab = () => {
   background-color: #f3f5f8;;
   .AggregationListItemKey {
     text-align: left;
-    margin-left: 20px;
+    margin-left: 10px;
     width: 154px;
     display: -webkit-box;
     display: -ms-flexbox;
@@ -324,6 +487,9 @@ const deleteSearchTab = () => {
     color: #8590a6;
     -webkit-transition: opacity .3s;
     transition: opacity .3s;
+  }
+  .checkbox {
+    
   }
 }
 .AppSearchTabs {
@@ -401,39 +567,60 @@ const deleteSearchTab = () => {
   border-radius: 4px;
   display: flex;
   align-items: center;
-}
-.AppSearchRefineLabel {
-  margin-right: 16px;
-  margin-bottom: 13px;
-  color: #646464;
-  font-size: 13px;
-}
-.AppSearchRefineItem {
-  background-color: #fff;
-  border: 1px solid transparent;
-  -webkit-box-shadow: 2px 2px 5px 0 rgba(55,99,170,.1), -2px -2px 5px 0 #fff, inset 0 1px 5px 0 hsla(0,0%,100%,.5);
-  box-shadow: 2px 2px 5px 0 rgba(55,99,170,.1), -2px -2px 5px 0 #fff, inset 0 1px 5px 0 hsla(0,0%,100%,.5);
-  padding: 5px 6px 5px 10px;
-  margin-right: 13px;
-  margin-bottom: 13px;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  .delete {
-    margin-left: 5px;
-    cursor: pointer;
+  .Highlight {
+    color: #8590a6;
+    background-color: transparent;
+  }
+  .AppSearchRefineLabel {
+    margin-right: 16px;
+    margin-bottom: 13px;
+    color: #646464;
+    font-size: 13px;
+  }
+  .AppSearchRefineItem {
+    background-color: #fff;
+    border: 1px solid transparent;
+    -webkit-box-shadow: 2px 2px 5px 0 rgba(55,99,170,.1), -2px -2px 5px 0 #fff, inset 0 1px 5px 0 hsla(0,0%,100%,.5);
+    box-shadow: 2px 2px 5px 0 rgba(55,99,170,.1), -2px -2px 5px 0 #fff, inset 0 1px 5px 0 hsla(0,0%,100%,.5);
+    padding: 5px 6px 5px 10px;
+    margin-right: 13px;
+    margin-bottom: 13px;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    display: grid;
+    .delete {
+      margin-left: 5px;
+      cursor: pointer;
+    }
+    .AppSearchRefineItemText {
+      margin-right: 3px;
+      font-size: 12px;
+      display: flex;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
   }
 }
-.AppSearchRefineItemText {
-  max-width: 140px;
-  display: inline-block;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-.List {
-  
-}
 
+
+
+.base-switch__button {
+  margin-left: 10px;
+}
+.base-switch__label {
+  margin-left: 10px;
+  font-size: 12px;
+  color: #8590a6;
+}
+.AppSearchFilter {
+  margin-top: 12px;
+}
+.scroll-top-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
 </style>

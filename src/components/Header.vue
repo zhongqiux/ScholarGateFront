@@ -7,14 +7,17 @@
 		<div v-for="item,index in itemList" :class='(active-1 == index)?"active header-item":"header-item"' @click="[go(item.path),active = index+1]" >{{ item.value }}</div>
 	</div>
 	<div class="search" v-show="store.search && store.display">
-		<el-dropdown>
-			<input type="text" v-model="option.label" readonly autocomplete="off" placeholder="请选择" class="base-input_inner">
+		<el-dropdown :disabled="store.inAuthorPage">
+			<div class="flex flex-row items-center outline-none">
+				<input type="text" v-model="store.option.label" readonly autocomplete="off" placeholder="请选择" class="base-input_inner">
+				<svg t="1703139986629" class="ico" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5147" width="10" height="10"><path fill="#c0c4cc" d="M878.592 250.88q29.696 0 48.128 11.264t24.576 29.696 0 41.472-26.624 45.568q-82.944 92.16-159.744 180.224t-148.48 164.864q-19.456 20.48-45.568 31.744t-53.76 11.776-53.248-8.704-43.008-28.672q-39.936-44.032-82.944-90.112l-88.064-92.16q-43.008-46.08-85.504-90.624t-79.36-86.528q-17.408-19.456-22.528-40.448t1.024-38.4 23.552-28.672 45.056-11.264q35.84 0 98.816-0.512t137.728-0.512l153.6 0 150.528 0 125.952 0 79.872 0z" p-id="5148"></path></svg>
+			</div>
 			<template #dropdown>
-				<el-dropdown-item v-for="item in options" @click="option = item">{{ item.label }}</el-dropdown-item>
+				<el-dropdown-item v-for="item in options" @click="store.option = item">{{ item.label }}</el-dropdown-item>
 			</template>
 		</el-dropdown>
 		<el-dropdown ref="dropdown2" trigger="contextmenu" placement="bottom-start">
-			<input type="text" autocomplete="off" @input="getSuggestion()" v-model="store.serInput" placeholder="搜索你感兴趣的内容..." class="top_input" @focus="store.search_active = true" @keyup.enter.native="push('/explorePaper',{key:option.value,value:store.serInput})">
+			<input type="text" autocomplete="off" @input="getSuggestion()" v-model="store.serInput" placeholder="搜索你感兴趣的内容..." class="top_input" @focus="store.search_active = true" @keyup.enter.native="push(store.inAuthorPage?'/exploreAuthor':'/explorePaper',{key:store.option.value,value:store.serInput})">
 			<template #dropdown>
 					<el-dropdown-menu>
 						<el-dropdown-item v-for="item in store.suggestions" @click="store.serInput = item.display_name">{{ item.display_name }}</el-dropdown-item>
@@ -53,26 +56,27 @@ import { defineComponent } from 'vue'
 import { UserFilled } from '@element-plus/icons-vue'
 import { useHeaderStore,useUserStore } from "@/store"
 import GitAvatar from "@/components/small/GitAvatar.vue"
-import { autoComplete } from '@/API'
+import { autoComplete,completeBy } from '@/API'
 import LoginButton from '@/components/small/LoginButton.vue'
 // let store = useHeaderStore()
 
 export default defineComponent({
 	name:"Header",
 	components:{
-    GitAvatar,
-    LoginButton
-},
+		GitAvatar,
+		LoginButton
+	},
 	data(){
 		return {
-			itemList:[{value:' 首页 ',path:'/'},{value:'网站介绍',path:'/main'},{value:'工作台',path:'/admin/board'}],
+			itemList:[{value:'首页 ',path:'/'},{value:'关系网络',path:'/relation'},{value:'工作台',path:'/admin/board'}],
 			input:'',
 			active:1,
 			options: [
-				{ value: '123',label: '主题',},
-				{ value: '456',label: '关键词',}
+				{ value: completeBy.works,label: '关键词',},
+				{ value: completeBy.concepts,label: '领域',},
+				{ value: completeBy.institutions,label: '机构',},
+				{ value: completeBy.authors,label: '作者',},
 			],
-			option:{ value: '123',label: '主题',},
 			value:'123',
 			UserFilled,
 			store : useHeaderStore(),
@@ -96,7 +100,7 @@ export default defineComponent({
 			if(this.store.serInput != ''){
 				// @ts-ignore
 				this.clock = setTimeout(()=>{
-					autoComplete(this.store.serInput).then(res=>{
+					autoComplete(this.store.option.value,this.store.serInput).then(res=>{
 						console.log(res)
 						this.store.suggestions = res.data.results
 						console.log(this.store.suggestions)
@@ -136,13 +140,17 @@ export default defineComponent({
     line-height: 36px;
     border-radius: 999px 0 0 999px;
     background-color: hsla(0,0%,100%,.2);
-    padding: 0 10px 0 0;
+    padding: 0 12px 0 0;
     
     text-align: center;
 	outline: none;
 	cursor: pointer;
 	width: 70px;
 	color: white;
+}
+.ico {
+	margin-left: -20px;
+	margin-right: 10px;
 }
 .top_input::-webkit-input-placeholder,
 .base-input_inner::-webkit-input-placeholder {

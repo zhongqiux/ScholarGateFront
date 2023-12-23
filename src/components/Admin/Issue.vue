@@ -100,10 +100,10 @@
           <el-card
             :body-style="{ padding: '0px' }"
             shadow="hover"
-            style="margin: 2vh 0; height: 33vh; min-width: 180px"
+            style="margin: 2vh 0; height: 30vh; min-width: 180px"
             class="card"
           >
-            <div style="padding: 0 12px; height: 20vh">
+            <div style="padding: 0 12px; height: 18vh">
               <span class="card_header">
                 <svg style="margin: 0; padding: 0; width: 7; height: 11">
                   <rect width="20" height="8" stroke="black" fill="black" />
@@ -112,7 +112,7 @@
               </span>
               <div class="bottom">
                 <span class="name"> 申请时间 </span>
-                <time class="content"> {{ form.createTime }} </time>
+                <time class="content"> {{ TimeFormat(form.createTime) }} </time>
               </div>
               <div class="bottom">
                 <span class="name"> 申请人 </span>
@@ -122,29 +122,21 @@
                 <span class="name"> 状态 </span>
                 <span class="content"> {{ translation(form.status) }} </span>
               </div>
-              <div class="bottom">
-                <span class="name"> 备注 </span>
-                <span class="content"> {{ form.content }} </span>
-              </div>
             </div>
             <div
               style="
                 padding: 12px;
                 padding-top: 0px;
                 padding-bottom: 0px;
-                height: 10vh;
+                height: 8vh;
               "
             >
               <div class="subtitle">
                 <span class="title"> 修改的内容 </span>
               </div>
               <div class="bottom">
-                <span class="name"> 机构 </span>
-                <span class="content"> xxx </span>
-              </div>
-              <div class="bottom">
-                <span class="name"> 教育经历 </span>
-                <span class="content"> xxx </span>
+                <span class="name"> 背景 </span>
+                <span class="content"> {{ form.content }} </span>
               </div>
             </div>
             <div v-if="form.status != 0">
@@ -154,7 +146,7 @@
                   <el-button
                     size="small"
                     type="primary"
-                    @click="approve(form.id, pages.currentPage * 6 - 6 + index)"
+                    @click="del(form.id, pages.currentPage * 6 - 6 + index)"
                     >确认</el-button
                   >
                 </div>
@@ -178,7 +170,6 @@
                   <el-button
                     type="info"
                     plain
-                    @click="approve(form.id, index)"
                     style="
                       margin-bottom: 0.5vh;
                       margin-top: 0.5vh;
@@ -192,7 +183,7 @@
               <el-button
                 type="info"
                 plain
-                @click="openReject"
+                @click="openReject(form.id, form.userId, pages.currentPage * 6 - 6 + index)"
                 style="
                   margin-bottom: 0.5vh;
                   margin-top: 0.5vh;
@@ -235,7 +226,7 @@ import {
   Filter,
 } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { approveIssue, deleteAllIssue, getIssues, rejectIssue } from "@/API";
+import { approveIssue, deleteAllIssue, deleteIssue, getIssues, rejectIssue } from "@/API";
 import * as Type from "@/API/type";
 
 const currentSelection = reactive({
@@ -268,53 +259,11 @@ const allData = reactive({
   msg: "",
   list: [
     {
-      id: 1,
+      id: "1f7a338a3c",
       status: 0,
       userId: 3208,
       content: "o.O?",
       createTime: "2023-11-07 18:34:43",
-    },
-    {
-      id: 2,
-      userId: 2200,
-      status: 0,
-      content: "o.O?",
-      createTime: "2022-11-11 15:14:44",
-    },
-    {
-      id: 3,
-      userId: 2200,
-      status: 0,
-      content: "o.O?",
-      createTime: "2023-12-19 15:14:44",
-    },
-    {
-      id: 2,
-      userId: 2200,
-      status: 1,
-      content: "o.O?",
-      createTime: "2022-11-11 15:14:44",
-    },
-    {
-      id: 2,
-      userId: 2200,
-      status: 0,
-      content: "o.O?",
-      createTime: "2022-11-11 15:14:44",
-    },
-    {
-      id: 2,
-      userId: 2200,
-      status: 0,
-      content: "o.O?",
-      createTime: "2022-11-11 15:14:44",
-    },
-    {
-      id: 2,
-      userId: 2200,
-      status: 0,
-      content: "o.O?",
-      createTime: "2022-11-11 15:14:44",
     },
   ],
   totalApply: 0,
@@ -371,6 +320,8 @@ const openDeleteAll = () => {
       deleteAllIssue()
         .then((res: Type.CommonReturnType) => {
           console.log(res);
+          getAllIssue();
+          fillRequestData(currentSelection.type);
           ElMessage({
             type: "success",
             message: "已全部删除",
@@ -391,13 +342,13 @@ const openDeleteAll = () => {
     });
 };
 
-const openReject = (id: any, num: any) => {
+const openReject = (id: any, user_id: any, num: any) => {
   ElMessageBox.prompt("填写驳回理由", "Tip", {
     confirmButtonText: "确认",
     cancelButtonText: "取消",
   })
     .then(({ value }) => {
-      refuse(id, num, value)
+      refuse(id, user_id, num, value)
         .then((res: Type.CommonReturnType) => {
           console.log(res);
           ElMessage({
@@ -461,11 +412,12 @@ function fillRequestData(type: any) {
 
 const refuse = function (
   id: any,
+  user_id: any,
   num: any,
   reason: string
 ): Promise<Type.CommonReturnType> {
   return new Promise((resolve, reject) => {
-    rejectIssue(id, reason)
+    rejectIssue(id, reason, user_id)
       .then((res: Type.CommonReturnType) => {
         console.log(res);
         requestData.list[num].status = 2;
@@ -481,18 +433,26 @@ const refuse = function (
 };
 
 const approve = function (id: any, num: any): void {
-  // approveIssue(id).then((res:Type.CommonReturnType)=>{
-  //   console.log(res)
-  //   requestData.list[num].status = 1;
-  //   if(currentSelection.type == 2)
-  //     requestData.list.splice(num,1);
-  //   totalCount();
-  // }).catch(err=>{
-  //   console.log(err)
-  // })
-  requestData.list[num].status = 1;
-  if (currentSelection.type == 2) requestData.list.splice(num, 1);
-  totalCount();
+  approveIssue(id).then((res:Type.CommonReturnType)=>{
+    console.log(res)
+    requestData.list[num].status = 1;
+    if(currentSelection.type == 2)
+      requestData.list.splice(num,1);
+    totalCount();
+  }).catch(err=>{
+    console.log(err)
+  })
+};
+
+const del = function (id: any, num: any): void {
+  deleteIssue(id).then((res:Type.CommonReturnType)=>{
+    console.log(res)
+    requestData.list[num].status = 1;
+    requestData.list.splice(num,1);
+    totalCount();
+  }).catch(err=>{
+    console.log(err)
+  })
 };
 
 const timeFilter = function (): void {
@@ -527,13 +487,22 @@ function translation(type: any) {
   else return "未通过";
 }
 
-fillRequestData(currentSelection.type);
+function TimeFormat(time: any) {
+  let T = new Date(time)
+  let s = ""
+  s += T.getFullYear() + "-"
+  s += T.getMonth() + '-'
+  s += T.getDate() + ' '
+  s += T.toLocaleTimeString()
+  return s;
+}
 
 function getAllIssue() {
   getIssues()
     .then((res: Type.GetIssuesReturn) => {
       console.log(res);
       allData.list = res.data;
+      fillRequestData(currentSelection.type);
     })
     .catch((err) => {
       console.log(err);
