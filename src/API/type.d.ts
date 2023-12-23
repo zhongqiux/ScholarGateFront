@@ -181,6 +181,19 @@ export interface autoCompleteReturn extends CommonReturnType {
 		]
 	}
 }
+
+export interface GetIssuesReturn extends CommonReturnType {
+	data: {
+		issues :{
+			id: string,
+			userId: string,
+			content: string,
+			status: number,
+			createTime: Date
+		}[],
+	}
+}
+
 export interface Institution {
 	"id": string,
 	"ror": string,

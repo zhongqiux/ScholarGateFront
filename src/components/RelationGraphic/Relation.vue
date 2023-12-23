@@ -430,14 +430,14 @@ page {
 #form {
   margin: 10px;
   height: 800px;
-  width: 1200px;
+  width: 1000px;
   background-color: rgb(192, 214, 255);
 }
 
 
 .container {
-  min-height: 98vh;
-  min-width: 99vw;
+  min-height: 100%;
+  min-width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;

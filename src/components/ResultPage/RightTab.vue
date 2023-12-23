@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" :class="{container2 : isPatent, container : !isPatent}">
     <!-- 下载 -->
     <div class="item" style="margin-top: 13px">
       <div class="title">
@@ -13,79 +13,92 @@
       </div>
     </div>
 
-<!--    &lt;!&ndash; 操作 &ndash;&gt;-->
-<!--    <div class="item" :style="patentStyle">-->
-<!--      <div class="title">-->
-<!--        <Operation class="icon"/>-->
-<!--        <span>常用操作</span>-->
-<!--      </div>-->
+    <!-- 操作 -->
+    <div class="item" v-if="!isPatent">
+      <div class="title">
+        <Operation class="icon"/>
+        <span>常用操作</span>
+      </div>
 
-<!--      <div class="actions">-->
-<!--        <el-popover placement="left-start" :width="200" show-after="100" hide-after="100" trigger="click">-->
-<!--          <div>引用格式1</div>-->
-<!--          <div>引用格式2</div>-->
-<!--          <template #reference>-->
-<!--            <div class="action_item" @click="clickAction(0)">-->
-<!--              <i class="iconfont icon-quote-left" :class="{ clickedStyle: isCitation }"></i>-->
-<!--              <span class="action_text" :class="{ clickedStyle: isCitation }">引用</span>-->
-<!--            </div>-->
-<!--          </template>-->
-<!--        </el-popover>-->
+      <!--      <div class="actions">-->
+      <!--        <el-popover placement="left-start" :width="200" show-after="100" hide-after="100" trigger="click">-->
+      <!--          <div>引用格式1</div>-->
+      <!--          <div>引用格式2</div>-->
+      <!--          <template #reference>-->
+      <!--            <div class="action_item" @click="clickAction(0)">-->
+      <!--              <i class="iconfont icon-quote-left" :class="{ clickedStyle: isCitation }"></i>-->
+      <!--              <span class="action_text" :class="{ clickedStyle: isCitation }">引用</span>-->
+      <!--            </div>-->
+      <!--          </template>-->
+      <!--        </el-popover>-->
 
-<!--        <div class="action_item" @click="clickAction(1)">-->
-<!--          <i class="iconfont icon-star" :class="{ clickedStyle: isFavourite }"></i>-->
-<!--          <span class="action_text" :class="{ clickedStyle: isFavourite }">收藏</span>-->
-<!--        </div>-->
-<!--        <div class="action_item" @click="clickAction(2)">-->
-<!--          <i class="iconfont icon-heart" :class="{ clickedStyle: isRecommend }"> </i>-->
-<!--          <span class="action_text" :class="{ clickedStyle: isRecommend }">推荐</span>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
+      <div class="action_item" @click="clickAction(1)">
+        <i class="iconfont icon-star" :class="{ clickedStyle: isFavourite }"></i>
+        <span class="action_text" :class="{ clickedStyle: isFavourite }">收藏</span>
+      </div>
 
-<!--    &lt;!&ndash; 统计 &ndash;&gt;-->
-<!--    <div class="item">-->
-<!--      <div class="title">-->
-<!--        <Histogram class="icon"/>-->
-<!--        <span>访问统计</span>-->
-<!--      </div>-->
+      <!--        <div class="action_item" @click="clickAction(2)">-->
+      <!--          <i class="iconfont icon-heart" :class="{ clickedStyle: isRecommend }"> </i>-->
+      <!--          <span class="action_text" :class="{ clickedStyle: isRecommend }">推荐</span>-->
+      <!--        </div>-->
+      <!--      </div>-->
+    </div>
 
-<!--      <div class="statistic">-->
-<!--        <div class="stat_item">-->
-<!--          <p class="stat_text">浏览数</p>-->
-<!--          <p class="stat_num">{{ viewNum }}</p>-->
-<!--        </div>-->
+    <!-- 统计 -->
+    <!--    <div class="item">-->
+    <!--      <div class="title">-->
+    <!--        <Histogram class="icon"/>-->
+    <!--        <span>访问统计</span>-->
+    <!--      </div>-->
 
-<!--        <div class="stat_item">-->
-<!--          <p class="stat_text">推荐数</p>-->
-<!--          <p class="stat_num">{{ recommendNum }}</p>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
+    <!--      <div class="statistic">-->
+    <!--        <div class="stat_item">-->
+    <!--          <p class="stat_text">浏览数</p>-->
+    <!--          <p class="stat_num">{{ viewNum }}</p>-->
+    <!--        </div>-->
 
-<!--    &lt;!&ndash; 问题反馈 &ndash;&gt;-->
-<!--    <div class="item" style="border-bottom: transparent">-->
-<!--      <div class="title">-->
-<!--        <Edit class="icon"/>-->
-<!--        <span>问题反馈</span>-->
-<!--      </div>-->
+    <!--        <div class="stat_item">-->
+    <!--          <p class="stat_text">推荐数</p>-->
+    <!--          <p class="stat_num">{{ recommendNum }}</p>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
 
-<!--      <div class="actions">-->
-<!--        <div class="action_item2">-->
-<!--          <i class="iconfont icon-cuowuguanbi2"></i>-->
-<!--          <span class="action_text">数据错误</span>-->
-<!--        </div>-->
-<!--        <div class="action_item2">-->
-<!--          <i class="iconfont icon-undo"></i>-->
-<!--          <span class="action_text">撤稿申请</span>-->
-<!--        </div>-->
-<!--        <div class="action_item2">-->
-<!--          <i class="iconfont icon-jinggao2"> </i>-->
-<!--          <span class="action_text">著作权申诉</span>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
+    <!--    &lt;!&ndash; 问题反馈 &ndash;&gt;-->
+    <!--    <div class="item" style="border-bottom: transparent">-->
+    <!--      <div class="title">-->
+    <!--        <Edit class="icon"/>-->
+    <!--        <span>问题反馈</span>-->
+    <!--      </div>-->
+
+    <!--      <div class="actions">-->
+    <!--        <div class="action_item2">-->
+    <!--          <i class="iconfont icon-cuowuguanbi2"></i>-->
+    <!--          <span class="action_text">数据错误</span>-->
+    <!--        </div>-->
+    <!--        <div class="action_item2">-->
+    <!--          <i class="iconfont icon-undo"></i>-->
+    <!--          <span class="action_text">撤稿申请</span>-->
+    <!--        </div>-->
+    <!--        <div class="action_item2">-->
+    <!--          <i class="iconfont icon-jinggao2"> </i>-->
+    <!--          <span class="action_text">著作权申诉</span>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
   </div>
+
+  <el-dialog v-model="dialogVisible" title="用户未登录" width="30%" :center="alignCenter" :align-center="alignCenter"
+             :show-close="showClose" :close-on-click-modal="showClose" :close-on-press-escape="showClose">
+    <span>请先进行登录/注册</span>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button type="primary" @click="toLogin">
+          登录/注册
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script lang="ts">
@@ -93,7 +106,9 @@ import {defineComponent} from "vue";
 import {Edit, Histogram, Link, Operation} from "@element-plus/icons-vue";
 import "@/assets/ResultPageIconfont/iconfont.css"
 import {ElMessage} from "element-plus";
-import {getPatentData, getPaperData} from "@/API"
+import {getPatentData, getPaperData, setStar} from "@/API"
+import {useUserStore} from "@/store";
+import {router} from "@/router";
 
 export default defineComponent({
   name: "RightTab",
@@ -109,20 +124,21 @@ export default defineComponent({
       isRecommend: false,
       downloadLink: null,
       data: null,
-    }
-  },
-
-  computed: {
-    patentStyle() {
-      if (this.isPatent) {
-        return ({
-          marginTop: '13px',
-        })
-      }
+      paperId: null,
+      paperName: null,
+      dialogVisible: false,
+      alignCenter: true,
+      showClose: false,
     }
   },
 
   methods: {
+    toLogin() {
+      router.push({
+        path: '/login'
+      })
+    },
+
     clickAction(type: number) {
       if (type == 0) {
         // if (this.isCitation) {
@@ -133,35 +149,26 @@ export default defineComponent({
         //   alert("引用成功！");
         // }
       } else if (type == 1) {
-        if (this.isFavourite) {
-          this.isFavourite = false;
-          ElMessage({
-            message: '取消收藏',
-            duration: 1500,
-          })
-        } else {
+        if (!this.isFavourite) {
           this.isFavourite = true;
-          ElMessage({
-            message: '收藏成功',
-            type: 'success',
-            duration: 1500,
-          })
+          this.starSet()
+
         }
-      } else if (type == 2) {
-        if (this.isRecommend) {
-          this.isRecommend = false;
-          ElMessage({
-            message: '取消推荐',
-            duration: 1500,
-          })
-        } else {
-          this.isRecommend = true;
-          ElMessage({
-            message: '推荐成功',
-            type: 'success',
-            duration: 1500,
-          })
-        }
+        // } else if (type == 2) {
+        //   if (this.isRecommend) {
+        //     this.isRecommend = false;
+        //     ElMessage({
+        //       message: '取消推荐',
+        //       duration: 1500,
+        //     })
+        //   } else {
+        //     this.isRecommend = true;
+        //     ElMessage({
+        //       message: '推荐成功',
+        //       type: 'success',
+        //       duration: 1500,
+        //     })
+        //   }
 
       }
     },
@@ -184,22 +191,50 @@ export default defineComponent({
 
       if (result.flag) {
         this.downloadLink = result.data.primary_location.pdf_url
+        this.paperName = result.data.title
+        this.isFavourite = result.data.star
+
+        var str: any = result.data.id
+        var index = str.lastIndexOf("\/")
+        str = str.substring(index + 1, str.length)
+
+        this.paperId = str
+      }
+
+    },
+
+    async starSet() {
+      if (this.paperId != null && this.paperName != null) {
+        const result = await setStar(this.paperId, this.paperName)
+        console.log(result)
+
+        if (result.flag) {
+          ElMessage({
+            message: '收藏成功',
+            type: 'success',
+            duration: 1500,
+          })
+        } else {
+          this.dialogVisible = true
+        }
+
       }
 
     },
 
     toDownload() {
-      if (this.downloadLink != null){
+      if (this.downloadLink != null) {
         window.open(this.downloadLink, "_blank")
       }
     }
   },
 
   mounted() {
+    const id = this.$route.query.id
     if (this.isPatent) {
-      this.patentDataGet('CN101232829B');
+      this.patentDataGet(id);
     } else {
-      this.paperDataGet('W2138270253');
+      this.paperDataGet(id);
     }
   }
 })
@@ -209,7 +244,7 @@ export default defineComponent({
 .container {
   display: flex;
   flex-direction: column;
-  height: 150px;
+  height: 250px;
   background-color: #f3f5f8;
   margin-top: 30px;
 }
@@ -217,14 +252,13 @@ export default defineComponent({
 .container2 {
   display: flex;
   flex-direction: column;
-  height: 400px;
+  height: 150px;
   background-color: #f3f5f8;
   margin-top: 30px;
 }
 
 .item {
   padding-bottom: 23px;
-  border-bottom: #ececec solid 1px;
 }
 
 .title {
@@ -266,9 +300,7 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 20px;
-  width: 70px;
-  margin: 0;
+//height: 20px; //width: 70px; margin: 0;
 }
 
 .action_item2 {
