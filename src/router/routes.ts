@@ -24,4 +24,5 @@ export const routes = [
     {path: '/login', name: '', title: '登录', component: () => import('@/pages/NewLogin.vue')},
 	{ path: '/field', name: '', title: '领域', component: ()=>import('@/pages/FieldPage.vue') },
     {path: '/messages', name: 'Messages', title: '消息中心', component: ()=>import('@/pages/Messages.vue')},
+    {path: '/identify', name: '', title: '认证成功', component: ()=>import('@/components/Claim/ClaimRequest.vue')}
 ]

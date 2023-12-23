@@ -192,3 +192,96 @@ export function autoComplete(author:string): Promise<Type.autoCompleteReturn> {
         })
     })
 }
+
+export function getIssues(): Promise<Type.GetIssuesReturn> {
+    return new Promise((resolve, reject) => {
+        axios.get("/audit/showinfo", {
+            params: {
+                
+            },
+            headers:{
+                Authorization:useUserStore().token,
+            }
+        }).then(res =>{
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function approveIssue(id: string): Promise<Type.CommonReturnType> {
+    return new Promise((resolve, reject) => {
+        axios.post("/audit/approve", {
+            id: id,
+        },{
+            headers:{
+                Authorization:useUserStore().token,
+            }
+        }).then(res =>{
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function rejectIssue(id: string, reason: string): Promise<Type.CommonReturnType> {
+    return new Promise((resolve, reject) => {
+        axios.post("/reject", {
+            id: id,
+            reject_reason: reason,
+        },{
+            headers:{
+                Authorization:useUserStore().token,
+            }
+        }).then(res =>{
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function deleteIssue(id: string): Promise<Type.CommonReturnType> {
+    return new Promise((resolve, reject) => {
+        axios.delete("/audit/deleteOnceInfo/"+id
+        ).then(res =>{
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function deleteAllIssue(): Promise<Type.CommonReturnType> {
+    return new Promise((resolve, reject) => {
+        axios.delete("/audit/deleteAllFinishInfo/"
+        ).then(res =>{
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function VerifyClaim(): Promise<Type.CommonReturnType> {
+    return new Promise((resolve, reject) => {
+        axios.delete("/portals/verifyCode"
+        ).then(res =>{
+            resolve(res.data);
+        }).catch(err => {
+            reject(err)
+        })
+    })
+}
