@@ -220,14 +220,14 @@ export default defineComponent({
       router.push({
         path: '/explorePaper',
         query: {
-          title: keyword,
+          key: 'works',
+          value: keyword
         }
       })
     },
 
 
     toAuthor(index: any) {
-
       if (!this.isPatent) {
         console.log(this.authorId[index])
         router.push({
@@ -350,20 +350,19 @@ export default defineComponent({
           loading.close()
           this.dialogVisible = true
         }
-
       }
     }
 
   },
 
   mounted() {
-    const id = this.$route.query.doi
+    const id = this.$route.query.id
     if (this.isPatent) {
-      this.patentDataGet('CN101232829B');
+      this.patentDataGet(id);
     } else {
       this.paperDataGet(id);
     }
-  }
+  },
 })
 </script>
 
