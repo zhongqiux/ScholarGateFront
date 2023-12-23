@@ -13,7 +13,7 @@
   
       <div class="list-item">
         <!-- 标题 -->
-        <h2 class="ContentItem__titleText" @click="handleTitleClick">{{ item.title }}</h2>
+        <h2 class="ContentItem__titleText" @click="handleTitleClick(item.patent_id)">{{ item.title }}</h2>
         <!-- 作者 -->
         <div>
           <el-icon class="author-icon"><UserFilled /></el-icon>
@@ -124,8 +124,12 @@ const changeShowFlag = (item, flag) => {
   item = flag
 }
 
-const handleTitleClick = () => {
-  alert('跳转到该文章')
+const handleTitleClick = (url) => {
+  const start = url.indexOf("/") + 1;
+  const end = url.indexOf("/", start);
+  const id = url.substring(start, end);
+  // console.log(result);
+  router.push(`patent?id=${id}`)
 }
 
 const handleAuthorClick = () => {
