@@ -13,6 +13,7 @@ export const useSearchStore = defineStore({
     patentStatus:'',
     patentTypeRatio:'',
     keywords:'',
+    filterItems:'',
 	}),
   actions: {
     

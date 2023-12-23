@@ -5,7 +5,7 @@
       <el-aside width="150px" class="AppSearchAggregation ContentLayout__sideColumn">
         <div class="AppSearchAggregation__label">分类浏览</div>
         <div class="demo-collapse">
-          <el-collapse v-model="activeNames">
+          <el-collapse v-model="activeNames"> 
             <!-- 论文的左框 -->
             <el-collapse-item title="论文类型" name="1" v-if="active_tab==1">
               <div>
@@ -19,28 +19,6 @@
                     />
                     {{ item.label }}
                   </span>
-                </div>
-              </div>
-            </el-collapse-item>
-            <el-collapse-item title="学科分类" name="2" v-if="active_tab==1">
-              <div>
-                <div v-for="(value, key, index) in tab_contents.item2" :key="key" class="AggregationListItem">
-                  <span class="AggregationListItemKey">
-                    <el-checkbox 
-                      v-model="conceptsCheckboxs"
-                      label="" 
-                      size=""
-                      class="checkbox" 
-                    />
-                    {{ value }}
-                  </span>
-                </div>
-              </div>
-            </el-collapse-item>
-            <el-collapse-item title="出版年" name="3" v-if="active_tab==1">
-              <div>
-                <div v-for="(item, index) in tab_contents.item3" class="AggregationListItem">
-                  <span class="AggregationListItemKey">{{ item.label }}</span>
                 </div>
               </div>
             </el-collapse-item>
@@ -150,11 +128,12 @@
           <div class="AppSearchRefineItems">
             <div class="AppSearchRefineLabel">筛选条件</div>
             <span class="AppSearchRefineItem">
-              <span class="AppSearchRefineItemText">
-                <span class="Highlight">主题：</span>
-                化学
+              <span v-if="filterItems.length===0">空</span>
+              <span v-for="(item, index) in filterItems" class="AppSearchRefineItemText">
+                <span class="Highlight">{{ item.label }}:</span>
+                {{ item.content }}
+                <el-icon class="delete" @click="deleteSearchTab(index)"><Close/></el-icon>
               </span>
-              <el-icon class="delete" @click="deleteSearchTab"><Close/></el-icon>
             </span>
           </div>
           <!-- 搜索详情 -->
@@ -206,8 +185,26 @@ const searchData = reactive({})
 const SearchCardRef = ref(null)
 // 专利面板的ref
 const PantentCardRef = ref(null)
-
 const activeNames = ref(['1','2','3','4'])
+const active_tab = ref(1)
+const typeCheckbox = ref()
+const conceptsCheckboxs = ref()
+const SearchValue = ref('')
+
+
+// 传递给子组件的对象
+const hasFullTextValue = ref(true)
+const dateValue = ref()
+const typeValue = ref()
+const countryValue = ref()
+const sortFunc = ref()
+const sortByTime = ref()
+const patentStatus = ref()
+const patentTypeRatio = ref()
+
+const filterItems = ref([
+  'nihao','nihaoma'
+])
 
 const options1 = [
   {value: 'Option1',label: '今年',},
@@ -244,8 +241,6 @@ const tab_contents = reactive({
     {label: 'paratext', checkbox: false},
     {label: 'other', checkbox: false},
   ],
-  // 类型
-  item2:searchStore.concepts,
   // 年份
   item3:[
     {label: '2023',checkbox: false},
@@ -271,7 +266,6 @@ const tab_contents = reactive({
     {label: 'YES',checkbox: false, name: 'yes'},
     {label: 'NO',checkbox: false, name: 'no'},
   ]
-
 })
 
 const conceptsData = reactive({
@@ -280,21 +274,6 @@ const conceptsData = reactive({
     values:[],
   }
 })
-
-const active_tab = ref(1)
-const typeCheckbox = ref()
-const conceptsCheckboxs = ref()
-
-// 传递给子组件的对象
-const hasFullTextValue = ref(true)
-const dateValue = ref()
-const typeValue = ref()
-const countryValue = ref()
-const sortFunc = ref()
-const sortByTime = ref()
-const patentStatus = ref()
-const patentTypeRatio = ref()
-
 
 // 搜索按钮
 const handleSearch = () => {
@@ -305,14 +284,6 @@ const handleSearch = () => {
     searchStore.typeValue = typeValue
     searchStore.sortFunc = sortFunc
     SearchCardRef.value.getSearchData()
-    // const newData = {}
-    // for (const key in tab_contents.item2) {
-    //   newData.push({
-    //     [key]:tab_contents.item2[key],
-    //     checkbox:false
-    //   })
-    // }
-    // console.log(newData)
   } else {
     handleCountry()
     searchStore.dateValue = dateValue
@@ -321,7 +292,6 @@ const handleSearch = () => {
     searchStore.patentStatus = patentStatus
     searchStore.patentTypeRatio = patentTypeRatio
     PantentCardRef.value.getSearchData()
-    
   }
 }
 
@@ -353,9 +323,13 @@ const handleCountry = () => {
   countryValue.value = result
 }
 
-const SearchValue = ref('')
-const deleteSearchTab = () => {
-  alert('删除搜索项')
+// 添加筛选条件
+const addFilterItem = () => {
+  filterItems.value.push('')
+}
+
+const deleteSearchTab = (index) => {
+  filterItems.value.splice(index, 1)
 }
 
 function scrollToTop() {
@@ -364,6 +338,14 @@ function scrollToTop() {
     behavior: 'smooth' // 可选，平滑滚动效果
   });
 }
+
+watch(
+  () => searchStore.filterItems,
+  (newVal, oldVal) => {
+    filterItems.value = newVal
+    console.log(newVal)
+  }, 
+  { immediate: true, deep: true })
 
 
 </script>
@@ -585,37 +567,46 @@ function scrollToTop() {
   border-radius: 4px;
   display: flex;
   align-items: center;
-}
-.AppSearchRefineLabel {
-  margin-right: 16px;
-  margin-bottom: 13px;
-  color: #646464;
-  font-size: 13px;
-}
-.AppSearchRefineItem {
-  background-color: #fff;
-  border: 1px solid transparent;
-  -webkit-box-shadow: 2px 2px 5px 0 rgba(55,99,170,.1), -2px -2px 5px 0 #fff, inset 0 1px 5px 0 hsla(0,0%,100%,.5);
-  box-shadow: 2px 2px 5px 0 rgba(55,99,170,.1), -2px -2px 5px 0 #fff, inset 0 1px 5px 0 hsla(0,0%,100%,.5);
-  padding: 5px 6px 5px 10px;
-  margin-right: 13px;
-  margin-bottom: 13px;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  .delete {
-    margin-left: 5px;
-    cursor: pointer;
+  .Highlight {
+    color: #8590a6;
+    background-color: transparent;
+  }
+  .AppSearchRefineLabel {
+    margin-right: 16px;
+    margin-bottom: 13px;
+    color: #646464;
+    font-size: 13px;
+  }
+  .AppSearchRefineItem {
+    background-color: #fff;
+    border: 1px solid transparent;
+    -webkit-box-shadow: 2px 2px 5px 0 rgba(55,99,170,.1), -2px -2px 5px 0 #fff, inset 0 1px 5px 0 hsla(0,0%,100%,.5);
+    box-shadow: 2px 2px 5px 0 rgba(55,99,170,.1), -2px -2px 5px 0 #fff, inset 0 1px 5px 0 hsla(0,0%,100%,.5);
+    padding: 5px 6px 5px 10px;
+    margin-right: 13px;
+    margin-bottom: 13px;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    display: grid;
+    .delete {
+      margin-left: 5px;
+      cursor: pointer;
+    }
+    .AppSearchRefineItemText {
+      margin-right: 3px;
+      font-size: 12px;
+      display: flex;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
   }
 }
-.AppSearchRefineItemText {
-  max-width: 140px;
-  display: inline-block;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
+
+
+
 .base-switch__button {
   margin-left: 10px;
 }
