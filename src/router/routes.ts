@@ -22,8 +22,8 @@ export const routes = [
       ]
     },
     {path: '/', name: '', title: '首页', component: () => import('@/pages/MainPage.vue')},
-    // {path: '/index', name: 'index', title: '首页', component: () => import('@/pages/MainPage.vue')},
-    {path: '/main', name: '', title: 'main', component: () => import('@/components/HelloWorld.vue')},
+    {path: '/index', name: 'index', title: '首页', component: () => import('@/pages/MainPage.vue')},
+    {path: '/relation', name: 'relation', title: '关系图', component: () => import('@/components/HelloWorld.vue')},
     {path: '/person', name: '', title: 'person', component: () => import('@/pages/PersonPage.vue')},
     {path: '/researcher', name: '', title: 'researcher', component: () => import('@/pages/ResearcherPage.vue')},
     {path: '/result', name: '', title: 'result', component: () => import('@/pages/ResultPage.vue')},
@@ -34,14 +34,4 @@ export const routes = [
 	  { path: '/field', name: '', title: '领域', component: ()=>import('@/pages/FieldPage.vue') },
     {path: '/messages', name: 'Messages', title: '消息中心', component: ()=>import('@/pages/Messages.vue')},
     {path: '/messagedetail', name: '', title: '消息', component: ()=>import('@/pages/MessageDetail.vue')},
-    {
-      path: '/index',
-      component: () => import('@/pages/VerifyPage.vue'), // 你的 Index 页面组件
-      props: (route: RouteLocationNormalized) => ({
-        token: route.query.token as string,
-        user: route.query.user as string,
-        mail: route.query.mail as string,
-        doi: route.query.doi as string,
-      }),
-    },
 ]

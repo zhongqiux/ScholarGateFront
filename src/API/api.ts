@@ -171,12 +171,12 @@ export function getAuthorData(doi: string): Promise<Type.GetUserDataReturn> {
         // axiso 自带 get 和 post 方法
         axios.get("/portals/getUserMsg", {
             params: {
-                doi: doi,
+                doi: 'A5023888391',
             },
             headers: {
-                Authorization: useUserStore().token,
+                // Authorization: useUserStore().token,
 
-                // Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIzNDUiLCJ1c2VyTmFtZSI6ImZ3IiwicGFzc3dvcmQiOiIxMjMifQ.4nS1yyna7b6Yb2c9P4_2yl-wESjQrGtqQTgXKLWIeQ0",
+                Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIzNDUiLCJ1c2VyTmFtZSI6ImZ3IiwicGFzc3dvcmQiOiIxMjMifQ.4nS1yyna7b6Yb2c9P4_2yl-wESjQrGtqQTgXKLWIeQ0",
             }
         }//get请求携带登录凭证
         ).then(res => {

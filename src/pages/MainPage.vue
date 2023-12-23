@@ -36,7 +36,7 @@
 			<li><svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-left: 0px; margin-right: 0px;"><path d="M1 1L6 6.00031L1 11" stroke="black" stroke-opacity="0.8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></li>
 			<li>学术成果查询</li> 
 			<li><svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-left: 0px; margin-right: 0px;"><path d="M1 1L6 6.00031L1 11" stroke="black" stroke-opacity="0.8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></li>
-			<li>增值服务</li>
+			<li>工作台</li>
 		</ul>
 	</div>
 	
@@ -125,6 +125,7 @@ export default defineComponent({
 		},
 		go(path:string,query:any){
 			this.$router.push({path:path,query:query})
+			// this.$router.push({name:'researcher',params:{doi:'123'}})
 		},
 		getSuggestion(){
 			if(this.clock)

@@ -411,6 +411,11 @@ export default defineComponent({
 
 
 			myChart.setOption(option);
+			myChart.on('click', function (params) {
+				if(params.dataType == "node"){
+					console.log(params)
+				}
+			})
 		}
 	}
 })

@@ -83,6 +83,8 @@ export interface FieldData extends CommonReturnType {
 			"i10_index": number
 		},
 		"image_url": string,
+		related_concepts:{display_name: string, id:string}[],
+		counts_by_year:{cited_by_count: number ,works_count: number ,year: number}[],
 		"works_api_url": string,
 		"works":{
 			"meta": {

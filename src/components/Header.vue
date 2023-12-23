@@ -68,7 +68,7 @@ export default defineComponent({
 	},
 	data(){
 		return {
-			itemList:[{value:' 首页 ',path:'/'},{value:'网站介绍',path:'/main'},{value:'工作台',path:'/admin/board'}],
+			itemList:[{value:'首页 ',path:'/'},{value:'关系网络',path:'/relation'},{value:'工作台',path:'/admin/board'}],
 			input:'',
 			active:1,
 			options: [
