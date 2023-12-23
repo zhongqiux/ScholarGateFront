@@ -38,12 +38,16 @@
         <div>
           <el-button @click="downLoadPdf(item.pdf)">查看PDF</el-button>
         </div>
-        
       </div>
     </el-container>
     <el-divider class="item-divider"/>
   </div>
-  <div class="paginationStyle">
+
+  <div v-if="total_results==0">
+    <el-empty description="无结果" />
+  </div>
+
+  <div class="paginationStyle" v-if="total_results!=0">
     <el-pagination 
       background 
       layout="prev, pager, next" 
@@ -52,6 +56,7 @@
       @current-change="changeCurrentPage"
     />
   </div>
+  
   
 
 </template>
@@ -69,7 +74,12 @@ const searchStore = useSearchStore()
 const route = useRoute()
 const router = useRouter()
 
-const getSearchData = () => {
+const searchData = reactive({})
+const showFlag = ref(true)
+const currentPage = ref(1)
+const total_results = ref(0)
+
+const getSearchData = () => {  
   const key = route.query.key
   const value = route.query.value
   const pageNo = currentPage.value.toString()
@@ -78,7 +88,6 @@ const getSearchData = () => {
     page:pageNo,
     num:"15",
   }
-  console.log(searchStore.dateValue)
 
   // 日期查询
   if (searchStore.dateValue !== undefined && searchStore.dateValue !== '') {
@@ -110,16 +119,13 @@ const getSearchData = () => {
   console.log(params)
   getPatentResult(params).then(result => {
     searchData.data = result.data.organic_results
-    
+    total_results.value = result.data.search_information.total_results
   }).catch(error => {
     console.error(error);
   });
+  console.log(searchData)
 }
 
-const searchData = reactive({})
-
-const showFlag = ref(true)
-const currentPage = ref(1)
 const changeShowFlag = (item, flag) => {
   item = flag
 }
@@ -128,7 +134,6 @@ const handleTitleClick = (url) => {
   const start = url.indexOf("/") + 1;
   const end = url.indexOf("/", start);
   const id = url.substring(start, end);
-  // console.log(result);
   router.push(`patent?id=${id}`)
 }
 
@@ -152,7 +157,7 @@ defineExpose({
   getSearchData,
 })
 
-onMounted(() => {
+onMounted(() => {  
   getSearchData()
 })
 watch(
