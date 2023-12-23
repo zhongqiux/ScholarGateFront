@@ -64,7 +64,7 @@ export default {
         </el-icon>
     </div>
 </template>
-  
+
 <style scoped>
 .is-loading {
     margin-top: 25vh;

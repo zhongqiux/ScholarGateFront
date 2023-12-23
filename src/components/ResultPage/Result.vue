@@ -9,7 +9,7 @@
     <!-- 作者信息: 学术成果状态下-->
     <div class="author_row" v-if="!isPatent">
       <Avatar class="icon"/>
-      <span class="author_name" @click="toAuthor(authors)" v-for="(authors, index) in authorNames"> <!-- 跳转科研人员页面 -->
+      <span class="author_name" @click="toAuthor(index)" v-for="(authors, index) in authorNames"> <!-- 跳转科研人员页面 -->
         {{ authors }}
         <span v-if="index != authorNames.length - 1" style="color: #8590a6; font-weight: normal" @click.stop="">,</span>
       </span><!-- 跳转科研人员页面 -->
@@ -156,6 +156,8 @@ import {ElLoading} from "element-plus"
 import {router} from '@/router'
 import {adaptSummary} from "@/API";
 import {useUserStore} from '@/store'
+import {useRoute} from "vue-router";
+
 
 export default defineComponent({
   name: "Result",
@@ -181,7 +183,8 @@ export default defineComponent({
       dialogVisible: false,
       alignCenter: true,
       showClose: false,
-      conceptId: []
+      conceptId: [],
+      authorId: []
     }
   },
 
@@ -223,12 +226,14 @@ export default defineComponent({
     },
 
 
-    toAuthor(authors: any) {
+    toAuthor(index: any) {
+
       if (!this.isPatent) {
+        console.log(this.authorId[index])
         router.push({
-          path: '/researcher',
-          query: {
-            doi: authors,
+          name: 'researcher',
+          params: {
+            doi: this.authorId[index],
           }
         })
       }
@@ -316,6 +321,12 @@ export default defineComponent({
         //作者
         for (var i = 0; i < result.data.authorships.length; i++) {
           this.authorNames.push(result.data.authorships[i].author.display_name)
+
+          var str: any = result.data.authorships[i].author.id
+          var index = str.lastIndexOf("\/")
+          str = str.substring(index + 1, str.length)
+
+          this.authorId.push(str)
         }
 
         //关键词
@@ -346,10 +357,11 @@ export default defineComponent({
   },
 
   mounted() {
+    const id = this.$route.query.doi
     if (this.isPatent) {
       this.patentDataGet('CN101232829B');
     } else {
-      this.paperDataGet('W2138270253');
+      this.paperDataGet(id);
     }
   }
 })

@@ -9,8 +9,7 @@ import RelationVue from "@/components/RelationGraphic"
   <el-card class="box-card">
     <template #header>
       <div class="card-header">
-        <span>Card name</span>
-        <el-button class="button" text>Operation button</el-button>
+        <span>科研人员信息</span>
       </div>
     </template>
     <div v-for="o in 4" :key="o" class="text item">{{ 'List item ' + o }}</div>
@@ -32,9 +31,12 @@ import RelationVue from "@/components/RelationGraphic"
 
 .box-card{
   position: absolute;
+  width: 250px;
   top: 30%;
   left: 30px;
   z-index: 999;
   border-radius: 30px;
+  background-color: #f5f5f5;
+  color: #1a1a1a;
 }
 </style>

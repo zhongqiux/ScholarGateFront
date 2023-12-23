@@ -213,7 +213,7 @@ export default {
     color: rgb(71, 71, 205);
     display: flex;
     justify-content: left;
-    max-width: 5vw;
+    max-width: 50vw;
 }
 
 .edit {
