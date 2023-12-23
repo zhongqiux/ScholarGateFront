@@ -87,6 +87,18 @@
     <!--      </div>-->
     <!--    </div>-->
   </div>
+
+  <el-dialog v-model="dialogVisible" title="用户未登录" width="30%" :center="alignCenter" :align-center="alignCenter"
+             :show-close="showClose" :close-on-click-modal="showClose" :close-on-press-escape="showClose">
+    <span>请先进行登录/注册</span>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button type="primary" @click="toLogin">
+          登录/注册
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script lang="ts">
@@ -95,6 +107,8 @@ import {Edit, Histogram, Link, Operation} from "@element-plus/icons-vue";
 import "@/assets/ResultPageIconfont/iconfont.css"
 import {ElMessage} from "element-plus";
 import {getPatentData, getPaperData, setStar} from "@/API"
+import {useUserStore} from "@/store";
+import {router} from "@/router";
 
 export default defineComponent({
   name: "RightTab",
@@ -112,10 +126,19 @@ export default defineComponent({
       data: null,
       paperId: null,
       paperName: null,
+      dialogVisible: false,
+      alignCenter: true,
+      showClose: false,
     }
   },
 
   methods: {
+    toLogin() {
+      router.push({
+        path: '/login'
+      })
+    },
+
     clickAction(type: number) {
       if (type == 0) {
         // if (this.isCitation) {
@@ -169,6 +192,7 @@ export default defineComponent({
       if (result.flag) {
         this.downloadLink = result.data.primary_location.pdf_url
         this.paperName = result.data.title
+        this.isFavourite = result.data.star
 
         var str: any = result.data.id
         var index = str.lastIndexOf("\/")
@@ -190,7 +214,10 @@ export default defineComponent({
             type: 'success',
             duration: 1500,
           })
+        } else {
+          this.dialogVisible = true
         }
+
       }
 
     },
@@ -203,10 +230,11 @@ export default defineComponent({
   },
 
   mounted() {
+    const id = this.$route.query.id
     if (this.isPatent) {
-      this.patentDataGet('CN101232829B');
+      this.patentDataGet(id);
     } else {
-      this.paperDataGet('W2138270253');
+      this.paperDataGet(id);
     }
   }
 })

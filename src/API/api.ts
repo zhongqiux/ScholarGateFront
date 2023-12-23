@@ -551,3 +551,27 @@ export function setStar(id: string, name: string): Promise<null> {
     })
 }
 
+
+export function getRelatedWork(paperId: String): Promise<null> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get("/works/getRelatedWork", {
+                params: {
+                    id: paperId,
+                },
+                headers: {
+                    Authorization: useUserStore().token,
+                    // Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIxMjM0NSIsInVzZXJOYW1lIjoibXR5IiwicGFzc3dvcmQiOiIxMjMifQ.eUdmT1dOZaZXGVvn9VMoHvRfgTBr8RfZb00_W2iTyg4",
+
+                }
+            }//get请求携带登录凭证
+        ).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
