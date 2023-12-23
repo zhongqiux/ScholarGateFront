@@ -1,7 +1,4 @@
 <template>
-  <el-button @click="getSearchData">
-    搜索
-  </el-button>
   <div v-for="(item, index) in searchData.data">
     <el-container class="List__item">
       <el-aside width="60px" class="List__itemActions">
@@ -10,10 +7,6 @@
         </div>
         <div class="List__itemAction">
           <div class="iconfont icon-quote-left QuoteButton"></div>
-          <div class="CircleQuoteButton__label">
-            引用
-            <span>{{ item.cited_by_count }}</span>
-          </div>
         </div>
         
       </el-aside>
@@ -33,37 +26,32 @@
 
         <!-- 发布时间 -->
         <div class="article-source__content">
-          <span>发布时间：{{ item.publication_date }}</span>
+          <span>申请时间：{{ item.filing_date }}</span>
         </div>
 
         <!-- snippet摘要 -->
         <div class="article-brief__content">
           <span>摘要：{{ item.snippet }}</span>
         </div>
-        
-        <!-- 关键词 -->
-        <div class="keywords" >
-          <span class="keywords__label">关键词: </span>
-          <span 
-            v-for="(keyword, index) in item.keywords" 
-            class="keywords__content"
-            @click="handleKeywordClick"
-          >
-            {{ keyword }} &nbsp;
-          </span>
-        </div>
 
         <!-- 下载PDF -->
         <div>
           <el-button @click="downLoadPdf(item.pdf)">查看PDF</el-button>
-          <el-button @click="landingPaper(item.landing_page_url)">landingPage</el-button>
         </div>
         
       </div>
     </el-container>
     <el-divider class="item-divider"/>
   </div>
-  
+  <div class="paginationStyle">
+    <el-pagination 
+      background 
+      layout="prev, pager, next" 
+      :total="1000" 
+      v-model:current-page="currentPage"
+      @current-change="changeCurrentPage"
+    />
+  </div>
   
 
 </template>
@@ -74,6 +62,9 @@ import "@/assets/ResultPageIconfont/iconfont.css"
 import axios from 'axios';
 import { getPatentResult } from '@/API'
 import { useRoute, useRouter } from 'vue-router';
+import { useSearchStore } from '@/store'
+
+const searchStore = useSearchStore()
 
 const route = useRoute()
 const router = useRouter()
@@ -81,14 +72,45 @@ const router = useRouter()
 const getSearchData = () => {
   const key = route.query.key
   const value = route.query.value
+  const pageNo = currentPage.value.toString()
   const params = {
-    theme: value,
-    page:"1",
+    patent_name: value,
+    page:pageNo,
     num:"15",
   }
+  console.log(searchStore.dateValue)
+
+  // 日期查询
+  if (searchStore.dateValue !== undefined && searchStore.dateValue !== '') {
+    params.filing_after = searchStore.dateValue[0].replace(/-/g, "");
+    params.filing_before = searchStore.dateValue[1].replace(/-/g, "");
+  }
+
+  // 国家查询
+  if (searchStore.countryValue !== '') {
+    params.countries = searchStore.countryValue
+  }
+
+  // 时间排序
+  if (searchStore.sortByTime !== undefined && searchStore.sortByTime !== '') {
+    params.sortByTime = searchStore.sortByTime
+  }
+
+  // 状态
+  if (searchStore.patentStatus !== undefined && searchStore.patentStatus !== '') {
+    params.status = searchStore.patentStatus ? "GRANT" : "APPLICATION"
+  }
+
+  // 类型
+  if (searchStore.patentTypeRatio !== undefined && searchStore.patentTypeRatio !== '') {
+    params.type = searchStore.patentTypeRatio
+  }
+
+  // TODO
+  console.log(params)
   getPatentResult(params).then(result => {
-    console.log(result)
     searchData.data = result.data.organic_results
+    
   }).catch(error => {
     console.error(error);
   });
@@ -97,7 +119,7 @@ const getSearchData = () => {
 const searchData = reactive({})
 
 const showFlag = ref(true)
-
+const currentPage = ref(1)
 const changeShowFlag = (item, flag) => {
   item = flag
 }
@@ -117,6 +139,14 @@ const handleKeywordClick = () => {
 const handleConceptClick = () => {
   alert('搜索该concept相关文章')
 }
+
+const changeCurrentPage = () => {
+  getSearchData()
+}
+
+defineExpose({
+  getSearchData,
+})
 
 onMounted(() => {
   getSearchData()
@@ -258,5 +288,8 @@ watch(
   .keywords__content:hover {
     color: #2f3a91;
   }
+}
+.paginationStyle {
+  margin-left: 20px;
 }
 </style>

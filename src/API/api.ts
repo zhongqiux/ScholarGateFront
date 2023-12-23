@@ -224,7 +224,15 @@ export function getSearchResult(
     }, pageNo: number): Promise<Type.GetSearchResultReturn> {
     return new Promise((resolve, reject) => {
         axios.post(`/search/work/filter/${pageNo}`, {
-            name:params.name
+            type:params.type,
+            concept:params.concept,
+            name:params.name,
+            year:params.year,
+            has_fulltext:params.has_fulltext,
+            start_date:params.start_date,
+            stop_date:params.stop_date,
+            sort_func:params.sort_func,
+            key_word:params.key_word,
         },
         {
             headers: {
@@ -253,6 +261,8 @@ export function getPatentResult(
         sortByTime:string,
         filing_before:string,
         filing_after:string,
+        page:string,
+        num:string
     }): Promise<Type.GetPatentResultReturn> {
     return new Promise((resolve, reject) => {
         axios.post(`/patent/showPatents`, {
@@ -267,6 +277,8 @@ export function getPatentResult(
             sortByTime:params.sortByTime,
             filing_before:params.filing_before,
             filing_after:params.filing_after,
+            page:params.page,
+            num:params.num
         },
         {
             headers: {
@@ -274,7 +286,6 @@ export function getPatentResult(
             }
         }
         ).then(res => {
-            console.log(useUserStore().token)
             resolve(res.data);
         }).catch(err => {
             console.log(err)

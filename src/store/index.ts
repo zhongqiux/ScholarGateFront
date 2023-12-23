@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 export * from "./headerStore"
 export * from "./hotInfo"
+export * from "./search"
 
 export const useCounterStore = defineStore('counter'/*store的唯一标识*/, {
 	state: () => ({ count: 0 }),

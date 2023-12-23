@@ -17,7 +17,7 @@
   
       <div class="list-item">
         <!-- 标题 -->
-        <h2 class="ContentItem__titleText" @click="handleTitleClick">{{ item.display_name }}</h2>
+        <h2 class="ContentItem__titleText" @click="handleTitleClick(item.id)" v-html="item.display_name"></h2>
         <!-- 作者 -->
         <div>
           <el-icon class="author-icon"><UserFilled /></el-icon>
@@ -28,19 +28,27 @@
           </span>
         </div>
 
-        <!-- 发布时间 -->
-        <div class="article-source__content">
-          <span>类型：{{ item.type }}</span>
-          发布时间 {{ item.publication_date }}</div>
 
+        <!-- 类型 -->
+        <div class="keywords">
+          <span class="keywords__label">类型：&nbsp;</span>
+          <span class="keywords__content">{{ item.type }}</span>
+        </div>
+
+        <!-- 发布时间 -->
+        <div class="keywords">
+          <span class="keywords__label">发布时间：&nbsp;</span>
+          <span class="keywords__content">{{ item.publication_date }}</span>
+        </div>
+        
         
         <!-- concepts -->
         <div class="concepts">
           <span class="keywords__label">concepts:&nbsp;</span>
           <span 
-            v-for="(value, index) in conceptsData.data.values"
+            v-for="(value, key, index) in item.concepts"
             class="keywords__content"
-            @click="handleConceptClick"
+            @click="handleConceptClick(key)"
           >
             {{ value }} &nbsp;
           </span>
@@ -54,12 +62,13 @@
             class="keywords__content"
             @click="handleKeywordClick"
           >
-            {{ keyword }} &nbsp;
+            <span v-html="keyword"></span>
+            <span>&nbsp;</span>
           </span>
         </div>
 
         <!-- 下载PDF -->
-        <div>
+        <div class="downloadPdf">
           <el-button @click="downLoadPdf(item.pdf_url)">下载PDF</el-button>
           <el-button @click="landingPaper(item.landing_page_url)">landingPage</el-button>
         </div>
@@ -87,10 +96,12 @@ import {reactive, onMounted, ref, watch} from 'vue'
 import "@/assets/ResultPageIconfont/iconfont.css"
 import axios from 'axios';
 import { getSearchResult } from '@/API'
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router'
+import { useSearchStore } from '@/store'
 
 
-// 可能会删除的代码
+const searchStore = useSearchStore()
+
 const searchData = reactive({})
 const route = useRoute()
 const router = useRouter()
@@ -101,32 +112,54 @@ const conceptsData = reactive({
     values:[],
   }
 })
-
 const showFlag = ref(true)
-
 const currentPage = ref(1)
 const pageNum = ref()
 
 const changeShowFlag = (item, flag) => {
   item = flag
 }
+
 const getSearchData = () => {
   let key = route.query.key
   let value = route.query.value
   let pageNo = currentPage.value
-  const params = {
+
+  const params = reactive({
     name: value,
+  })
+
+  // 可获取全文
+  params.has_fulltext = searchStore.hasFullTextValue ? "true" : "false"
+
+  // 日期查询
+  if (searchStore.dateValue !== undefined) {
+    params.start_date = searchStore.dateValue[0]
+    params.stop_date = searchStore.dateValue[1]
   }
-  getSearchResult(params, pageNo).then(data => {
-    searchData.data = data.data
-    conceptsData.data.keys = Object.keys(data.data[0].concepts)
-    conceptsData.data.values = Object.values(data.data[0].concepts)
+
+  // 排序方式
+  if (searchStore.sortFunc !== undefined) {
+    params.sort_func = searchStore.sortFunc
+  }
+  
+  // 类型
+  if (searchStore.typeValue !== '') {
+    params.type = searchStore.typeValue
+  }
+  // TODO
+  console.log(params)
+  getSearchResult(params, pageNo).then(result => {
+    searchData.data = result.data
+    // 将concepts渲染到左侧栏里
+    searchStore.concepts = result.data[0].concepts
   }).catch(error => {
     console.error(error);
   });
 }
-const handleTitleClick = () => {
-  alert('跳转到该文章')
+const handleTitleClick = (url) => {
+  const id = url.substring(url.lastIndexOf('/') + 1);
+  router.push(`field?field=${id}`)
 }
 
 const handleAuthorClick = () => {
@@ -137,8 +170,9 @@ const handleKeywordClick = () => {
   alert('搜索该关键词相关文章')
 }
 
-const handleConceptClick = () => {
-  alert('搜索该concept相关文章')
+const handleConceptClick = (url) => {
+  const result = url.substring(url.lastIndexOf('/') + 1);
+  console.log(result);
 }
 
 const downLoadPdf = (pdf_url) => {
@@ -150,7 +184,6 @@ const downLoadPdf = (pdf_url) => {
 }
 
 const landingPaper = (landing_page_url) => {
-  
   if (landing_page_url == null) {
     alert('该论文没有lading paper!')
   } else {
@@ -162,15 +195,21 @@ const changeCurrentPage = () => {
   getSearchData()
 }
 
+// 父组件传给子组件的对象
+const props = defineProps([])
+
+// 向父组件暴露的函数
+defineExpose({
+  getSearchData,
+})
+
 onMounted(() => {
   getSearchData()
 })
 
 watch(
-  () => route.params, // 监听路由参数的变化
-  (newParams, oldParams) => {
-    // 在路由参数变化时执行的代码
-    console.log('路由参数发生变化');
+  () => route.params,
+  (new1,new2) => {
     getSearchData()
   },
   { immediate: true }
@@ -226,11 +265,13 @@ watch(
   color: #2f3a91;
 }
 .keywords {
-  margin-top: 10px;
+  display: flex;
+  margin-top: 20px;
+  margin-right: 10px;
   font-size: 14px;
   color: #646464;
   cursor: pointer;
-  margin-right: 10px;
+  
   -webkit-transition: all .3s;
   transition: all .3s;
   word-break: break-word;
@@ -240,6 +281,9 @@ watch(
   }
   .keywords__content:hover {
     color: #2f3a91;
+  }
+  .keywords__content {
+    margin-left: 5px;
   }
 }
 .List__item {
@@ -287,12 +331,12 @@ watch(
   margin-left: 20px;
 }
 .concepts {
-  margin-top: 10px;
-  margin-bottom: 30px;
+  margin-right: 10px;
+  margin-bottom: 0px;
+  padding-bottom: 15px;
   font-size: 14px;
   color: #646464;
   cursor: pointer;
-  margin-right: 10px;
   -webkit-transition: all .3s;
   transition: all .3s;
   word-break: break-word;
@@ -306,5 +350,8 @@ watch(
 }
 .paginationStyle {
   margin-left: 20px;
+}
+.downloadPdf {
+  margin-top: 20px;
 }
 </style>

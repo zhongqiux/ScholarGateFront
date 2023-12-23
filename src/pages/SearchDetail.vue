@@ -6,42 +6,78 @@
         <div class="AppSearchAggregation__label">分类浏览</div>
         <div class="demo-collapse">
           <el-collapse v-model="activeNames">
-            <el-collapse-item title="论文类型" name="1">
+            <!-- 论文的左框 -->
+            <el-collapse-item title="论文类型" name="1" v-if="active_tab==1">
               <div>
                 <div v-for="(item, index) in tab_contents.item1" class="AggregationListItem">
-                  <span class="AggregationListItemKey">{{ item.label }}</span>
-                  <span class="AggregationListItemNumber">{{ item.num }}</span>
+                  <span class="AggregationListItemKey">
+                    <el-checkbox 
+                      v-model="item.checkbox"
+                      label="" 
+                      size=""
+                      class="checkbox" 
+                    />
+                    {{ item.label }}
+                  </span>
                 </div>
               </div>
             </el-collapse-item>
-            <el-collapse-item title="学科分类" name="2">
+            <el-collapse-item title="学科分类" name="2" v-if="active_tab==1">
               <div>
-                <div v-for="(item, index) in tab_contents.item2" class="AggregationListItem">
-                  <span class="AggregationListItemKey">{{ item.label }}</span>
-                  <span class="AggregationListItemNumber">{{ item.num }}</span>
+                <div v-for="(value, key, index) in tab_contents.item2" :key="key" class="AggregationListItem">
+                  <span class="AggregationListItemKey">
+                    <el-checkbox 
+                      v-model="conceptsCheckboxs"
+                      label="" 
+                      size=""
+                      class="checkbox" 
+                    />
+                    {{ value }}
+                  </span>
                 </div>
               </div>
             </el-collapse-item>
-            <el-collapse-item title="出版年" name="3">
+            <el-collapse-item title="出版年" name="3" v-if="active_tab==1">
               <div>
-                <div v-for="(item, index) in tab_contents.item2" class="AggregationListItem">
+                <div v-for="(item, index) in tab_contents.item3" class="AggregationListItem">
                   <span class="AggregationListItemKey">{{ item.label }}</span>
-                  <span class="AggregationListItemNumber">{{ item.num }}</span>
                 </div>
               </div>
             </el-collapse-item>
-            <el-collapse-item title="出版物" name="4">
+
+            <!-- 专利的左框 -->
+            <el-collapse-item title="国家" name="4" v-if="active_tab==2">
               <div>
-                <div v-for="(item, index) in tab_contents.item2" class="AggregationListItem">
-                  <span class="AggregationListItemKey">{{ item.label }}</span>
-                  <span class="AggregationListItemNumber">{{ item.num }}</span>
+                <div v-for="(item, index) in tab_contents.item4" class="AggregationListItem">
+                  <span class="AggregationListItemKey">
+                    <el-checkbox 
+                      v-model="item.checkbox"
+                      label="" 
+                      size=""
+                      class="checkbox" 
+                    />
+                    {{ item.name }}
+                  </span>
+                </div>
+              </div>
+            </el-collapse-item>
+
+            <el-collapse-item title="专利类型" name="5" v-if="active_tab==2">
+              <div>
+                <div class="AggregationListItem">
+                  <span class="AggregationListItemKey">
+                    <el-radio-group v-model="patentTypeRatio" class="ml-4">
+                      <el-radio label="PATENT" size="large">专利</el-radio>
+                      <el-radio label="DESIGN" size="large">设计</el-radio>
+                    </el-radio-group>
+                  </span>
                 </div>
               </div>
             </el-collapse-item>
           </el-collapse>
         </div>
       </el-aside>
-    
+      
       <!-- 中间栏 -->
       <el-main>
         <div class="card">
@@ -66,7 +102,8 @@
               />
             </el-col>
             <el-col :span="4">
-              <el-select v-model="SelectValue2" placeholder="排序方式" size="default">
+              <!-- 论文 -->
+              <el-select v-model="sortFunc" placeholder="排序方式" size="default" v-if="active_tab==1">
                 <el-option
                   v-for="item in options2"
                   :key="item.value"
@@ -74,12 +111,29 @@
                   :value="item.value"
                 />
               </el-select>
+              <!-- 专利 -->
+              <el-select v-model="sortByTime" placeholder="时间排序" size="default" v-if="active_tab==2">
+                <el-option
+                  v-for="item in options3"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-col>
             <el-col :span="4">
-              <span class="base-switch__button">
-                <el-switch v-model="has_fulltextValue" />
+              <!-- 论文 -->
+              <span class="base-switch__button" v-if="active_tab==1">
+                <el-switch v-model="hasFullTextValue" />
+                <span class="base-switch__label">可获取全文</span>
               </span>
-              <span class="base-switch__label">可获取全文</span>
+              
+              <!-- 专利 -->
+              <span class="base-switch__button" v-if="active_tab==2">
+                <el-switch v-model="patentStatus" />
+                <span class="base-switch__label" v-if="patentStatus">已授予</span>
+                <span class="base-switch__label" v-if="!patentStatus">申请中</span>
+              </span>
             </el-col>
           </el-row>
           <div class="AppSearchTabContent">
@@ -107,12 +161,12 @@
           <div class="List"></div>
           <!-- 论文 -->
           <div v-if="active_tab == 1">
-            <SearchCard/>
+            <SearchCard ref="SearchCardRef"/>
           </div>
           
           <!-- 专利 -->
           <div v-if="active_tab == 2">
-            <PatentSearchCard/>
+            <PatentSearchCard ref="PantentCardRef"/>
           </div>
         </div>
         
@@ -134,19 +188,27 @@
 import { onMounted, reactive, ref, shallowRef, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElCheckbox, ElCheckboxGroup, ElEmpty, ElNotification, ElPagination } from "element-plus";
-import { useSearchStore } from '../store/search.ts';
 import { Calendar, Search } from '@element-plus/icons-vue'
 
 import SearchCard from '@/components/Search/SearchCard/SearchCard.vue'
 import PatentSearchCard from '@/components/Search/SearchCard/PatentSearchCard.vue'
 import { getSearchResult, getPatentResult } from '@/API'
+import { useSearchStore } from '@/store'
+
 
 const searchStore = useSearchStore()
 const route = useRoute()
 const router = useRouter()
+
 const searchData = reactive({})
 
+// 论文面板的ref
+const SearchCardRef = ref(null)
+// 专利面板的ref
+const PantentCardRef = ref(null)
+
 const activeNames = ref(['1','2','3','4'])
+
 const options1 = [
   {value: 'Option1',label: '今年',},
   {value: 'Option2',label: '近三年',},
@@ -154,36 +216,62 @@ const options1 = [
   {value: 'Option4',label: '近十年',},
 ]
 const options2 = [
-  {value: 'Option1',label: '综合排序',},
-  {value: 'Option2',label: '时间排序',},
-  {value: 'Option3',label: '相关排序',},
+  {value: 'display_name',label: '名称排序(升序)',},
+  {value: 'display_name:desc',label: '名称排序(降序)',},
+  {value: 'relevance_score:desc',label: '综合排序',},
+  {value: 'publication_date',label: '发布时间(升序)',},
+  {value: 'publication_date:desc',label: '发布时间(降序)',},
+  {value: 'cited_by_count',label: '引用次数(升序)',},
+  {value: 'cited_by_count:desc',label: '引用次数(降序)',},
+]
+const options3 = [
+  {value: 'new',label: '从新到旧',},
+  {value: 'old',label: '从旧到新',},
 ]
 
 const tab_contents = reactive({
   item1:[
-    {label: '期刊论文',num: 10000,},
-    {label: '学位论文',num: 8755,},
-    {label: '预印本论文',num: 230,},
-    {label: '会议论文',num: 120,},
+    // 论文类型
+    {label: 'article', checkbox: false},
+    {label: 'book-chapter', checkbox: false},
+    {label: 'book', checkbox: false},
+    {label: 'dissertation', checkbox: false},
+    {label: 'dataset', checkbox: false},
+    {label: 'report', checkbox: false},
+    {label: 'letter', checkbox: false},
+    {label: 'standard', checkbox: false},
+    {label: 'editorial', checkbox: false},
+    {label: 'paratext', checkbox: false},
+    {label: 'other', checkbox: false},
   ],
-  item2:[
-    {label: '文化、科学、教育、体育',num: 10000,},
-    {label: '预防医学、卫生学',num: 8755,},
-    {label: '公路运输',num: 230,},
-    {label: '电脑、计算机',num: 120,},
-  ],
+  // 类型
+  item2:searchStore.concepts,
+  // 年份
   item3:[
-    {label: '2023',num: 10000,},
-    {label: '2022',num: 8755,},
-    {label: '2021',num: 230,},
-    {label: '2020',num: 120,},
+    {label: '2023',checkbox: false},
+    {label: '2022',checkbox: false},
+    {label: '2021',checkbox: false},
+    {label: '2020',checkbox: false},
   ],
+  // 国家
   item4:[
-    {label: '劳动保护',num: 10000,},
-    {label: '健康生活',num: 8755,},
-    {label: '汽车杂志',num: 230,},
-    {label: '汽车杂志',num: 120,},
-  ],  
+    {label: 'US',checkbox: false, name: '美国'},
+    {label: 'WO',checkbox: false, name: '世界知识产权组织'},
+    {label: 'CN',checkbox: false, name: '中国'},
+    {label: 'JP',checkbox: false, name: '日本'},
+    {label: 'DE',checkbox: false, name: '德国'},
+    {label: 'FR',checkbox: false, name: '法国'},
+    {label: 'GB',checkbox: false, name: '英国'},
+    {label: 'CA',checkbox: false, name: '加拿大'},
+    {label: 'AU',checkbox: false, name: '澳大利亚'},
+    {label: 'IN',checkbox: false, name: '印度'},
+  ],
+  // litigation
+  item7:[
+    {label: 'YES',checkbox: false, name: 'yes'},
+    {label: 'NO',checkbox: false, name: 'no'},
+  ]
+
 })
 
 const conceptsData = reactive({
@@ -194,31 +282,75 @@ const conceptsData = reactive({
 })
 
 const active_tab = ref(1)
-const has_fulltextValue = ref(true)
-const dateValue = ref()
+const typeCheckbox = ref()
+const conceptsCheckboxs = ref()
 
+// 传递给子组件的对象
+const hasFullTextValue = ref(true)
+const dateValue = ref()
+const typeValue = ref()
+const countryValue = ref()
+const sortFunc = ref()
+const sortByTime = ref()
+const patentStatus = ref()
+const patentTypeRatio = ref()
+
+
+// 搜索按钮
 const handleSearch = () => {
-  let key = route.query.key
-  let value = route.query.value
-  const params = reactive({
-    name: value,
-    has_fulltext: has_fulltextValue,
-  })
-  if (dateValue.value != null) {
-    params.start_date = dateValue.value[0]
-    params.stop_date = dateValue.value[1]
+  if (active_tab.value === 1) {
+    handleType()
+    searchStore.hasFullTextValue = hasFullTextValue
+    searchStore.dateValue = dateValue
+    searchStore.typeValue = typeValue
+    searchStore.sortFunc = sortFunc
+    SearchCardRef.value.getSearchData()
+    // const newData = {}
+    // for (const key in tab_contents.item2) {
+    //   newData.push({
+    //     [key]:tab_contents.item2[key],
+    //     checkbox:false
+    //   })
+    // }
+    // console.log(newData)
+  } else {
+    handleCountry()
+    searchStore.dateValue = dateValue
+    searchStore.countryValue = countryValue
+    searchStore.sortByTime = sortByTime
+    searchStore.patentStatus = patentStatus
+    searchStore.patentTypeRatio = patentTypeRatio
+    PantentCardRef.value.getSearchData()
+    
   }
-  getSearchResult(params, 1).then(data => {
-    console.log(1)
-    searchData.data = data.data
-    conceptsData.data.keys = Object.keys(data.data[0].concepts)
-    conceptsData.data.values = Object.values(data.data[0].concepts)
-  }).catch(error => {
-    console.error(error);
-  });
 }
+
 const changeActiveTab = (num) => {
   active_tab.value = num
+}
+
+// 处理type
+const handleType = () => {
+  let result = ''
+  for (let item of tab_contents.item1) {
+    if (item.checkbox) {
+      result += item.label;
+      result +='|'
+    }
+  }
+  typeValue.value = result
+}
+
+// 处理国家
+const handleCountry = () => {
+  let result = ''
+  for (let item of tab_contents.item4) {
+    if (item.checkbox) {
+      result += item.label
+      result += ','
+    }
+  }
+  countryValue.value = result
 }
 
 const SearchValue = ref('')
@@ -358,7 +490,7 @@ function scrollToTop() {
   background-color: #f3f5f8;;
   .AggregationListItemKey {
     text-align: left;
-    margin-left: 20px;
+    margin-left: 10px;
     width: 154px;
     display: -webkit-box;
     display: -ms-flexbox;
@@ -373,6 +505,9 @@ function scrollToTop() {
     color: #8590a6;
     -webkit-transition: opacity .3s;
     transition: opacity .3s;
+  }
+  .checkbox {
+    
   }
 }
 .AppSearchTabs {
