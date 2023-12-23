@@ -48,7 +48,7 @@
           <span 
             v-for="(value, key, index) in item.concepts"
             class="keywords__content"
-            @click="handleConceptClick(key)"
+            @click="handleConceptClick(key, value, index)"
           >
             {{ value }} &nbsp;
           </span>
@@ -60,7 +60,7 @@
           <span 
             v-for="(keyword, index) in item.keywords" 
             class="keywords__content"
-            @click="handleKeywordClick"
+            @click="handleKeywordClick(keyword, index)"
           >
             <span v-html="keyword"></span>
             <span>&nbsp;</span>
@@ -77,6 +77,11 @@
     </el-container>
     <el-divider class="item-divider"/>
   </div>
+
+  <div v-if="searchData.data==''">
+    <el-empty description="无结果" />
+  </div>
+
   <div class="paginationStyle">
     <el-pagination 
       background 
@@ -115,6 +120,7 @@ const conceptsData = reactive({
 const showFlag = ref(true)
 const currentPage = ref(1)
 const pageNum = ref()
+const filterItems = ref([])
 
 const changeShowFlag = (item, flag) => {
   item = flag
@@ -147,11 +153,29 @@ const getSearchData = () => {
   if (searchStore.typeValue !== '') {
     params.type = searchStore.typeValue
   }
+
+  // concept key_word
+  if (filterItems.value.length !== 0) {
+    const conceptValue = filterItems.value
+      .filter(item => item.label === 'concept')
+      .map(item => item.id)
+      .join('|');
+    const keyWordValue = filterItems.value
+      .filter(item => item.label === 'key_word')
+      .map(item => item.content)
+      .join('|');
+    console.log(keyWordValue)
+    if (conceptValue != '') {
+      params.concept = conceptValue
+    }
+    if (keyWordValue != '') {
+      params.key_word = keyWordValue
+    }
+  }
   // TODO
   console.log(params)
   getSearchResult(params, pageNo).then(result => {
     searchData.data = result.data
-    // 将concepts渲染到左侧栏里
     searchStore.concepts = result.data[0].concepts
   }).catch(error => {
     console.error(error);
@@ -166,13 +190,29 @@ const handleAuthorClick = () => {
   alert('搜索该作者相关文章')
 }
 
-const handleKeywordClick = () => {
-  alert('搜索该关键词相关文章')
+const handleKeywordClick = (keyword, index) => {
+  const obj = {
+    label: 'key_word',
+    content: keyword,
+    id:'',
+  }
+  const isDuplicate = filterItems.value.some(item => item.content === obj.content);
+  filterItems.value.push(obj)
+  searchStore.filterItems = filterItems.value
 }
 
-const handleConceptClick = (url) => {
-  const result = url.substring(url.lastIndexOf('/') + 1);
-  console.log(result);
+const handleConceptClick = (key, value, index) => {
+  const obj = {
+    label: 'concept',
+    content: value,
+    id: key
+  }
+  // 判断元素是否重复
+  const isDuplicate = filterItems.value.some(item => item.id === obj.id);
+  if (!isDuplicate) {
+    filterItems.value.push(obj)
+    searchStore.filterItems = filterItems.value
+  }
 }
 
 const downLoadPdf = (pdf_url) => {
