@@ -94,7 +94,7 @@ import {defineComponent} from "vue";
 import {Edit, Histogram, Link, Operation} from "@element-plus/icons-vue";
 import "@/assets/ResultPageIconfont/iconfont.css"
 import {ElMessage} from "element-plus";
-import {getPatentData, getPaperData} from "@/API"
+import {getPatentData, getPaperData, setStar} from "@/API"
 
 export default defineComponent({
   name: "RightTab",
@@ -110,6 +110,8 @@ export default defineComponent({
       isRecommend: false,
       downloadLink: null,
       data: null,
+      paperId: null,
+      paperName: null,
     }
   },
 
@@ -124,35 +126,26 @@ export default defineComponent({
         //   alert("引用成功！");
         // }
       } else if (type == 1) {
-        if (this.isFavourite) {
-          this.isFavourite = false;
-          ElMessage({
-            message: '取消收藏',
-            duration: 1500,
-          })
-        } else {
+        if (!this.isFavourite) {
           this.isFavourite = true;
-          ElMessage({
-            message: '收藏成功',
-            type: 'success',
-            duration: 1500,
-          })
+          this.starSet()
+
         }
-      } else if (type == 2) {
-        if (this.isRecommend) {
-          this.isRecommend = false;
-          ElMessage({
-            message: '取消推荐',
-            duration: 1500,
-          })
-        } else {
-          this.isRecommend = true;
-          ElMessage({
-            message: '推荐成功',
-            type: 'success',
-            duration: 1500,
-          })
-        }
+        // } else if (type == 2) {
+        //   if (this.isRecommend) {
+        //     this.isRecommend = false;
+        //     ElMessage({
+        //       message: '取消推荐',
+        //       duration: 1500,
+        //     })
+        //   } else {
+        //     this.isRecommend = true;
+        //     ElMessage({
+        //       message: '推荐成功',
+        //       type: 'success',
+        //       duration: 1500,
+        //     })
+        //   }
 
       }
     },
@@ -175,6 +168,29 @@ export default defineComponent({
 
       if (result.flag) {
         this.downloadLink = result.data.primary_location.pdf_url
+        this.paperName = result.data.title
+
+        var str: any = result.data.id
+        var index = str.lastIndexOf("\/")
+        str = str.substring(index + 1, str.length)
+
+        this.paperId = str
+      }
+
+    },
+
+    async starSet() {
+      if (this.paperId != null && this.paperName != null) {
+        const result = await setStar(this.paperId, this.paperName)
+        console.log(result)
+
+        if (result.flag) {
+          ElMessage({
+            message: '收藏成功',
+            type: 'success',
+            duration: 1500,
+          })
+        }
       }
 
     },
@@ -200,7 +216,7 @@ export default defineComponent({
 .container {
   display: flex;
   flex-direction: column;
-  height: 230px;
+  height: 250px;
   background-color: #f3f5f8;
   margin-top: 30px;
 }
@@ -256,9 +272,7 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 20px;
-  width: 70px;
-  margin: 0;
+//height: 20px; //width: 70px; margin: 0;
 }
 
 .action_item2 {
