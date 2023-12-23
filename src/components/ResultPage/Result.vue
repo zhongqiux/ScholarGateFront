@@ -82,7 +82,7 @@
     </div>
 
     <!--  关键词: 学术成果状态下   -->
-    <div class="tag_row" v-if="!isPatent">
+    <div class="tag_row" v-if="!isPatent && keyWords.length != 0">
       <span class="text">关键词：</span>
       <el-tag class="tags" v-for="(keyword) in keyWords" effect="plain" @click="toKeyWord(keyword)">
         {{ keyword }}
