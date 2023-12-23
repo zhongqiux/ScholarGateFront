@@ -41,6 +41,14 @@
       <span class="text">{{ publicationDate }}</span>
       <span class="text" style="color: #8590a6">引用次数:</span>
       <span class="text">{{ citationNum }}</span>
+
+    </div>
+    <div class="row" v-if="!isPatent">
+      <span class="text" style="color: #8590a6">相关领域:</span>
+      <span class="text2" v-for="(concept, index) in concepts" key="index" @click="toConcepts(index)">
+        {{ concept }}
+        <span v-if="index != concepts.length - 1" style="color: #8590a6; font-weight: normal" @click.stop>,</span>
+      </span>
     </div>
 
     <!-- 其他信息：专利状态下 -->
@@ -74,7 +82,7 @@
     </div>
 
     <!--  关键词: 学术成果状态下   -->
-    <div class="tag_row" v-if="!isPatent">
+    <div class="tag_row" v-if="!isPatent && keyWords.length != 0">
       <span class="text">关键词：</span>
       <el-tag class="tags" v-for="(keyword) in keyWords" effect="plain" @click="toKeyWord(keyword)">
         {{ keyword }}
@@ -84,26 +92,47 @@
   <!-- 导航栏监听用 -->
   <div id="tag1"></div>
 
-  <!--  相关领域    -->
+  <!--  相关推荐    -->
   <div id="recommend">
     <div class="page_divider">
-      <p class="divider_title">相关领域</p>
+      <p class="divider_title">相关推荐</p>
       <p class="line"></p>
     </div>
 
 
     <div v-if="recommendation.length != 0">
+      <!-- 导航栏监听用 -->
+      <div id="tag4" v-if="!isPatent"></div>
+
       <div v-for="(recommends, index) in recommendation" key="index" class="recommend_container">
         <div class="recommend_list">
-          <span style="color: #2f3a91; font-size: 16px; width: 32px">{{ index + 1 }}.</span>
+          <span style="color: #2f3a91; font-size: 16px; width: 40px;">{{ index + 1 }}.</span>
           <div class="recommend_item">
-            <p class="recommend_title" @click="toConcepts(index)">{{ recommends }}</p>
+            <p class="recommend_title" @click="toResult(recommends.id)">{{ recommends.title }}</p>
+            <p class="recommend_info">发表日期：{{ recommends.publishDate }}</p>
+            <p class="recommend_info">
+              <span class="recommend_info">作者：</span>
+              <span class="recommend_info" v-for="(author, index) in recommends.author">
+              {{ author }}
+             <span v-if="index != recommends.author.length - 1" style="color: #8590a6; font-weight: normal" @click.stop="">,</span>
+            </span>
+            </p>
+
+            <p class="recommend_info">
+              <span class="recommend_info">关键词：</span>
+              <span class="recommend_info" v-for="(keyword, index) in recommends.keyword">
+              {{ keyword }}
+             <span v-if="index != recommends.keyword.length - 1" style="color: #8590a6; font-weight: normal" @click.stop="">,</span>
+            </span>
+            </p>
+
+
           </div>
         </div>
       </div>
     </div>
     <div v-else>
-      <el-empty description="无相关领域推荐"/>
+      <el-empty description="无相关推荐"/>
     </div>
 
     <!-- 导航栏监听用 -->
@@ -151,12 +180,11 @@
 <script lang="ts">
 import {defineComponent} from 'vue'
 import {Avatar, ArrowDown, ArrowUp,} from '@element-plus/icons-vue'
-import {getPatentData, getPaperData} from "@/API"
+import {getPatentData, getPaperData, getRelatedWork} from "@/API"
 import {ElLoading} from "element-plus"
 import {router} from '@/router'
 import {adaptSummary} from "@/API";
 import {useUserStore} from '@/store'
-import {useRoute} from "vue-router";
 
 
 export default defineComponent({
@@ -183,8 +211,9 @@ export default defineComponent({
       dialogVisible: false,
       alignCenter: true,
       showClose: false,
+      concepts: [],
       conceptId: [],
-      authorId: []
+      authorId: [],
     }
   },
 
@@ -241,6 +270,7 @@ export default defineComponent({
     },
 
     toConcepts(index: any) {
+      console.log(index, this.conceptId)
       if (this.conceptId.length != 0) {
         router.push({
           path: '/field',
@@ -255,6 +285,17 @@ export default defineComponent({
       router.push({
         path: '/login'
       })
+    },
+
+    toResult(paperId:any){
+      if (!this.isPatent) {
+        router.push({
+          path: '/result',
+          query: {
+            id: paperId,
+          }
+        })
+      }
     },
 
 
@@ -318,6 +359,7 @@ export default defineComponent({
         this.publicationDate = result.data.publication_date
         this.citationNum = result.data.cited_by_count
         this.message = adaptSummary(result.data.summary)
+
         //作者
         for (var i = 0; i < result.data.authorships.length; i++) {
           this.authorNames.push(result.data.authorships[i].author.display_name)
@@ -336,7 +378,7 @@ export default defineComponent({
 
         //相关领域
         for (var i = 0; i < result.data.concepts.length; i++) {
-          this.recommendation.push(result.data.concepts[i].display_name)
+          this.concepts.push(result.data.concepts[i].display_name)
 
           var str: any = result.data.concepts[i].id
           var index = str.lastIndexOf("\/")
@@ -351,6 +393,39 @@ export default defineComponent({
           this.dialogVisible = true
         }
       }
+    },
+
+    async relatedWorkGet(paperId: any) {
+      const result = await getRelatedWork(paperId)
+      console.log(result)
+
+      if (result.flag) {
+        for (var i = 0; i < result.data.results.length; i++) {
+          var str: any = result.data.results[i].id
+
+          var index = str.lastIndexOf("\/")
+          str = str.substring(index + 1, str.length)
+
+          let id = str
+          let title = result.data.results[i].title
+          let publishDate = result.data.results[i].publication_date
+          let author = []
+          let keyword = []
+          for (var j = 0; j < result.data.results[i].authorships.length; j++) {
+            author.push(result.data.results[i].authorships[j].author.display_name)
+          }
+
+          for (var j = 0; j < result.data.results[i].keywords.length; j++) {
+            keyword.push(result.data.results[i].keywords[j].keyword)
+          }
+
+          this.recommendation.push({id, title, publishDate, author, keyword})
+
+        }
+
+      }
+
+      console.log(this.recommendation)
     }
 
   },
@@ -358,11 +433,18 @@ export default defineComponent({
   mounted() {
     const id = this.$route.query.id
     if (this.isPatent) {
-      this.patentDataGet(id);
+      this.patentDataGet(id)
     } else {
-      this.paperDataGet(id);
+      this.paperDataGet(id)
+      this.relatedWorkGet(id)
     }
   },
+
+  watch:{
+    '$route': function (){
+      location.reload()
+    }
+  }
 })
 </script>
 
@@ -433,6 +515,20 @@ export default defineComponent({
   padding: 5px;
   text-align: start;
   color: #121212;
+}
+
+.text2 {
+  font-size: 15px;
+  padding: 5px;
+  text-align: start;
+  color: #121212;
+}
+
+.text2:hover {
+  cursor: pointer;
+  color: #2f3a91;
+  text-decoration: underline;
+  text-decoration-style: dotted;
 }
 
 .context_text {
@@ -535,7 +631,7 @@ export default defineComponent({
 .recommend_list {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: left;
 }
 
@@ -557,6 +653,14 @@ export default defineComponent({
   color: #2f3a91;
   text-decoration: underline;
   text-decoration-style: dotted;
+}
+
+.recommend_info {
+  color: #8590a6;
+  font-size: 14px;
+  margin: 0;
+  margin-top: 6px;
+  text-align: left;
 }
 
 .ipc_text {

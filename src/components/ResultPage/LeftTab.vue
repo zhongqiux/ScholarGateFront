@@ -33,7 +33,7 @@ export default defineComponent({
           hrefId: "#info"
         },
         {
-          content: "相关领域",
+          content: "相关推荐",
           color: "#8590a6",
           hrefId: "#recommend"
         },
@@ -96,6 +96,8 @@ export default defineComponent({
               this.handleClick(0, null);
             } else if (targetId == "tag2") {
               this.handleClick(1, null);
+            }else if (targetId == "tag4") {
+              this.handleClick(1, null);
             } else if (targetId == "tag3") {
               this.handleClick(2, null);
             }
@@ -110,6 +112,7 @@ export default defineComponent({
       let targetElement1 = document.getElementById("tag1")
       let targetElement2 = document.getElementById("tag2")
       let targetElement3 = document.getElementById("tag3")
+      let targetElement4 = document.getElementById("tag4")
 
       const observer = new IntersectionObserver(this.handleIntersection, {
         root: null,
@@ -122,6 +125,7 @@ export default defineComponent({
         observer.observe(targetElement1);
         observer.observe(targetElement2);
         observer.observe(targetElement3);
+        observer.observe(targetElement4);
       }
     }
   },
