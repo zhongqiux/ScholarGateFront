@@ -351,7 +351,7 @@ export function searchAuthorByName(name:string, pageNo:number): Promise<Type.Get
 
 export function searchInstituitionByName(name:string, pageNo:number): Promise<Type.GetSearchResultReturn> {
     return new Promise((resolve, reject) => {
-        axios.get(`/search/work/${name}/${pageNo}`,{
+        axios.get(`/search/institution/${name}/${pageNo}`,{
             headers: {
                 Authorization: useUserStore().token,
             }
