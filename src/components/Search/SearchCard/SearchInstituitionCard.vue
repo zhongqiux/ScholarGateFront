@@ -1,4 +1,9 @@
 <template>
+  <div>
+    一共搜索到：
+    <span></span>
+    条
+  </div>
   <div v-for="(item, index) in searchData.data">
     <el-container class="List__item">
       <el-aside width="60px" class="List__itemActions">
@@ -10,10 +15,23 @@
       <div class="list-item">
         <!-- display_name -->
         <div class="">
-          <h2 class="ContentItem__titleText" @click="handleNameClick(item.id)">
+          <h2 class="ContentItem__titleText">
             <el-icon class="author-icon"><UserFilled /></el-icon>
             {{ item.display_name }}
           </h2>
+        </div>
+        <!-- type -->
+        <div class="keywords">
+          <span class="keywords__label">type:</span>
+          <span class="keywords__content">
+            {{ item.type }}
+          </span>
+        </div>
+        <!-- homepage_url -->
+        <div class="keywords">
+          <span class="keywords__label">homepage_url:
+            <el-button @click="handleHomepageUrlClick(item.homepage_url)">homepage</el-button>
+          </span>
         </div>
         <!-- works_count -->
         <div class="keywords">
@@ -29,34 +47,26 @@
             {{ item.cited_by_count }}
           </span>
         </div>
-        <!-- institution_name -->
+        <!-- works_api_url -->
         <div class="keywords">
-          <span class="keywords__label">institution_name:</span>
+          <span class="keywords__label">works_api_url:</span>
           <span class="keywords__content">
-            {{ item.institution_name }}
+            {{ item.works_api_url }}
           </span>
         </div>
-        <!-- concept_name_list -->
-        <div class="keywords">
-          <span class="keywords__label">concept_name_list:</span>
-          <span @click="handleAuthorClick" class="keywords__content">
-            <span v-for="(a, index) in item.concept_name_list" class="Author-info__content">
-              {{ a }} &nbsp;
-            </span>
-          </span>
-        </div>
+        
       </div>
     </el-container>
     <el-divider class="item__divider"/>
   </div>
-  <div v-if="searchData.data===undefined">
+  <div >
     <el-empty description="无结果" />
   </div>
-  <div class="paginationStyle" v-if="searchData.data!==undefined">
+  <div class="paginationStyle">
     <el-pagination 
       background 
       layout="prev, pager, next" 
-      :total="1000" 
+      :total="100"
       v-model:current-page="currentPage"
       @current-change="changeCurrentPage"
     />
@@ -68,7 +78,7 @@
 </template>
 
 <script setup>
-import {reactive, onMounted, ref, watch} from 'vue'
+import {reactive, onMounted, onBeforeMount, ref, watch} from 'vue'
 import "@/assets/ResultPageIconfont/iconfont.css"
 import { searchAuthorByName, searchInstituitionByName } from '@/API'
 import { useRoute, useRouter } from 'vue-router'
@@ -78,7 +88,13 @@ const searchStore = useSearchStore()
 const route = useRoute()
 const router = useRouter()
 const currentPage = ref(1)
-const searchData = reactive({})
+const searchData = reactive({
+  data:{
+    meta:{
+      count:0
+    }
+  }
+})
 const showFlag = ref(true)
 
 const changeShowFlag = (item, flag) => {
@@ -89,6 +105,14 @@ const handleNameClick = (url) => {
   const extractedString = url.substring(url.lastIndexOf("/") + 1);
   console.log(extractedString)
   router.push(`/researcher/${extractedString}`)
+}
+
+const handleHomepageUrlClick = (url) => {
+  if (url == null) {
+    alert('该机构没有home page!')
+  } else {
+    window.open(url, '_blank')
+  }
 }
 
 const getSearchData = () => {
@@ -114,8 +138,11 @@ defineExpose({
   getSearchData,
 })
 
-onMounted(() => {
+onBeforeMount(() => {
   getSearchData()
+}),
+onMounted(() => {
+  
 })
 
 watch(
