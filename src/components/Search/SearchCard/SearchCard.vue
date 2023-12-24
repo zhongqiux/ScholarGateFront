@@ -100,16 +100,16 @@
 import {reactive, onMounted, ref, watch} from 'vue'
 import "@/assets/ResultPageIconfont/iconfont.css"
 import axios from 'axios';
-import { getSearchResult } from '@/API'
+import { getSearchResult, searchByInstituition, searchByAuthor } from '@/API'
 import { useRoute, useRouter } from 'vue-router'
 import { useSearchStore } from '@/store'
 
 
 const searchStore = useSearchStore()
-
-const searchData = reactive({})
 const route = useRoute()
 const router = useRouter()
+const searchData = reactive({})
+
 
 const conceptsData = reactive({
   data:{
@@ -174,12 +174,29 @@ const getSearchData = () => {
   }
   // TODO
   console.log(params)
-  getSearchResult(params, pageNo).then(result => {
-    searchData.data = result.data
-    searchStore.concepts = result.data[0].concepts
-  }).catch(error => {
-    console.error(error);
-  });
+  if (key === 'works') {
+    getSearchResult(params, pageNo).then(result => {
+      searchData.data = result.data
+      searchStore.concepts = result.data[0].concepts
+    }).catch(error => {
+      console.error(error);
+    });
+  } else if (key === 'institutions') {
+    searchByInstituition(value, pageNo).then(result => {
+      searchData.data = result.data
+      searchStore.concepts = result.data[0].concepts
+    }).catch(error => {
+      console.error(error);
+    });
+  } else if (key === 'authors') {
+    searchByAuthor(value, pageNo).then(result => {
+      searchData.data = result.data
+      searchStore.concepts = result.data[0].concepts
+    }).catch(error => {
+      console.error(error);
+    });
+  }
+  
 }
 const handleTitleClick = (url) => {
   const id = url.substring(url.lastIndexOf('/') + 1);

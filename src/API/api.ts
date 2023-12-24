@@ -295,6 +295,76 @@ export function getSearchResult(
     })
 }
 
+export function searchByInstituition(name:string, pageNo:number): Promise<Type.GetSearchResultReturn> {
+    return new Promise((resolve, reject) => {
+        axios.get(`/search/work/institution/${pageNo}`,{
+            params:{
+                "institution": name,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }
+        ).then(res => {
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function searchByAuthor(name:string, pageNo:number): Promise<Type.GetSearchResultReturn> {
+    return new Promise((resolve, reject) => {
+        axios.get(`/search/work/author/${pageNo}`,{
+            params:{
+                "author": name,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }
+        ).then(res => {
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function searchAuthorByName(name:string, pageNo:number): Promise<Type.GetSearchResultReturn> {
+    return new Promise((resolve, reject) => {
+        axios.get(`/search/author/${name}/${pageNo}`,{
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }
+        ).then(res => {
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function searchInstituitionByName(name:string, pageNo:number): Promise<Type.GetSearchResultReturn> {
+    return new Promise((resolve, reject) => {
+        axios.get(`/search/institution/${name}/${pageNo}`,{
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }
+        ).then(res => {
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
 export function getPatentResult(
     params: {
         publication_number: string,
@@ -455,6 +525,22 @@ export function getHotScholar(page: number, rank: RankedBy): Promise<Type.Schola
             params: {
                 type: tem,
             },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+export function getHotWorks(): Promise<Type.HotWorks> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get(`/works/showHeatWork`,{
             headers: {
                 Authorization: useUserStore().token,
             }

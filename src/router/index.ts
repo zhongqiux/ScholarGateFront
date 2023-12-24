@@ -31,9 +31,15 @@ router.beforeEach((to, from, next) => {
     }
     if(to.path === '/exploreAuthor'){
         useHeaderStore().inAuthorPage = true;
-        useHeaderStore().option = { value: completeBy.works,label: '关键词' };
+        useHeaderStore().option = { value: completeBy.authors,label: '作者' };
     }else {
         useHeaderStore().inAuthorPage = false;
+    }
+    if(to.path == '/exploreInstituition'){
+        useHeaderStore().inInstitutionPage = true;
+        useHeaderStore().option = { value: completeBy.institutions,label: '机构' };
+    }else {
+        useHeaderStore().inInstitutionPage = false;
     }
     console.log(from)
     console.log(to)

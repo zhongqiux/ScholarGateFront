@@ -10,10 +10,23 @@
       <div class="list-item">
         <!-- display_name -->
         <div class="">
-          <h2 class="ContentItem__titleText" @click="handleNameClick(item.id)">
+          <h2 class="ContentItem__titleText">
             <el-icon class="author-icon"><UserFilled /></el-icon>
             {{ item.display_name }}
           </h2>
+        </div>
+        <!-- type -->
+        <div class="keywords">
+          <span class="keywords__label">type:</span>
+          <span class="keywords__content">
+            {{ item.type }}
+          </span>
+        </div>
+        <!-- homepage_url -->
+        <div class="keywords">
+          <span class="keywords__label">homepage_url:
+            <el-button @click="handleHomepageUrlClick(item.homepage_url)">homepage</el-button>
+          </span>
         </div>
         <!-- works_count -->
         <div class="keywords">
@@ -29,34 +42,26 @@
             {{ item.cited_by_count }}
           </span>
         </div>
-        <!-- institution_name -->
+        <!-- works_api_url -->
         <div class="keywords">
-          <span class="keywords__label">institution_name:</span>
+          <span class="keywords__label">works_api_url:</span>
           <span class="keywords__content">
-            {{ item.institution_name }}
+            {{ item.works_api_url }}
           </span>
         </div>
-        <!-- concept_name_list -->
-        <div class="keywords">
-          <span class="keywords__label">concept_name_list:</span>
-          <span @click="handleAuthorClick" class="keywords__content">
-            <span v-for="(a, index) in item.concept_name_list" class="Author-info__content">
-              {{ a }} &nbsp;
-            </span>
-          </span>
-        </div>
+        
       </div>
     </el-container>
     <el-divider class="item__divider"/>
   </div>
-  <div v-if="searchData.data===undefined">
-    <el-empty description="无结果" />
+  <div >
+    <el-empty description="无结果" v-if="totalNum===0"/>
   </div>
-  <div class="paginationStyle" v-if="searchData.data!==undefined">
+  <div class="paginationStyle" v-if="totalNum!==0">
     <el-pagination 
       background 
       layout="prev, pager, next" 
-      :total="1000" 
+      :total="totalNum.value"
       v-model:current-page="currentPage"
       @current-change="changeCurrentPage"
     />
@@ -68,7 +73,7 @@
 </template>
 
 <script setup>
-import {reactive, onMounted, ref, watch} from 'vue'
+import {reactive, onMounted, onBeforeMount, ref, watch} from 'vue'
 import "@/assets/ResultPageIconfont/iconfont.css"
 import { searchAuthorByName, searchInstituitionByName } from '@/API'
 import { useRoute, useRouter } from 'vue-router'
@@ -80,6 +85,7 @@ const router = useRouter()
 const currentPage = ref(1)
 const searchData = reactive({})
 const showFlag = ref(true)
+const totalNum = ref(0)
 
 const changeShowFlag = (item, flag) => {
   item = flag
@@ -91,16 +97,27 @@ const handleNameClick = (url) => {
   router.push(`/researcher/${extractedString}`)
 }
 
+const handleHomepageUrlClick = (url) => {
+  if (url == null) {
+    alert('该机构没有home page!')
+  } else {
+    window.open(url, '_blank')
+  }
+}
+
 const getSearchData = () => {
   let key = route.query.key
   let value = route.query.value
   let pageNo = currentPage.value
-
-  searchAuthorByName(value, pageNo).then(result => {
-      searchData.data = result.data
+  searchInstituitionByName(value, pageNo).then(result => {
+      searchData.data = result.data.results
+      searchData.meta = result.data.meta
+      totalNum.value = searchData.meta.count
     }).catch(error => {
       console.error(error);
     });
+  console.log(searchData.data)
+  console.log(searchData.meta)
 }
 
 const changeCurrentPage = () => {
@@ -112,8 +129,11 @@ defineExpose({
   getSearchData,
 })
 
-onMounted(() => {
+onBeforeMount(() => {
   getSearchData()
+}),
+onMounted(() => {
+  
 })
 
 watch(

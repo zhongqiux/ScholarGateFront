@@ -51,7 +51,7 @@
     <el-pagination 
       background 
       layout="prev, pager, next" 
-      :total="1000" 
+      :total="1000"
       v-model:current-page="currentPage"
       @current-change="changeCurrentPage"
     />

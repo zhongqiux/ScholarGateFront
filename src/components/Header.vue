@@ -7,7 +7,7 @@
 		<div v-for="item,index in itemList" :class='(active-1 == index)?"active header-item":"header-item"' @click="[go(item.path),active = index+1]" >{{ item.value }}</div>
 	</div>
 	<div class="search" v-show="store.search && store.display">
-		<el-dropdown :disabled="store.inAuthorPage">
+		<el-dropdown :disabled="store.inAuthorPage || store.inInstitutionPage">
 			<div class="flex flex-row items-center outline-none">
 				<input type="text" v-model="store.option.label" readonly autocomplete="off" placeholder="请选择" class="base-input_inner">
 				<svg t="1703139986629" class="ico" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5147" width="10" height="10"><path fill="#c0c4cc" d="M878.592 250.88q29.696 0 48.128 11.264t24.576 29.696 0 41.472-26.624 45.568q-82.944 92.16-159.744 180.224t-148.48 164.864q-19.456 20.48-45.568 31.744t-53.76 11.776-53.248-8.704-43.008-28.672q-39.936-44.032-82.944-90.112l-88.064-92.16q-43.008-46.08-85.504-90.624t-79.36-86.528q-17.408-19.456-22.528-40.448t1.024-38.4 23.552-28.672 45.056-11.264q35.84 0 98.816-0.512t137.728-0.512l153.6 0 150.528 0 125.952 0 79.872 0z" p-id="5148"></path></svg>
@@ -17,7 +17,7 @@
 			</template>
 		</el-dropdown>
 		<el-dropdown ref="dropdown2" trigger="contextmenu" placement="bottom-start">
-			<input type="text" autocomplete="off" @input="getSuggestion()" v-model="store.serInput" placeholder="搜索你感兴趣的内容..." class="top_input" @focus="store.search_active = true" @keyup.enter.native="push(store.inAuthorPage?'/exploreAuthor':'/explorePaper',{key:store.option.value,value:store.serInput})">
+			<input type="text" autocomplete="off" @input="getSuggestion()" v-model="store.serInput" placeholder="搜索你感兴趣的内容..." class="top_input" @focus="store.search_active = true" @keyup.enter.native="autoPush({key:store.option.value,value:store.serInput})">
 			<template #dropdown>
 					<el-dropdown-menu>
 						<el-dropdown-item v-for="item in store.suggestions" @click="store.serInput = item.display_name">{{ item.display_name }}</el-dropdown-item>
@@ -92,6 +92,15 @@ export default defineComponent({
 			this.$router.push(path)
 		},
 		push(path:string,query:any){
+			this.$router.push({path:path,query:query})
+		},
+		autoPush(query:any){
+			let path:string = '/explorePaper';
+			if(this.store.inAuthorPage){
+				path = '/exploreAuthor'
+			}else if(this.store.inInstitutionPage){
+				path = '/exploreInstituition'
+			}
 			this.$router.push({path:path,query:query})
 		},
 		getSuggestion(){

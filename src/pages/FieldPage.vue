@@ -308,7 +308,7 @@ export default defineComponent({
 	margin: 20px 0 14px;
 }
 .relatedCon:hover {
-	color: #76b6e0;
+	color: rgb(47, 58, 145);
 	cursor: pointer;
 }
 .field-description {
