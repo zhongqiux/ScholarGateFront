@@ -16,17 +16,12 @@ import RelationVue from "@/components/RelationGraphic"
     <template #footer>Footer content</template>
   </el-card>
 
-  <RelationVue class="relation"></RelationVue>
+  <RelationVue></RelationVue>
 </template>
 
 <style scoped>
 .read-the-docs {
   color: #888;
-}
-
-.relation{
-  height: 100%;
-  width: 100%;
 }
 
 .box-card{
