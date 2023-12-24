@@ -1,9 +1,4 @@
 <template>
-  <div>
-    一共搜索到：
-    <span></span>
-    条
-  </div>
   <div v-for="(item, index) in searchData.data">
     <el-container class="List__item">
       <el-aside width="60px" class="List__itemActions">
@@ -60,13 +55,13 @@
     <el-divider class="item__divider"/>
   </div>
   <div >
-    <el-empty description="无结果" />
+    <el-empty description="无结果" v-if="totalNum===0"/>
   </div>
-  <div class="paginationStyle">
+  <div class="paginationStyle" v-if="totalNum!==0">
     <el-pagination 
       background 
       layout="prev, pager, next" 
-      :total="100"
+      :total="totalNum.value"
       v-model:current-page="currentPage"
       @current-change="changeCurrentPage"
     />
@@ -88,14 +83,9 @@ const searchStore = useSearchStore()
 const route = useRoute()
 const router = useRouter()
 const currentPage = ref(1)
-const searchData = reactive({
-  data:{
-    meta:{
-      count:0
-    }
-  }
-})
+const searchData = reactive({})
 const showFlag = ref(true)
+const totalNum = ref(0)
 
 const changeShowFlag = (item, flag) => {
   item = flag
@@ -122,6 +112,7 @@ const getSearchData = () => {
   searchInstituitionByName(value, pageNo).then(result => {
       searchData.data = result.data.results
       searchData.meta = result.data.meta
+      totalNum.value = searchData.meta.count
     }).catch(error => {
       console.error(error);
     });
