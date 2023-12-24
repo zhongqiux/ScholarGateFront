@@ -530,8 +530,8 @@ getAllIssue();
 }
 
 .background {
-  background-color: aqua;
-  background-size: contain;
+  background-image: url(../../assets/card-bg.jpg);
+  background-size: cover;
   padding: 1vh 1vw;
 }
 
