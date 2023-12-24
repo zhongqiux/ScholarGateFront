@@ -1,15 +1,17 @@
 <template>
   <div class="body">
     <el-container class="ContentLayout">
+  
       <el-main>
         <div class="card">
           <!-- 搜索标签 -->
           <div class="AppSearchTabs">
-            <div class="AppSearchTab" :class="{'is-active': active_tab === 1}">作者</div>
+            <div class="AppSearchTab" :class="{'is-active': active_tab === 1}">机构</div>
           </div>
+        
           <!-- 搜索详情 -->
           <div class="List"></div>
-          <SearchAuthorCard/>
+          <SearchInstituitionCard />
         </div>
         
       </el-main>

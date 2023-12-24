@@ -1,53 +1,67 @@
 <template>
-  <div>我是机构页面</div>
-  <div v-for="(item, index) in searchData">
+  <div v-for="(item, index) in searchData.data">
     <el-container class="List__item">
       <el-aside width="60px" class="List__itemActions">
         <div class="List__itemAction">
-          
           <div class="List__itemIndex">
-            {{ item.id }}.</div>
+            {{ index + 1 }}.</div>
         </div>
-        
       </el-aside>
-  
       <div class="list-item">
-        <!-- 名字 -->
-        <h2 class="ContentItem__titleText" @click="handleTitleClick">
-          <el-icon class="author-icon"><UserFilled /></el-icon>
-          {{ item.name }}</h2>
-        <!-- 领域 -->
-        <div>
-          <span  @click="handleAuthorClick">
-            <span v-for="(a, index) in item.fields" class="Author-info__content">
+        <!-- display_name -->
+        <div class="">
+          <h2 class="ContentItem__titleText" @click="handleNameClick(item.id)">
+            <el-icon class="author-icon"><UserFilled /></el-icon>
+            {{ item.display_name }}
+          </h2>
+        </div>
+        <!-- works_count -->
+        <div class="keywords">
+          <span class="keywords__label">works_count:</span>
+          <span class="keywords__content">
+            {{ item.works_count }}
+          </span>
+        </div>
+        <!-- cited_by_count -->
+        <div class="keywords">
+          <span class="keywords__label">cited_by_count:</span>
+          <span class="keywords__content">
+            {{ item.cited_by_count }}
+          </span>
+        </div>
+        <!-- institution_name -->
+        <div class="keywords">
+          <span class="keywords__label">institution_name:</span>
+          <span class="keywords__content">
+            {{ item.institution_name }}
+          </span>
+        </div>
+        <!-- concept_name_list -->
+        <div class="keywords">
+          <span class="keywords__label">concept_name_list:</span>
+          <span @click="handleAuthorClick" class="keywords__content">
+            <span v-for="(a, index) in item.concept_name_list" class="Author-info__content">
               {{ a }} &nbsp;
             </span>
           </span>
         </div>
-
-        <!-- 简介 -->
-        <div class="article-brief__content" v-if="item.showFlag">
-          {{ item.abstract.slice(0,100) }}
-          <!-- 展开 收回 -->
-          <span @click="item.showFlag=false" v-if="item.abstract.length > 100">
-            
-            ...
-            <span class="expand-unexpand" >阅读全部</span>
-            <el-icon><ArrowDown /></el-icon>
-          </span>
-        </div>
-        <div class="article-brief__content" v-if="!item.showFlag">
-          {{ item.abstract}}
-          <!-- 展开 收回 -->
-          <span class="expand-unexpand" @click="item.showFlag=true">
-            收起
-            <el-icon><ArrowUp /></el-icon>
-          </span>
-        </div>
       </div>
     </el-container>
-    <el-divider class="item-divider"/>
+    <el-divider class="item__divider"/>
   </div>
+  <div v-if="searchData.data===undefined">
+    <el-empty description="无结果" />
+  </div>
+  <div class="paginationStyle" v-if="searchData.data!==undefined">
+    <el-pagination 
+      background 
+      layout="prev, pager, next" 
+      :total="1000" 
+      v-model:current-page="currentPage"
+      @current-change="changeCurrentPage"
+    />
+  </div>
+  
   
   
 
@@ -57,63 +71,60 @@
 import {reactive, onMounted, ref, watch} from 'vue'
 import "@/assets/ResultPageIconfont/iconfont.css"
 import { searchAuthorByName, searchInstituitionByName } from '@/API'
+import { useRoute, useRouter } from 'vue-router'
+import { useSearchStore } from '@/store'
 
-const searchData = reactive(
-  [{
-    id:1,
-    name: '王老吉',
-    fields: ['化学', '数学'],
-    abstract: '我是一个粉刷匠粉刷本领强我是一个粉刷匠粉刷本领强我是一个粉刷匠粉刷本领强我是一个粉刷匠粉刷本领强我是一个粉刷匠粉刷本领强我是一个粉刷匠粉刷本领强我是一个粉刷匠粉刷本领强我是一个粉刷匠粉刷本领强',
-    showFlag: true
-  },
-  {
-    id:2,
-    name: '李老二',
-    fields: ['生物', '物理', '地理', '安全健康'],
-    abstract: '攻略一回归教材，查缺补漏一、厘清知识脉络，完善知识体系回归教材不是从头到尾读教材，也不是把书后习题个再做一遍。考生需要根据自己的学习情况，精读自己掌握得最薄弱的章节，准备一张白纸，先凭印象画出这部分内容的简略图，再结合教材和课堂笔记，增减内容。结合笔记能更好地抓住重点，在之前学习、复习过程中老师给出的小结和重点知识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
-    showFlag: true
-  },
-  {
-    id:3,
-    name: '李老二',
-    fields: ['生物', '物理', '地理', '安全健康'],
-    abstract: '攻略一回归教材，查缺补漏一、厘清知识脉络，完善知识体系回归教材不是从头到尾读教材，也不是把书后习题个再做一遍。考生需要根据自己的学习情况，精读自己掌握得最薄弱的章节，准备一张白纸，先凭印象画出这部分内容的简略图，再结合教材和课堂笔记，增减内容。结合笔记能更好地抓住重点，在之前学习、复习过程中老师给出的小结和重点知识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
-    showFlag: true
-  },
-  {
-    id:4,
-    name: '李老二',
-    fields: ['生物', '物理', '地理', '安全健康'],
-    abstract: '攻略一回归教材，查缺补漏一、厘清知识脉络，完善知识体系回归教材不是从头到尾读教材，也不是把书后习题个再做一遍。考生需要根据自己的学习情况，精读自己掌握得最薄弱的章节，准备一张白纸，先凭印象画出这部分内容的简略图，再结合教材和课堂笔记，增减内容。结合笔记能更好地抓住重点，在之前学习、复习过程中老师给出的小结和重点知识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
-    showFlag: true
-  },
-  {
-    id:5,
-    name: '李老二',
-    fields: ['生物', '物理', '地理', '安全健康'],
-    abstract: '攻略一回归教材，查缺补漏一、厘清知识脉络，完善知识体系回归教材不是从头到尾读教材，也不是把书后习题个再做一遍。考生需要根据自己的学习情况，精读自己掌握得最薄弱的章节，准备一张白纸，先凭印象画出这部分内容的简略图，再结合教材和课堂笔记，增减内容。结合笔记能更好地抓住重点，在之前学习、复习过程中老师给出的小结和重点知识的示例，对理解、记忆知识点很有帮助，因此，回归教材时别忘了仔细整理之前的笔记',
-    showFlag: true
-  },
-]) 
-
+const searchStore = useSearchStore()
+const route = useRoute()
+const router = useRouter()
+const currentPage = ref(1)
+const searchData = reactive({})
 const showFlag = ref(true)
 
 const changeShowFlag = (item, flag) => {
   item = flag
 }
 
-const handleTitleClick = () => {
-  alert('跳转到该文章')
+const handleNameClick = (url) => {
+  const extractedString = url.substring(url.lastIndexOf("/") + 1);
+  console.log(extractedString)
+  router.push(`/researcher/${extractedString}`)
 }
 
-const handleAuthorClick = () => {
-  alert('搜索该作者相关文章')
+const getSearchData = () => {
+  let key = route.query.key
+  let value = route.query.value
+  let pageNo = currentPage.value
+  searchInstituitionByName(value, pageNo).then(result => {
+      searchData.data = result.data.results
+      searchData.meta = result.data.meta
+    }).catch(error => {
+      console.error(error);
+    });
+  console.log(searchData.data)
+  console.log(searchData.meta)
 }
 
-const handleKeywordClick = () => {
-  alert('搜索该关键词相关文章')
+const changeCurrentPage = () => {
+  getSearchData()
 }
 
+// 向父组件暴露的函数
+defineExpose({
+  getSearchData,
+})
+
+onMounted(() => {
+  getSearchData()
+})
+
+watch(
+  () => route.params,
+  (new1,new2) => {
+    getSearchData()
+  },
+  { immediate: true }
+)
 </script>
 
 <style>
@@ -164,23 +175,6 @@ const handleKeywordClick = () => {
   font-size: 13px;
   color: #2f3a91;
 }
-.keywords {
-  margin-top: 10px;
-  font-size: 14px;
-  color: #646464;
-  cursor: pointer;
-  margin-right: 10px;
-  -webkit-transition: all .3s;
-  transition: all .3s;
-  word-break: break-word;
-  height: 24px;
-  .keywords__label {
-    color:#aeadad
-  }
-  .keywords__content:hover {
-    color: #2f3a91;
-  }
-}
 .List__item {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -222,7 +216,31 @@ const handleKeywordClick = () => {
   margin-left: 5px;
   display: block;
 }
-.item-divider {
+.item__divider {
   margin-left: 20px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.keywords {
+  display: flex;
+  margin-top: 20px;
+  margin-right: 10px;
+  font-size: 14px;
+  color: #646464;
+  cursor: pointer;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+  word-break: break-word;
+  height: 24px;
+  .keywords__label {
+    color:#aeadad
+  }
+  .keywords__content:hover {
+    color: #2f3a91;
+  }
+  .keywords__content {
+    margin-left: 5px;
+  }
 }
 </style>
