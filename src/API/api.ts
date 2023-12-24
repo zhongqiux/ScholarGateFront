@@ -296,6 +296,76 @@ export function getSearchResult(
     })
 }
 
+export function searchByInstituition(name:string, pageNo:number): Promise<Type.GetSearchResultReturn> {
+    return new Promise((resolve, reject) => {
+        axios.get(`/search/work/institution/${pageNo}`,{
+            params:{
+                "institution": name,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }
+        ).then(res => {
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function searchByAuthor(name:string, pageNo:number): Promise<Type.GetSearchResultReturn> {
+    return new Promise((resolve, reject) => {
+        axios.get(`/search/work/author/${pageNo}`,{
+            params:{
+                "author": name,
+            },
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }
+        ).then(res => {
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function searchAuthorByName(name:string, pageNo:number): Promise<Type.GetSearchResultReturn> {
+    return new Promise((resolve, reject) => {
+        axios.get(`/search/author/${name}/${pageNo}`,{
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }
+        ).then(res => {
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
+export function searchInstituitionByName(name:string, pageNo:number): Promise<Type.GetSearchResultReturn> {
+    return new Promise((resolve, reject) => {
+        axios.get(`/search/work/${name}/${pageNo}`,{
+            headers: {
+                Authorization: useUserStore().token,
+            }
+        }
+        ).then(res => {
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
 export function getPatentResult(
     params:{
         publication_number:string,

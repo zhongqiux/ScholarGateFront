@@ -1,4 +1,5 @@
 <template>
+  <div>我是机构页面</div>
   <div v-for="(item, index) in searchData">
     <el-container class="List__item">
       <el-aside width="60px" class="List__itemActions">
@@ -56,13 +57,6 @@
 import {reactive, onMounted, ref, watch} from 'vue'
 import "@/assets/ResultPageIconfont/iconfont.css"
 import { searchAuthorByName, searchInstituitionByName } from '@/API'
-import { useRoute, useRouter } from 'vue-router'
-import { useSearchStore } from '@/store'
-
-const searchStore = useSearchStore()
-const route = useRoute()
-const router = useRouter()
-const currentPage = ref(1)
 
 const searchData = reactive(
   [{
@@ -120,35 +114,6 @@ const handleKeywordClick = () => {
   alert('搜索该关键词相关文章')
 }
 
-const getSearchData = () => {
-  let key = route.query.key
-  let value = route.query.value
-  let pageNo = currentPage.value
-
-  searchAuthorByName(value, pageNo).then(result => {
-      searchData.data = result.data
-    }).catch(error => {
-      console.error(error);
-    });
-  console.log(searchData.data)
-}
-
-// 向父组件暴露的函数
-defineExpose({
-  getSearchData,
-})
-
-onMounted(() => {
-  getSearchData()
-})
-
-watch(
-  () => route.params,
-  (new1,new2) => {
-    getSearchData()
-  },
-  { immediate: true }
-)
 </script>
 
 <style>

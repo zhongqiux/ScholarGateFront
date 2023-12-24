@@ -9,59 +9,12 @@
             <div class="AppSearchTab" :class="{'is-active': active_tab === 1}" @click="changeActiveTab(1)">作者</div>
             <div class="AppSearchTab" :class="{'is-active': active_tab === 2}" @click="changeActiveTab(2)">机构</div>
           </div>
-          <!-- 搜索筛选项 -->
-          <div class="AppSearchTabContent">
-            <div class="AppSearchFilters">
-              <div class="AppFilterMeta">
-                <span>0 / </span>
-                <span class="total-num">100000条</span>
-              </div>
-              <div class="AppFilterInput">
-                <el-input
-                  v-model="SearchValue"
-                  placeholder="在结果中检索"
-                  :suffix-icon="Search"
-                />
-              </div>
-              <div class="AppFilterSelect">
-                <span>
-                  <el-select v-model="SelectValue1" placeholder="时间范围" size="default">
-                    <el-option
-                      v-for="item in options1"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </span>
-                <span>
-                  <el-select v-model="SelectValue2" placeholder="排序方式" size="default">
-                    <el-option
-                      v-for="item in options2"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </span>
-                
-              </div>
-            </div>
-          </div>
-          <!-- 筛选条件 -->
-          <div class="AppSearchRefineItems">
-            <div class="AppSearchRefineLabel">筛选条件</div>
-            <span class="AppSearchRefineItem">
-              <span class="AppSearchRefineItemText">
-                <span class="Highlight">主题：</span>
-                化学
-              </span>
-              <el-icon class="delete" @click="deleteSearchTab"><Close/></el-icon>
-            </span>
-          </div>
+        
           <!-- 搜索详情 -->
           <div class="List"></div>
-          <SearchAuthorCard/>
+
+          <SearchAuthorCard v-if="active_tab===1"/>
+          <SearchInstituitionCard v-if="active_tab===2"/>
         </div>
         
       </el-main>
@@ -80,53 +33,13 @@ import { useSearchStore } from '../store/search.ts';
 import { Calendar, Search } from '@element-plus/icons-vue'
 
 import SearchAuthorCard from '@/components/Search/SearchCard/SearchAuthorCard.vue'
-//import Avatar from '@/components/Avatar.vue'
-
+import SearchInstituitionCard from '@/components/Search/SearchCard/SearchInstituitionCard.vue'
 
 const searchStore = useSearchStore()
 const SelectValue1 = ref('')
 const SelectValue2 = ref('')
 
 const activeNames = ref(['1','2','3','4'])
-const options1 = [
-  {value: 'Option1',label: '今年',},
-  {value: 'Option2',label: '近三年',},
-  {value: 'Option3',label: '近五年',},
-  {value: 'Option4',label: '近十年',},
-]
-const options2 = [
-  {value: 'Option1',label: '综合排序',},
-  {value: 'Option2',label: '时间排序',},
-  {value: 'Option3',label: '相关排序',},
-]
-
-const tab_contents = reactive({
-  item1:[
-    {label: '期刊论文',num: 10000,},
-    {label: '学位论文',num: 8755,},
-    {label: '预印本论文',num: 230,},
-    {label: '会议论文',num: 120,},
-  ],
-  item2:[
-    {label: '文化、科学、教育、体育',num: 10000,},
-    {label: '预防医学、卫生学',num: 8755,},
-    {label: '公路运输',num: 230,},
-    {label: '电脑、计算机',num: 120,},
-  ],
-  item3:[
-    {label: '2023',num: 10000,},
-    {label: '2022',num: 8755,},
-    {label: '2021',num: 230,},
-    {label: '2020',num: 120,},
-  ],
-  item4:[
-    {label: '劳动保护',num: 10000,},
-    {label: '健康生活',num: 8755,},
-    {label: '汽车杂志',num: 230,},
-    {label: '汽车杂志',num: 120,},
-  ],  
-})
-
 
 const active_tab = ref(1)
 
@@ -135,10 +48,6 @@ const changeActiveTab = (num) => {
 }
 
 const SearchValue = ref('')
-const deleteSearchTab = () => {
-  alert('删除搜索项')
-}
-
 </script>
 
 <style>
