@@ -76,7 +76,7 @@ export default defineComponent({
 		this.APIrefreshList()
 	},
 	mounted() {
-		setInterval(this.APIrefreshList, 1000)
+		setInterval(this.APIrefreshList, 300000)
 	},
 	data(){
 		return {

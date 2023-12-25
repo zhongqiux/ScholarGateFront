@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="background"></div>
-        <img data-v-c970699f="" src="/ScholarGateFront/src/assets/icon.png" class="w-60 h-17"
+        <img data-v-c970699f="" src="@/assets/icon.png" class="w-60 h-17"
             style="position: absolute; left: 35.5vw; top: -1vh; width: 30vw;">
         <div style="opacity: 0.65; color: black;">
             <!-- 登陆页 -->
