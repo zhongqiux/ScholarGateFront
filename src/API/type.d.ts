@@ -200,7 +200,8 @@ export interface GetIssuesReturn extends CommonReturnType {
 			userId: string,
 			content: string,
 			status: number,
-			createTime: Date
+			createTime: Date,
+			userName: string
 		}[],
 	}
 }
