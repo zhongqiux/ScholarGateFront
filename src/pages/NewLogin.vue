@@ -156,6 +156,7 @@ export default {
                         this.store.token = res.data.token
                         this.store.email = res.data.email
                         this.store.avatar = res.data.avatar
+                        this.store.Identity = res.data.type
                         ElMessage({
                             message: `登录成功！`,
                             type: 'success',

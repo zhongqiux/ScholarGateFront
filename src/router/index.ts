@@ -1,12 +1,12 @@
 import { routes } from "./routes";
 import { createRouter, createWebHistory } from 'vue-router'
-import { useHeaderStore } from '@/store'
+import { useHeaderStore, useUserStore,Identity } from '@/store'
 import { completeBy } from "@/API";
 
 // 路由参数配置
 export const router = createRouter({
     // 使用hash(createWebHashHistory)模式，(createWebHistory是HTML5历史模式，支持SEO)
-    history: createWebHistory('ScholarGateFront'),
+    history: createWebHistory(''),
     routes: routes,
 })
 

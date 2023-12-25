@@ -13,7 +13,8 @@ export interface LoginReturn extends CommonReturnType {
 		userId: number,
 		userName: string,
 		avatar: number,
-		email: string
+		email: string,
+		type:string
 	}
 }
 export interface SendCodeReturn extends CommonReturnType {
