@@ -26,9 +26,9 @@
 		</el-dropdown>
 	</div>
 	<div class="ava">
-		<div @click="go('/messages')" class="hover:cursor-pointer">
+		<div v-show="userStore.islogin" @click="go('/messages')" class="hover:cursor-pointer">
 			<el-tooltip effect="dark" content="消息" placement="bottom">
-				<el-badge :value="1" :max="99" class="item">
+				<el-badge :value="messageCnt" :max="99" :hidden="noMess" class="item">
 					<el-icon color="#777575" class="no-inherit" :size="20" style="vertical-align: middle">
 						<svg width="18" height="18" viewBox="0 0 24 24" class="ZDI ZDI--BellFill24 css-7dgah8" fill="white"><path fill-rule="evenodd" d="M9.723 21.271c0-.42.34-.76.76-.76h3.043a.76.76 0 0 1 0 1.521h-3.043a.76.76 0 0 1-.76-.76Z" clip-rule="evenodd"></path><path d="M11.153 3.115c0-.618.376-1.115.844-1.115.469 0 .845.499.845 1.115v.183c3.997.369 7.012 4.117 7.024 8.515V17.468h.253a.76.76 0 1 1 0 1.521H3.891a.76.76 0 0 1 0-1.521h.253V11.813c.011-4.392 3.02-8.137 7.009-8.514v-.184Z"></path></svg>
 					</el-icon>
@@ -44,7 +44,8 @@
 				<el-dropdown-item @click="go('/admin/board')">管理员</el-dropdown-item>
 				<el-dropdown-item @click="go('/person')">主页</el-dropdown-item>
 				<el-dropdown-item @click="go('/result')">学术成果展示</el-dropdown-item>
-				<el-dropdown-item @click="go('/login')">登录</el-dropdown-item>
+				<el-dropdown-item v-if="!userStore.islogin" @click="go('/login')">登录</el-dropdown-item>
+				<el-dropdown-item v-else @click="logout()">登出</el-dropdown-item>
 				</el-dropdown-menu>
 			</template>
 		</el-dropdown>
@@ -56,10 +57,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { UserFilled } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+import { getMessageList } from '@/API'
 import { useHeaderStore,useUserStore } from "@/store"
 import GitAvatar from "@/components/small/GitAvatar.vue"
 import { autoComplete,completeBy } from '@/API'
 import LoginButton from '@/components/small/LoginButton.vue'
+import * as Type from "@/API/type"
 // let store = useHeaderStore()
 
 export default defineComponent({
@@ -67,6 +71,12 @@ export default defineComponent({
 	components:{
 		GitAvatar,
 		LoginButton
+	},
+	created() {
+		this.APIrefreshList()
+	},
+	mounted() {
+		setInterval(this.APIrefreshList, 1000)
 	},
 	data(){
 		return {
@@ -84,10 +94,51 @@ export default defineComponent({
 			store : useHeaderStore(),
 			userStore:useUserStore(),
 			clock:null,
+			message_list:[{ id: '7', userId: '1', name: '122342343', content: '内容', time: '17:40', isRead: true, },],
+			messageCnt:0,
+			noMess:true,
 		}
 	},
 	
 	methods:{
+		APIrefreshList(): void {
+			getMessageList().then((res: Type.GetMessageListReturn) => {
+				console.log(res.data)
+				if (res.flag == true) {
+					this.message_list = res.data
+					var cnt = 0
+					this.message_list.forEach(function (item) {
+						if (!item.isRead) {
+							cnt += 1
+						}
+					})
+					if (cnt==0) {
+						this.noMess=true
+					} else {
+						this.noMess=false
+						this.messageCnt=cnt
+					}
+				}
+				
+			}).catch(err => {
+				console.log(err)
+			})
+		},
+
+		logout() {
+			this.userStore.outdate = new Date('1919-5-4').getTime(),
+			this.userStore.userId = -1
+			this.userStore.userName = ''
+			this.userStore.token = ''
+			this.userStore.email = ''
+			this.userStore.avatar = -1
+			ElMessage({
+				message: `登出成功！`,
+				type: 'success',
+			})
+			this.$router.push('/')
+		},
+
 		go(path:string){
 			this.$router.push(path)
 		},

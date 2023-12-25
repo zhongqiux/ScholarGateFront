@@ -12,8 +12,8 @@
 					<el-badge :is-dot="!message['isRead']" class="dot">
 						<el-card class="box-card" shadow="hover">
 							<div class="card-header">
-								<!-- <el-avatar :src="message['avatar']" :size="80" style="margin-right: 2vw;" /> -->
-								<el-avatar src='https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
+								<!-- <el-avatar :src="https://pic.616pic.com/ys_bnew_img/00/05/09/Ewz0Ve3BTc.jpg" :size="80" style="margin-right: 2vw;" /> -->
+								<el-avatar src='https://pic.616pic.com/ys_bnew_img/00/05/09/Ewz0Ve3BTc.jpg'
 									:size="80" style="margin-right: 2vw;" />
 								<span style="width: 55vw;">
 									<div class="time">{{ message["name"] + " · " + message["time"] }}</div>
@@ -23,6 +23,11 @@
 											</el-text>
 										</el-button></div>
 								</span>
+								<el-popconfirm title="确定要删除这条消息吗?" @confirm="dltMessage(message)">
+									<template #reference>
+										<el-button type="danger" :icon="Delete" circle />
+									</template>
+								</el-popconfirm>
 							</div>
 						</el-card>
 					</el-badge>
@@ -32,10 +37,15 @@
 	</div>
 </template>
 
+<script lang="ts" setup>
+import { Delete } from '@element-plus/icons-vue'
+</script>
+
+
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getMessageList, readMessage, readAllMessage } from '@/API'
+import { getMessageList, readMessage, readAllMessage, deleteMessage } from '@/API'
 import * as Type from "@/API/type"
 import { useUserStore } from '@/store'
 export default defineComponent({
@@ -73,7 +83,7 @@ export default defineComponent({
 			}).catch(err => {
 				console.log(err)
 				ElMessage({
-					message: `错误！`,
+					message: `请先登录！`,
 					type: 'error',
 				})
 			})
@@ -86,7 +96,7 @@ export default defineComponent({
 				this.has_message = this.message_list.length == 0 ? false : true
 				this.message_list.forEach(function (item) {
 					var t = new Date(item.time)
-					item.time = t.toLocaleDateString() + "-" + t.toLocaleTimeString()
+					item.time = t.toLocaleDateString() + " " + t.toLocaleTimeString()
 				})
 				if (cl) {
 					ElMessage({
@@ -97,7 +107,7 @@ export default defineComponent({
 			}).catch(err => {
 				console.log(err)
 				ElMessage({
-					message: `错误！`,
+					message: `请先登录！`,
 					type: 'error',
 				})
 			})
@@ -118,6 +128,25 @@ export default defineComponent({
 				console.log(message["time"])
 				console.log(res.data.time)
 				if (res.flag == true) {
+					this.APIrefreshList(false)
+				}
+			}).catch(err => {
+				console.log(err)
+				ElMessage({
+					message: `错误！`,
+					type: 'error',
+				})
+			})
+		},
+
+		// 删除消息
+		dltMessage(message: { [x: string]: any; }) {
+			deleteMessage(message["id"]).then((res: Type.ReadMessageReturn) => {
+				if (res.flag == true) {
+					ElMessage({
+						message: `删除成功！`,
+						type: 'success',
+					})
 					this.APIrefreshList(false)
 				}
 			}).catch(err => {
