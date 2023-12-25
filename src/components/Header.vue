@@ -4,7 +4,9 @@
 		<img src="@/assets/icon.png" class="w-60 h-17">
 	</div>
 	<div class="routes" v-show="store.display">
-		<div v-for="item,index in itemList" :class='(active-1 == index)?"active header-item":"header-item"' @click="[go(item.path),active = index+1]" >{{ item.value }}</div>
+		<div :class='(active-1 == 0)?"active header-item":"header-item"' @click="[go(itemList[0].path),active = 0]">{{ itemList[0].value }}</div>
+		<div :class='(active-1 == 1)?"active header-item":"header-item"' @click="[go(itemList[1].path),active = 1]">{{ itemList[1].value }}</div>
+		<div :class='(active-1 == 2)?"active header-item":"header-item"' v-if="userStore.Identity == '3'" @click="[go(itemList[2].path),active = 3]">{{ itemList[2].value }}</div>
 	</div>
 	<div class="search" v-show="store.search && store.display">
 		<el-dropdown :disabled="store.inAuthorPage || store.inInstitutionPage">
@@ -17,10 +19,10 @@
 			</template>
 		</el-dropdown>
 		<el-dropdown ref="dropdown2" trigger="contextmenu" placement="bottom-start">
-			<input type="text" autocomplete="off" @input="getSuggestion()" v-model="store.serInput" placeholder="搜索你感兴趣的内容..." class="top_input" @focus="store.search_active = true" @keyup.enter.native="autoPush({key:store.option.value,value:store.serInput})">
+			<input type="text" autocomplete="off" @input="getSuggestion()" v-model="store.serInput" placeholder="搜索你感兴趣的内容..." class="top_input" @focus="store.search_active = true" @keyup.space.native="doSomething($event)" @keyup.enter.native="autoPush({key:store.option.value,value:store.serInput})">
 			<template #dropdown>
 					<el-dropdown-menu>
-						<el-dropdown-item v-for="item in store.suggestions" @click="store.serInput = item.display_name">{{ item.display_name }}</el-dropdown-item>
+						<el-dropdown-item v-for="item in store.suggestions" @click="store.serInput = item.display_name"><div style="max-width: 300px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{ item.display_name }}</div></el-dropdown-item>
 					</el-dropdown-menu>
 				</template>
 		</el-dropdown>
@@ -37,13 +39,11 @@
 		</div>
 		<span class="w-5"></span>
 		<LoginButton class="outline-none" v-show="!userStore.islogin" @click="go('/login')"></LoginButton>
-		<el-dropdown v-show="userStore.islogin" @click="go((userStore.Auth==0)?'/admin/board': '/person')">
+		<el-dropdown v-show="userStore.islogin" @click="go((userStore.Auth=='3')?'/admin/board': '/person')">
 			<GitAvatar :num="userStore.avatar" class="outline-none" ></GitAvatar>
 			<template #dropdown>
 				<el-dropdown-menu>
-				<el-dropdown-item @click="go('/admin/board')">管理员</el-dropdown-item>
 				<el-dropdown-item @click="go('/person')">主页</el-dropdown-item>
-				<el-dropdown-item @click="go('/result')">学术成果展示</el-dropdown-item>
 				<el-dropdown-item v-if="!userStore.islogin" @click="go('/login')">登录</el-dropdown-item>
 				<el-dropdown-item v-else @click="logout()">登出</el-dropdown-item>
 				</el-dropdown-menu>
@@ -172,6 +172,10 @@ export default defineComponent({
 					})
 				},500)
 			}
+		},
+		doSomething(event){
+			this.store.serInput+=' ';
+			setTimeout(()=>{event.target.focus();},300)
 		}
 	}
 })

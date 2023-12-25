@@ -16,10 +16,10 @@
 			</div>
 			
 			<el-dropdown ref="dropdown1" trigger="contextmenu" placement="bottom-start">
-				<input class="search-input"  @input="getSuggestion()" autocomplete="off" id="txt_SearchText" name="txt_SearchText" type="text" placeholder="中文文献、外文文献" maxlength="100" style="color: rgb(125, 125, 125);" v-model="store.serInput" @keyup.enter.native="go('/explorePaper',{key:store.option.value,value:store.serInput})">
+				<input class="search-input"  ref="focus1" @input="getSuggestion()" autocomplete="off" id="txt_SearchText" name="txt_SearchText" type="text" placeholder="中文文献、外文文献" maxlength="100" style="color: rgb(125, 125, 125);" v-model="store.serInput" @keyup.space.native="doSomething($event)" @keyup.enter.native="go('/explorePaper',{key:store.option.value,value:store.serInput})">
 				<template #dropdown>
 					<el-dropdown-menu>
-						<el-dropdown-item v-for="item in store.suggestions" @click="store.serInput = item.display_name">{{ item.display_name }}</el-dropdown-item>
+						<el-dropdown-item v-for="item in store.suggestions" @click="store.serInput = item.display_name"><div style="max-width: 300px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{ item.display_name }}</div></el-dropdown-item>
 					</el-dropdown-menu>
 				</template>
 			</el-dropdown>
@@ -165,6 +165,10 @@ export default defineComponent({
 				console.log(res)
 				this.rpapers = res.data.results
 			})
+		},
+		doSomething(event){
+			this.store.serInput+=' ';
+			setTimeout(()=>{event.target.focus();},300)
 		}
 	}
 })

@@ -119,7 +119,7 @@
               </div>
               <div class="bottom">
                 <span class="name"> 申请人 </span>
-                <span class="content"> {{ form.userId }} </span>
+                <span class="content"> {{ form.userName }} </span>
               </div>
               <div class="bottom">
                 <span class="name"> 状态 </span>
@@ -186,7 +186,7 @@
               <el-button
                 type="info"
                 plain
-                @click="openReject(form.id, form.userId, pages.currentPage * 6 - 6 + index)"
+                @click="openReject(form.id, form.userName, pages.currentPage * 6 - 6 + index)"
                 style="
                   margin-bottom: 0.5vh;
                   margin-top: 0.5vh;
@@ -266,7 +266,7 @@ const allData = reactive({
     {
       id: "1f7a338a3c",
       status: 0,
-      userId: 3208,
+      userName: 3208,
       content: "o.O?",
       createTime: "2023-11-07 18:34:43",
     },
@@ -347,13 +347,13 @@ const openDeleteAll = () => {
     });
 };
 
-const openReject = (id: any, user_id: any, num: any) => {
+const openReject = (id: any, userName: any, num: any) => {
   ElMessageBox.prompt("填写驳回理由", "Tip", {
     confirmButtonText: "确认",
     cancelButtonText: "取消",
   })
     .then(({ value }) => {
-      refuse(id, user_id, num, value)
+      refuse(id, userName, num, value)
         .then((res: Type.CommonReturnType) => {
           console.log(res);
           ElMessage({
@@ -381,7 +381,7 @@ const requestData = reactive({
   list: [
     {
       id: 2,
-      userId: 2200,
+      userName: 2200,
       status: 0,
       content: "o.O?",
       createTime: "2022-11-11 15:14:44",
@@ -419,12 +419,12 @@ function fillRequestData(type: any) {
 
 const refuse = function (
   id: any,
-  user_id: any,
+  userName: any,
   num: any,
   reason: string
 ): Promise<Type.CommonReturnType> {
   return new Promise((resolve, reject) => {
-    rejectIssue(id, reason, user_id)
+    rejectIssue(id, reason, userName)
       .then((res: Type.CommonReturnType) => {
         console.log(res);
         requestData.list[num].status = 2;

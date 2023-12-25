@@ -10,7 +10,6 @@ export default({ mode }) => defineConfig({
   plugins: [vue()],
   assetsInclude: ['**/*.gltf'],
   build:{
-    outDir:'docs',
     chunkSizeWarningLimit:1024,
     rollupOptions : {
       output : {
@@ -27,10 +26,12 @@ export default({ mode }) => defineConfig({
     }
   },
   envDir:"env",
-  base:'/ScholarGateFront',
+  base:'/',
   resolve : {
     alias : {
       '@' : resolve(__dirname,"./src"),
+      // Fix: Missing "./lib/helpers/buildURL" specifier in "axios" package 
+      'axios/lib': path.resolve(__dirname, './node_modules/axios/lib')
     },
     extensions:[".js", ".ts", ".tsx", ".jsx", ".d.ts"],
   },

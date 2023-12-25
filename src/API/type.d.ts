@@ -13,7 +13,8 @@ export interface LoginReturn extends CommonReturnType {
 		userId: number,
 		userName: string,
 		avatar: number,
-		email: string
+		email: string,
+		type:string
 	}
 }
 export interface SendCodeReturn extends CommonReturnType {
@@ -200,7 +201,8 @@ export interface GetIssuesReturn extends CommonReturnType {
 			userId: string,
 			content: string,
 			status: number,
-			createTime: Date
+			createTime: Date,
+			userName: string
 		}[],
 	}
 }

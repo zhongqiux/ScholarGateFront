@@ -20,9 +20,10 @@ export const useCounterStore = defineStore('counter'/*store的唯一标识*/, {
 	persist: true,
 })
 
-enum Identity {
-	User = 0,
-	Scholar = 1,
+export enum Identity {
+	User = '1',
+	Scholar = '2',
+	ADMINISTRATOR = '3',
 }
 export const useUserStore = defineStore('user'/*store的唯一标识*/, {
 	state: () => ({ 
@@ -31,7 +32,7 @@ export const useUserStore = defineStore('user'/*store的唯一标识*/, {
 		userId:-1,
 		avatar:-1,
 		email:'',
-		Auth:{} as Identity,
+		Identity: '1' as Identity,
 		outdate:new Date('1919-5-4').getTime(),
 	}),
 	getters: {
