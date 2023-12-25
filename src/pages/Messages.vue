@@ -6,7 +6,7 @@
 				<el-button @click="APIrefreshList(true)">刷新</el-button>
 				<span class="w-10 inline-block"></span>
 			</div>
-			<el-empty :image-size="350" v-if="!has_message" description="哎呀，聊天列表为空~" />
+			<el-empty :image-size="350" v-if="!has_message" description="哎呀，消息列表为空~" />
 			<el-scrollbar v-else style="height: 74vh;">
 				<div v-for="message in message_list" :key="message['name']">
 					<el-badge :is-dot="!message['isRead']" class="dot">

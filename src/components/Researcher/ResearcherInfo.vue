@@ -64,7 +64,7 @@ export default {
             console.log(doi);
 
             ElMessage({
-                message: '提交认领请求成功，请耐心等待审核~',
+                message: '提交认领请求成功，请前往邮箱确认喵~',
                 type: 'success',
             });
             claim(doi, useUserStore().email).then((res: Type.ClaimReturn) => {

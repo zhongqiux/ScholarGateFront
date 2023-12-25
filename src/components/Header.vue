@@ -76,7 +76,7 @@ export default defineComponent({
 		this.APIrefreshList()
 	},
 	mounted() {
-		setInterval(this.APIrefreshList, 300000)
+		setInterval(this.APIrefreshList, 1000)
 	},
 	data(){
 		return {
@@ -103,7 +103,7 @@ export default defineComponent({
 	methods:{
 		APIrefreshList(): void {
 			getMessageList().then((res: Type.GetMessageListReturn) => {
-				console.log(res.data)
+				// console.log(res.data)
 				if (res.flag == true) {
 					this.message_list = res.data
 					var cnt = 0

@@ -93,7 +93,7 @@ export function getMessageList(): Promise<Type.GetMessageListReturn> {
                 }
             }//get请求携带登录凭证
         ).then(res => {
-            console.log(res);
+            // console.log(res);
             resolve(res.data);
         }).catch(err => {
             console.log(err)
