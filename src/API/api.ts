@@ -123,6 +123,27 @@ export function readMessage(messageId: string): Promise<Type.ReadMessageReturn> 
     })
 }
 
+export function deleteMessage(messageId: string): Promise<Type.DeleteMessageReturn> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get("/messages/deleteMsg", {
+                params: {
+                    id: messageId,
+                },
+                headers: {
+                    Authorization: useUserStore().token,
+                }
+            }//get请求携带登录凭证
+        ).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
+
 export function readAllMessage(): Promise<Type.ReadAllMessageReturn> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法

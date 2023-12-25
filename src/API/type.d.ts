@@ -39,6 +39,17 @@ export interface ReadMessageReturn extends CommonReturnType {
 	}
 }
 
+export interface DeleteMessageReturn extends CommonReturnType {
+	data: {
+		id: string,
+		userId: string,
+		name: string,
+		content: string,
+		time: string,
+		isRead: boolean,
+	}
+}
+
 export interface ReadAllMessageReturn extends CommonReturnType {
 	data: null,
 }
@@ -190,7 +201,8 @@ export interface GetIssuesReturn extends CommonReturnType {
 			userId: string,
 			content: string,
 			status: number,
-			createTime: Date
+			createTime: Date,
+			userName: string
 		}[],
 	}
 }

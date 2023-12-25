@@ -53,7 +53,8 @@
       <span style="color: purple">{{ currentSelection.name }}</span>
       <div style="float: right">
         <span style="font-size: large">筛选日期</span>
-        <el-date-picker
+        <el-config-provider :locale="locale">
+          <el-date-picker
           style="margin-left: 1vw"
           v-model="timeRange"
           type="daterange"
@@ -65,6 +66,8 @@
           :shortcuts="shortcuts"
         />
 
+        </el-config-provider>
+        
         <el-popover
           placement="bottom"
           :width="180"
@@ -116,7 +119,7 @@
               </div>
               <div class="bottom">
                 <span class="name"> 申请人 </span>
-                <span class="content"> {{ form.userId }} </span>
+                <span class="content"> {{ form.userName }} </span>
               </div>
               <div class="bottom">
                 <span class="name"> 状态 </span>
@@ -183,7 +186,7 @@
               <el-button
                 type="info"
                 plain
-                @click="openReject(form.id, form.userId, pages.currentPage * 6 - 6 + index)"
+                @click="openReject(form.id, form.userName, pages.currentPage * 6 - 6 + index)"
                 style="
                   margin-bottom: 0.5vh;
                   margin-top: 0.5vh;
@@ -217,7 +220,7 @@
   
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { ElEmpty } from "element-plus";
+import { ElEmpty, ElConfigProvider } from "element-plus";
 import {
   List,
   Folder,
@@ -228,7 +231,9 @@ import {
 import { ElMessage, ElMessageBox } from "element-plus";
 import { approveIssue, deleteAllIssue, deleteIssue, getIssues, rejectIssue } from "@/API";
 import * as Type from "@/API/type";
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
+const locale = zhCn
 const currentSelection = reactive({
   type: 1,
   name: "全部事项",
@@ -261,7 +266,7 @@ const allData = reactive({
     {
       id: "1f7a338a3c",
       status: 0,
-      userId: 3208,
+      userName: 3208,
       content: "o.O?",
       createTime: "2023-11-07 18:34:43",
     },
@@ -342,13 +347,13 @@ const openDeleteAll = () => {
     });
 };
 
-const openReject = (id: any, user_id: any, num: any) => {
+const openReject = (id: any, userName: any, num: any) => {
   ElMessageBox.prompt("填写驳回理由", "Tip", {
     confirmButtonText: "确认",
     cancelButtonText: "取消",
   })
     .then(({ value }) => {
-      refuse(id, user_id, num, value)
+      refuse(id, userName, num, value)
         .then((res: Type.CommonReturnType) => {
           console.log(res);
           ElMessage({
@@ -376,7 +381,7 @@ const requestData = reactive({
   list: [
     {
       id: 2,
-      userId: 2200,
+      userName: 2200,
       status: 0,
       content: "o.O?",
       createTime: "2022-11-11 15:14:44",
@@ -390,8 +395,7 @@ function pageCurrentChange(val: any) {
   pages.currentPage = val;
 }
 
-function fillRequestData(type: any) {
-  isLoading.loading = 1;
+function selection(type: any) {
   if (type === 1) {
     requestData.list = allData.list;
   } else if (type === 2) {
@@ -403,21 +407,24 @@ function fillRequestData(type: any) {
       return item.status == 1 || item.status == 2;
     });
   }
-  if (timeRange.value != null) {
-    timeFilter();
-  }
+}
+
+function fillRequestData(type: any) {
+  isLoading.loading = 1;
+  selection(type)
+  timeFilter();
   totalCount();
   isLoading.loading = 0;
 }
 
 const refuse = function (
   id: any,
-  user_id: any,
+  userName: any,
   num: any,
   reason: string
 ): Promise<Type.CommonReturnType> {
   return new Promise((resolve, reject) => {
-    rejectIssue(id, reason, user_id)
+    rejectIssue(id, reason, userName)
       .then((res: Type.CommonReturnType) => {
         console.log(res);
         requestData.list[num].status = 2;
@@ -457,18 +464,21 @@ const del = function (id: any, num: any): void {
 
 const timeFilter = function (): void {
   if (timeRange.value == null) {
-    fillRequestData(currentSelection.type);
+    selection(currentSelection.type);
     totalCount();
   } else {
-    console.log(timeRange);
+    selection(currentSelection.type)
     let s = new Date(timeRange.value[0]);
     let e = new Date(timeRange.value[1]);
     e.setTime(e.getTime() + 3600 * 1000 * 24);
     const stime = s.getTime();
     const etime = e.getTime();
+    console.log("stime:" + stime)
+    console.log(TimeFormat(stime))
     requestData.list = requestData.list.filter((item) => {
       let date = new Date(item.createTime);
       let time = date.getTime();
+      console.log(time)
       return time >= stime && time <= etime;
     });
     totalCount();
@@ -491,7 +501,7 @@ function TimeFormat(time: any) {
   let T = new Date(time)
   let s = ""
   s += T.getFullYear() + "-"
-  s += T.getMonth() + '-'
+  s += T.getMonth()+1 + '-'
   s += T.getDate() + ' '
   s += T.toLocaleTimeString()
   return s;
