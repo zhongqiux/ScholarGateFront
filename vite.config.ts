@@ -31,6 +31,8 @@ export default({ mode }) => defineConfig({
   resolve : {
     alias : {
       '@' : resolve(__dirname,"./src"),
+      // Fix: Missing "./lib/helpers/buildURL" specifier in "axios" package 
+      'axios/lib': path.resolve(__dirname, './node_modules/axios/lib')
     },
     extensions:[".js", ".ts", ".tsx", ".jsx", ".d.ts"],
   },

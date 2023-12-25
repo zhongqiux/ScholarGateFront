@@ -1,9 +1,6 @@
 import * as Type from './type';
-import axios from 'axios';
+import { instance as axios } from './index';
 import {useUserStore} from '@/store';
-
-axios.defaults.baseURL = import.meta.env.VITE_HOST
-axios.defaults.timeout = 3000
 
 export function test(msg: String): Promise<Type.CommonReturnType> {
     return new Promise((resolve, reject) => {
@@ -543,7 +540,7 @@ export function getHotWorks(): Promise<Type.HotWorks> {
         axios.get(`/works/showHeatWork`,{
             headers: {
                 Authorization: useUserStore().token,
-            }
+            },
         }).then(res => {
             console.log(res);
             resolve(res.data);
