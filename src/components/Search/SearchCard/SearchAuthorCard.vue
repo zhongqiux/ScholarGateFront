@@ -87,7 +87,6 @@ const changeShowFlag = (item, flag) => {
 
 const handleNameClick = (url) => {
   const extractedString = url.substring(url.lastIndexOf("/") + 1);
-  console.log(extractedString)
   router.push(`/researcher/${extractedString}`)
 }
 
