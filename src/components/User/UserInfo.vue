@@ -6,7 +6,7 @@
                 <GitAvatar :num="myavatar" class="custom-avatar"></GitAvatar>
                 <div class="info-container">
                     <div class="name">{{ displayName }}</div>
-                    <div class="organization">{{ institutionDisplayName }}</div>
+                    <div class="organization" v-if="isAuthor">{{ institutionDisplayName }}</div>
                     <div class="background"><el-text class="background-text">
                             {{ backGround }}
                         </el-text>
@@ -67,10 +67,12 @@ export default {
         displayName: String,
         backGround: String,
         institutionDisplayName: String,
+        flag: String,
     },
     setup(props) {
         const dialogFormVisible = ref(false);
         const formLabelWidth = '80px';
+        const isAuthor = ref(props.flag == "2");
         const myavatar = ref(0)
         const form = reactive({
             displayName: '',
@@ -79,7 +81,7 @@ export default {
         });
         const originalFormData = reactive({ ...form }); // 增加原始表单数据的副本
         onMounted(() => {
-            console.log("displayName:", props.displayName);
+            console.log("isAuthor:", isAuthor.value);
             if (props.avatar !== undefined) {
                 myavatar.value = props.avatar;
             }
@@ -145,6 +147,7 @@ export default {
             formLabelWidth,
             form,
             backgroundImagePath: 'assets/Personbgc.jpg',
+            isAuthor,
             handleConfirm,
             handleCancel
         };
