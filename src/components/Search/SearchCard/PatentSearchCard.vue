@@ -33,10 +33,10 @@
         <div class="article-brief__content">
           <span>摘要：{{ item.snippet }}</span>
         </div>
-
+        <!-- 专利号 -->    
         <!-- 下载PDF -->
         <div>
-          <el-button @click="downLoadPdf(item.pdf)">查看PDF</el-button>
+          <el-button @click="goPdf(item.pdf)">查看PDF</el-button>
         </div>
       </div>
     </el-container>
@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import {reactive, onMounted, ref, watch} from 'vue'
+import {reactive, onMounted, ref, watch, computed} from 'vue'
 import "@/assets/ResultPageIconfont/iconfont.css"
 import axios from 'axios';
 import { getPatentResult } from '@/API'
@@ -137,20 +137,19 @@ const handleTitleClick = (url) => {
   router.push(`patent?id=${id}`)
 }
 
-const handleAuthorClick = () => {
-  alert('搜索该作者相关文章')
-}
-
-const handleKeywordClick = () => {
-  alert('搜索该关键词相关文章')
-}
-
-const handleConceptClick = () => {
-  alert('搜索该concept相关文章')
-}
+const patentId = computed((url) => {
+  return url.substring((url.indexOf("/") + 1), url.indexOf("/", start))
+})
 
 const changeCurrentPage = () => {
   getSearchData()
+}
+const goPdf = (pdf_url) => {
+  if (pdf_url == null) {
+    alert('该论文没有PDF!')
+  } else {
+    window.open(pdf_url, '_blank')
+  }
 }
 
 defineExpose({
