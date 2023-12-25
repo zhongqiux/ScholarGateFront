@@ -53,7 +53,8 @@
       <span style="color: purple">{{ currentSelection.name }}</span>
       <div style="float: right">
         <span style="font-size: large">筛选日期</span>
-        <el-date-picker
+        <el-config-provider :locale="locale">
+          <el-date-picker
           style="margin-left: 1vw"
           v-model="timeRange"
           type="daterange"
@@ -65,6 +66,8 @@
           :shortcuts="shortcuts"
         />
 
+        </el-config-provider>
+        
         <el-popover
           placement="bottom"
           :width="180"
@@ -217,7 +220,7 @@
   
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { ElEmpty } from "element-plus";
+import { ElEmpty, ElConfigProvider } from "element-plus";
 import {
   List,
   Folder,
@@ -228,7 +231,9 @@ import {
 import { ElMessage, ElMessageBox } from "element-plus";
 import { approveIssue, deleteAllIssue, deleteIssue, getIssues, rejectIssue } from "@/API";
 import * as Type from "@/API/type";
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
+const locale = zhCn
 const currentSelection = reactive({
   type: 1,
   name: "全部事项",
@@ -390,8 +395,7 @@ function pageCurrentChange(val: any) {
   pages.currentPage = val;
 }
 
-function fillRequestData(type: any) {
-  isLoading.loading = 1;
+function selection(type: any) {
   if (type === 1) {
     requestData.list = allData.list;
   } else if (type === 2) {
@@ -403,9 +407,12 @@ function fillRequestData(type: any) {
       return item.status == 1 || item.status == 2;
     });
   }
-  if (timeRange.value != null) {
-    timeFilter();
-  }
+}
+
+function fillRequestData(type: any) {
+  isLoading.loading = 1;
+  selection(type)
+  timeFilter();
   totalCount();
   isLoading.loading = 0;
 }
@@ -457,18 +464,21 @@ const del = function (id: any, num: any): void {
 
 const timeFilter = function (): void {
   if (timeRange.value == null) {
-    fillRequestData(currentSelection.type);
+    selection(currentSelection.type);
     totalCount();
   } else {
-    console.log(timeRange);
+    selection(currentSelection.type)
     let s = new Date(timeRange.value[0]);
     let e = new Date(timeRange.value[1]);
     e.setTime(e.getTime() + 3600 * 1000 * 24);
     const stime = s.getTime();
     const etime = e.getTime();
+    console.log("stime:" + stime)
+    console.log(TimeFormat(stime))
     requestData.list = requestData.list.filter((item) => {
       let date = new Date(item.createTime);
       let time = date.getTime();
+      console.log(time)
       return time >= stime && time <= etime;
     });
     totalCount();
@@ -491,7 +501,7 @@ function TimeFormat(time: any) {
   let T = new Date(time)
   let s = ""
   s += T.getFullYear() + "-"
-  s += T.getMonth() + '-'
+  s += T.getMonth()+1 + '-'
   s += T.getDate() + ' '
   s += T.toLocaleTimeString()
   return s;
