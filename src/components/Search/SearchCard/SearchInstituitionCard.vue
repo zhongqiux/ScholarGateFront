@@ -42,14 +42,6 @@
             {{ item.cited_by_count }}
           </span>
         </div>
-        <!-- works_api_url -->
-        <div class="keywords">
-          <span class="keywords__label">works_api_url:</span>
-          <span class="keywords__content">
-            {{ item.works_api_url }}
-          </span>
-        </div>
-        
       </div>
     </el-container>
     <el-divider class="item__divider"/>

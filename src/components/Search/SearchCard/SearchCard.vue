@@ -21,9 +21,11 @@
         <!-- 作者 -->
         <div>
           <el-icon class="author-icon"><UserFilled /></el-icon>
-          <span  @click="handleAuthorClick">
-            <span v-for="(a, index) in item.authorships" class="Author-info__content">
-              {{ a }} &nbsp;
+          <span>
+            <span v-for="(value, key, index) in item.authorships" class="Author-info__content">
+              <span @click="handleAuthorClick(key)">
+                {{ value }} &nbsp;
+              </span>
             </span>
           </span>
         </div>
@@ -199,12 +201,13 @@ const getSearchData = () => {
   
 }
 const handleTitleClick = (url) => {
-  const id = url.substring(url.lastIndexOf('/') + 1);
+  const id = url.substring(url.lastIndexOf('/') + 1)
   router.push(`result?id=${id}`)
 }
 
-const handleAuthorClick = () => {
-  alert('搜索该作者相关文章')
+const handleAuthorClick = (url) => {
+  const result = url.substring(url.lastIndexOf('/') + 1)
+  router.push(`/researcher/${result}`)
 }
 
 const handleKeywordClick = (keyword, index) => {

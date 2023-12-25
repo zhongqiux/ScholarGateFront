@@ -2,6 +2,9 @@ import * as Type from './type';
 import { instance as axios } from './index';
 import {useUserStore} from '@/store';
 
+axios.defaults.baseURL = import.meta.env.VITE_HOST
+axios.defaults.timeout = 10000
+
 export function test(msg: String): Promise<Type.CommonReturnType> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
@@ -188,12 +191,12 @@ export function getAuthorData(doi: string): Promise<Type.GetUserDataReturn> {
         // axiso 自带 get 和 post 方法
         axios.get("/portals/getUserMsg", {
                 params: {
-                    doi: 'A5023888391',
+                    doi: doi,
                 },
                 headers: {
-                    // Authorization: useUserStore().token,
+                    Authorization: useUserStore().token,
 
-                    Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIzNDUiLCJ1c2VyTmFtZSI6ImZ3IiwicGFzc3dvcmQiOiIxMjMifQ.4nS1yyna7b6Yb2c9P4_2yl-wESjQrGtqQTgXKLWIeQ0",
+                    // Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIzNDUiLCJ1c2VyTmFtZSI6ImZ3IiwicGFzc3dvcmQiOiIxMjMifQ.4nS1yyna7b6Yb2c9P4_2yl-wESjQrGtqQTgXKLWIeQ0",
                 }
             }//get请求携带登录凭证
         ).then(res => {

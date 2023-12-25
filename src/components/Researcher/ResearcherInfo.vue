@@ -12,7 +12,7 @@
         </div>
 
         <div class="right">
-            <el-button type="primary" round v-if="!isRealNameAuthenticated" @click="dialogVisible = true">认领此门户</el-button>
+            <el-button type="primary" round v-if="isRealNameAuthenticated" @click="dialogVisible = true">认领此门户</el-button>
             <el-divider direction="vertical" border-style="dashed" class="custom-divider" />
             <el-icon class="is-loading" :size="220">
                 <Sunny />
@@ -50,17 +50,19 @@ export default {
         displayName: String,
         backGround: String,
         institutionDisplayName: String,
-        doi: String
+        doi: String,
+        flag: String
     },
     setup(props) {
         const dialogVisible = ref(false);
         const formLabelWidth = '80px';
-        const isRealNameAuthenticated = ref(false);
+        const isRealNameAuthenticated = ref(props.flag == '1');
 
 
         const handleConfirm = () => {
             const doi = props.doi as string;
             console.log(doi);
+
             ElMessage({
                 message: '提交认领请求成功，请耐心等待审核~',
                 type: 'success',
@@ -93,7 +95,7 @@ export default {
 }
 
 .left {
-    margin-left: 10%;
+    margin-left: 21%;
     margin-top: 1%;
     width: 20%;
     display: flex;
@@ -107,7 +109,7 @@ export default {
     justify-content: flex-end;
     text-align: right;
     margin-top: 1%;
-    margin-right: 10%;
+    margin-right: 18%;
 }
 
 .name {
