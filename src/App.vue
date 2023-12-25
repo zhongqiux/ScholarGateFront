@@ -30,5 +30,6 @@ const store  = useHeaderStore();
 }
 .el-main {
   padding: 10px 0 0 0;
+  overflow: hidden;
 }
 </style>

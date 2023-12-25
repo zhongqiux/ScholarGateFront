@@ -45,16 +45,28 @@ export interface ReadAllMessageReturn extends CommonReturnType {
 export interface GetUserDataReturn extends CommonReturnType {
 	data: {
 		displayName: string,
+		citedCount: number,
+		worksCount: number,
 		institutionDisplayName: string,
 		backGround: string,
 		avatar: string,
 		works: {
+			id: string,
 			workName: string,
 			publicationDate: string,
 		}[],
 		stars: {
 			id: string,
 			name: string,
+		}[],
+		concepts: {
+			id: string,
+			name: string,
+		}[],
+		countByYears: {
+			year: number,
+			works_count: number,
+			cited_by_count: number,
 		}[],
 
 	}
@@ -71,19 +83,19 @@ export interface verifyCodeReturn extends CommonReturnType {
 export interface EditUserInfoReturn extends CommonReturnType {
 	data: null,
 }
-export interface HotWorks extends CommonReturnType{
-	data:{
-		results:{
-			title:string,
-			publication_date:string,
-			keywords:{keyword:string}[],
-			concepts:{display_name:string, id:string}[],
-			authorships:{
-				author:{display_name:string, id:string},
+export interface HotWorks extends CommonReturnType {
+	data: {
+		results: {
+			title: string,
+			publication_date: string,
+			keywords: { keyword: string }[],
+			concepts: { display_name: string, id: string }[],
+			authorships: {
+				author: { display_name: string, id: string },
 			}[],
-			id:string,
+			id: string,
 		}[],
-		size:number,
+		size: number,
 	},
 }
 export interface FieldData extends CommonReturnType {
@@ -101,8 +113,8 @@ export interface FieldData extends CommonReturnType {
 			"i10_index": number
 		},
 		"image_url": string,
-		related_concepts:{display_name: string, id:string}[],
-		counts_by_year:{cited_by_count: number ,works_count: number ,year: number}[],
+		related_concepts: { display_name: string, id: string }[],
+		counts_by_year: { cited_by_count: number, works_count: number, year: number }[],
 		"works_api_url": string,
 		"works": {
 			"meta": {
@@ -184,7 +196,7 @@ export interface autoCompleteReturn extends CommonReturnType {
 
 export interface GetIssuesReturn extends CommonReturnType {
 	data: {
-		issues :{
+		issues: {
 			id: string,
 			userId: string,
 			content: string,
