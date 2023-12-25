@@ -592,6 +592,22 @@ export function autoComplete(key: completeBy, value: string): Promise<Type.autoC
         })
     })
 }
+export function getReferenceWork(id: string): Promise<Type.ReferenceWork> {
+    return new Promise((resolve, reject) => {
+        // axiso 自带 get 和 post 方法
+        axios.get(`/works/getReferenceWork`,{
+            params:{
+                id:id
+            }
+        }).then(res => {
+            console.log(res);
+            resolve(res.data);
+        }).catch(err => {
+            console.log(err)
+            reject(err)
+        })
+    })
+}
 
 export function getPatentData(patentId: String): Promise<null> {
     return new Promise((resolve, reject) => {

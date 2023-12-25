@@ -8,6 +8,7 @@
 <script lang="ts">
 import * as echarts from "echarts"
 import {defineComponent} from 'vue'
+import { getReferenceWork,getPaperData,getAuthorData } from "@/API";
 
 export default defineComponent({
   mounted: function () {

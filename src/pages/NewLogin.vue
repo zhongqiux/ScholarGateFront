@@ -105,7 +105,7 @@
 import { ElMessage } from 'element-plus'
 import { login, register, sendCode } from '@/API'
 import * as Type from "@/API/type"
-import { useUserStore } from '@/store'
+import { Identity, useUserStore } from '@/store'
 
 
 
@@ -156,7 +156,7 @@ export default {
                         this.store.token = res.data.token
                         this.store.email = res.data.email
                         this.store.avatar = res.data.avatar
-                        this.store.Identity = res.data.type
+                        this.store.Identity = res.data.type as Identity
                         ElMessage({
                             message: `登录成功！`,
                             type: 'success',
