@@ -2,9 +2,6 @@ import * as Type from './type';
 import { instance as axios } from './index';
 import {useUserStore} from '@/store';
 
-axios.defaults.baseURL = import.meta.env.VITE_HOST
-axios.defaults.timeout = 10000
-
 export function test(msg: String): Promise<Type.CommonReturnType> {
     return new Promise((resolve, reject) => {
         // axiso 自带 get 和 post 方法
