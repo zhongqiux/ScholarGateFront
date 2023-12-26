@@ -15,7 +15,7 @@
                         </div>
                         <div class="form-group">
                             <label for="pwd">密码</label>
-                            <input v-model="pwd" type="pwd" id="pwd" placeholder="请输入密码" />
+                            <input v-model="pwd" type="password" id="pwd" placeholder="请输入密码" />
                         </div>
                         <div class="tit">
                             <button type="submit">登录</button>
