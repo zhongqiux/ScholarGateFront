@@ -20,28 +20,36 @@
         <span>常用操作</span>
       </div>
 
-      <!--      <div class="actions">-->
-      <!--        <el-popover placement="left-start" :width="200" show-after="100" hide-after="100" trigger="click">-->
-      <!--          <div>引用格式1</div>-->
-      <!--          <div>引用格式2</div>-->
-      <!--          <template #reference>-->
-      <!--            <div class="action_item" @click="clickAction(0)">-->
-      <!--              <i class="iconfont icon-quote-left" :class="{ clickedStyle: isCitation }"></i>-->
-      <!--              <span class="action_text" :class="{ clickedStyle: isCitation }">引用</span>-->
-      <!--            </div>-->
-      <!--          </template>-->
-      <!--        </el-popover>-->
+      <div class="actions">
+        <!--        <el-popover placement="left-start" :width="200" show-after="100" hide-after="100" trigger="click">-->
+        <!--          <div>引用格式1</div>-->
+        <!--          <div>引用格式2</div>-->
+        <!--          <template #reference>-->
+        <!--            <div class="action_item" @click="clickAction(0)">-->
+        <!--              <i class="iconfont icon-quote-left" :class="{ clickedStyle: isCitation }"></i>-->
+        <!--              <span class="action_text" :class="{ clickedStyle: isCitation }">引用</span>-->
+        <!--            </div>-->
+        <!--          </template>-->
+        <!--        </el-popover>-->
 
-      <div class="action_item" @click="clickAction(1)">
-        <i class="iconfont icon-star" :class="{ clickedStyle: isFavourite }"></i>
-        <span class="action_text" :class="{ clickedStyle: isFavourite }">收藏</span>
+        <div class="action_item" @click="clickAction(1)">
+          <i class="iconfont icon-star" :class="{ clickedStyle: isFavourite }"></i>
+          <span class="action_text" :class="{ clickedStyle: isFavourite }">收藏</span>
+        </div>
+
+        <div class="action_item" @click="clickAction(3)">
+          <el-icon class="iconfont">
+            <DataBoard/>
+          </el-icon>
+          <span class="action_text">关系图</span>
+        </div>
+
+
+        <!--        <div class="action_item" @click="clickAction(2)">-->
+        <!--          <i class="iconfont icon-heart" :class="{ clickedStyle: isRecommend }"> </i>-->
+        <!--          <span class="action_text" :class="{ clickedStyle: isRecommend }">推荐</span>-->
+        <!--        </div>-->
       </div>
-
-      <!--        <div class="action_item" @click="clickAction(2)">-->
-      <!--          <i class="iconfont icon-heart" :class="{ clickedStyle: isRecommend }"> </i>-->
-      <!--          <span class="action_text" :class="{ clickedStyle: isRecommend }">推荐</span>-->
-      <!--        </div>-->
-      <!--      </div>-->
     </div>
 
     <!-- 统计 -->
@@ -170,6 +178,13 @@ export default defineComponent({
         //     })
         //   }
 
+      }else if(type == 3){
+        router.push({
+          path: '/relation',
+          query: {
+            id: this.paperId
+          }
+        })
       }
     },
 
@@ -190,7 +205,7 @@ export default defineComponent({
       console.log(result);
 
       if (result.flag) {
-        this.downloadLink = result.data.primary_location.pdf_url
+        this.downloadLink = result.data.open_access.oa_url
         this.paperName = result.data.title
         this.isFavourite = result.data.star
 
@@ -300,7 +315,9 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
-//height: 20px; //width: 70px; margin: 0;
+  height: 20px;
+  width: 70px;
+  margin: 10px;
 }
 
 .action_item2 {
