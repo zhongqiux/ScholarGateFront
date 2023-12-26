@@ -164,8 +164,7 @@ export interface FieldData extends CommonReturnType {
 		}
 	}
 }
-export interface ReferenceWork extends CommonReturnType{
-	data:any
+export interface ReferenceWork extends FieldWorks{
 }
 export interface FieldWorks extends CommonReturnType {
 	data: {

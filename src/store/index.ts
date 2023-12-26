@@ -5,7 +5,10 @@ export * from "./hotInfo"
 export * from "./search"
 
 export const useCounterStore = defineStore('counter'/*store的唯一标识*/, {
-	state: () => ({ count: 0 }),
+	state: () => ({ 
+		count: 0 ,
+		author:{ },
+	}),
 	getters: {
 	  // @ts-ignore
 	  double: (state) => state.count * 2,
