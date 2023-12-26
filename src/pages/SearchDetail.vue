@@ -130,9 +130,10 @@
             <span class="AppSearchRefineItem">
               <span v-if="filterItems.length===0">空</span>
               <span v-for="(item, index) in filterItems" class="AppSearchRefineItemText">
+                <el-icon class="delete" @click="deleteSearchTab(index)"><Close/></el-icon>
                 <span class="Highlight">{{ item.label }}:</span>
                 {{ item.content }}
-                <el-icon class="delete" @click="deleteSearchTab(index)"><Close/></el-icon>
+                
               </span>
             </span>
           </div>
