@@ -298,7 +298,7 @@ export default defineComponent({
 }
 .center {
 	position: relative;
-	width: 960px;
+	width: 80%;
 	left: 10vw;
 }
 .divide {

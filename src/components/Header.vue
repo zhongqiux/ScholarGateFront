@@ -6,7 +6,7 @@
 	<div class="routes" v-show="store.display">
 		<div :class='(active == 0)?"active header-item":"header-item"' @click="[go(itemList[0].path),active = 0]">{{ itemList[0].value }}</div>
 		<div :class='(active == 1)?"active header-item":"header-item"' @click="[push(itemList[1].path,{id:'W2134812217'}),active = 1]">{{ itemList[1].value }}</div>
-		<div :class='(active == 2)?"active header-item":"header-item"' v-if="userStore.Identity == '3'" @click="[go(itemList[2].path),active = 2]">{{ itemList[2].value }}</div>
+		<div :class='(active == 2)?"active header-item":"header-item"' v-if="userStore.Identity == '2'" @click="[go(itemList[2].path),active = 2]">{{ itemList[2].value }}</div>
 	</div>
 	<div class="search" v-show="store.search && store.display">
 		<el-dropdown :disabled="store.inAuthorPage || store.inInstitutionPage">
@@ -39,7 +39,7 @@
 		</div>
 		<span class="w-5"></span>
 		<LoginButton class="outline-none" v-show="!userStore.islogin" @click="go('/login')"></LoginButton>
-		<el-dropdown v-show="userStore.islogin" @click="go((userStore.Identity=='3')?'/admin/board': '/person')">
+		<el-dropdown v-show="userStore.islogin" @click="go((userStore.Identity=='2')?'/admin/board': '/person')">
 			<GitAvatar :num="userStore.avatar" class="outline-none" ></GitAvatar>
 			<template #dropdown>
 				<el-dropdown-menu>
